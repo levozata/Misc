@@ -194,10 +194,13 @@ const PLACES={
 };
 const LANDMARKS=[["République",PLACES.republique,"r"],["Bastille",PLACES.bastille,"r"],["Nation",PLACES.nation,"r"],["Pl. d'Italie",PLACES.italie,"r"],["Jussieu",PLACES.jussieu,"l"],["Champ-de-Mars",PLACES.champdemars,"l"],["Châtelet",PLACES.chatelet,"r"],["Pl. de l'Europe",PLACES.europe,"l"],["Pont St-Michel",PLACES.stmichel,"l"]];
 
+/* ---------- last data update (YYYY-MM-DD); bump on every refresh ---------- */
+const UPDATED="2026-10-01";
+
 /* ---------- interface strings ---------- */
 const UI={
  en:{kicker:"Strikes · marches · rallies",
-  lede:"Strikes, marches, rallies and blockades in Paris, late September to late October 2026. Compiled on <b>1 October 2026</b> from news outlets, union pages and activist calendars. Routes and times change, so check the linked source before you go.",
+  lede:"Strikes, marches, rallies and blockades in Paris, late September to late October 2026. Updated <b>{date}</b> from news outlets, union pages and activist calendars. Routes and times change, so check the linked source before you go.",
   when:"When",type:"Type",upcoming:"Now & upcoming",soon:"Next 7 days",all:"All",past:"Past",
   march:"March",rally:"Rally",strike:"Strike",blockade:"Blockade",
   confirmed:"Confirmed",announced:"Announced",unconfirmed:"Unconfirmed",
@@ -209,7 +212,7 @@ const UI={
   foot2:"Base map: Paris arrondissements (OpenStreetMap-derived). The Seine and route lines are drawn by hand and approximate. Markers show announced meeting points.",
   foot3:"The Préfecture de police can ban or reroute any demonstration at short notice."},
  es:{kicker:"Huelgas · marchas · concentraciones",
-  lede:"Huelgas, marchas, concentraciones y bloqueos en París, de finales de septiembre a finales de octubre de 2026. Recopilado el <b>1 de octubre de 2026</b> a partir de medios, sindicatos y agendas militantes. Los recorridos y horarios cambian: consulta la fuente enlazada antes de ir.",
+  lede:"Huelgas, marchas, concentraciones y bloqueos en París, de finales de septiembre a finales de octubre de 2026. Actualizado el <b>{date}</b> a partir de medios, sindicatos y agendas militantes. Los recorridos y horarios cambian: consulta la fuente enlazada antes de ir.",
   when:"Cuándo",type:"Tipo",upcoming:"Ahora y próximos",soon:"Próximos 7 días",all:"Todos",past:"Pasados",
   march:"Marcha",rally:"Concentración",strike:"Huelga",blockade:"Bloqueo",
   confirmed:"Confirmado",announced:"Anunciado",unconfirmed:"Sin confirmar",
@@ -221,7 +224,7 @@ const UI={
   foot2:"Mapa base: distritos (arrondissements) de París, a partir de OpenStreetMap. El Sena y los recorridos están dibujados a mano y son aproximados. Los marcadores indican los puntos de encuentro anunciados.",
   foot3:"La Prefectura de Policía puede prohibir o desviar cualquier manifestación con poca antelación."},
  fr:{kicker:"Grèves · manifs · rassemblements",
-  lede:"Grèves, manifestations, rassemblements et blocages à Paris, de fin septembre à fin octobre 2026. Compilé le <b>1er octobre 2026</b> à partir de la presse, de sites syndicaux et d'agendas militants. Parcours et horaires peuvent changer : vérifiez la source avant d'y aller.",
+  lede:"Grèves, manifestations, rassemblements et blocages à Paris, de fin septembre à fin octobre 2026. Mis à jour le <b>{date}</b> à partir de la presse, de sites syndicaux et d'agendas militants. Parcours et horaires peuvent changer : vérifiez la source avant d'y aller.",
   when:"Quand",type:"Type",upcoming:"En cours et à venir",soon:"7 prochains jours",all:"Tout",past:"Passés",
   march:"Manif",rally:"Rassemblement",strike:"Grève",blockade:"Blocage",
   confirmed:"Confirmé",announced:"Annoncé",unconfirmed:"Non confirmé",
@@ -445,7 +448,7 @@ KIND_KEYS.forEach(k=>{const b=document.createElement("button");b.className="chip
 function applyLang(){
   document.documentElement.lang=LANG;
   document.querySelectorAll("[data-i18n]").forEach(el=>el.textContent=T(el.dataset.i18n));
-  document.querySelectorAll("[data-i18n-html]").forEach(el=>el.innerHTML=T(el.dataset.i18nHtml));
+  document.querySelectorAll("[data-i18n-html]").forEach(el=>el.innerHTML=T(el.dataset.i18nHtml).replace("{date}",new Date(UPDATED+"T12:00:00").toLocaleDateString(LOCALE[LANG],{day:"numeric",month:"long",year:"numeric"})));
   WHEN.forEach(k=>document.getElementById("when-"+k).textContent=T(k));
   KIND_KEYS.forEach(k=>document.getElementById("kind-"+k).innerHTML=`<i class="sw ${k}"></i>${T(k)}`);
   ["zin","zout","zreset"].forEach(id=>{const b=document.getElementById(id);b.setAttribute("aria-label",T(id));b.title=T(id);});
