@@ -1,0 +1,404 @@
+<title>Paris dans la rue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: map pane (left) beside a dated agenda (right); stacks map-over-list on phones.
+   Look: Paris street-sign enamel blue on map paper; event kinds get their own signal hues. */
+:root {
+  --bg: #f3f4f1;
+  --paper: #fbfbf8;
+  --land: #e9ebe4;
+  --land-line: #c9cdc2;
+  --water: #b9cfe0;
+  --ink: #1b2330;
+  --muted: #5d6673;
+  --rule: #d9dcd4;
+  --enamel: #1d3d6e;
+  --enamel-ink: #ffffff;
+  --k-march: #1f5fbf;
+  --k-rally: #c27a00;
+  --k-strike: #b0306a;
+  --k-blockade: #13806f;
+  --halo: #fbfbf8;
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161c; --paper: #181d25; --land: #1f252e; --land-line: #353d49; --water: #22384f;
+    --ink: #e7eaee; --muted: #9aa3ae; --rule: #2c333d; --enamel: #3b67a8; --enamel-ink: #ffffff;
+    --k-march: #6aa2f2; --k-rally: #e9a73a; --k-strike: #e66a9f; --k-blockade: #3cbfa8; --halo: #181d25;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161c; --paper: #181d25; --land: #1f252e; --land-line: #353d49; --water: #22384f;
+  --ink: #e7eaee; --muted: #9aa3ae; --rule: #2c333d; --enamel: #3b67a8; --enamel-ink: #ffffff;
+  --k-march: #6aa2f2; --k-rally: #e9a73a; --k-strike: #e66a9f; --k-blockade: #3cbfa8; --halo: #181d25;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.5; }
+.wrap { max-width: 1400px; margin: 0 auto; padding-inline: 16px; padding-block: 16px 32px; display: grid; gap: 14px; }
+
+header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 24px; }
+.sign { display: inline-flex; flex-direction: column; background: var(--enamel); color: var(--enamel-ink); border: 2px solid var(--enamel-ink); outline: 2px solid var(--enamel); border-radius: 6px; padding: 4px 14px 6px; }
+.sign small { font-family: var(--font-display); font-weight: 600; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; opacity: .85; }
+.sign h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 4vw, 38px); line-height: 1; letter-spacing: .01em; }
+.lede { margin: 0; max-width: 62ch; color: var(--muted); }
+.lede b { color: var(--ink); font-weight: 600; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
+.group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.group > span { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-right: 2px; }
+.chip { font: inherit; font-size: 13px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); border-radius: 999px; padding: 4px 11px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.chip:focus-visible, .ctl:focus-visible, .item:focus-visible { outline: 2px solid var(--enamel); outline-offset: 2px; }
+.sw { width: 10px; height: 10px; display: inline-block; flex: none; }
+.sw.march { background: var(--k-march); border-radius: 50%; }
+.sw.rally { background: var(--k-rally); border-radius: 50%; }
+.sw.strike { background: var(--k-strike); }
+.sw.blockade { background: var(--k-blockade); transform: rotate(45deg) scale(.85); }
+
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 14px; align-items: start; }
+@media (max-width: 900px) { .main { grid-template-columns: minmax(0, 1fr); } }
+
+.mapbox { position: relative; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; min-width: 0; }
+@media (min-width: 901px) { .mapbox { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); } }
+#map { display: block; width: 100%; height: auto; aspect-ratio: 1000 / 610; max-width: 100%; touch-action: none; cursor: grab; }
+#map:active { cursor: grabbing; }
+.zoom { position: absolute; right: 10px; top: 10px; display: flex; flex-direction: column; gap: 4px; }
+.ctl { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); font: 600 16px/1 var(--font-body); cursor: pointer; }
+.legend { position: absolute; left: 10px; bottom: 10px; background: color-mix(in srgb, var(--paper) 88%, transparent); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 9px; font-size: 11.5px; display: grid; grid-template-columns: auto auto; gap: 2px 14px; }
+.legend div { display: flex; gap: 6px; align-items: center; }
+.ring { width: 11px; height: 11px; border-radius: 50%; border: 1.5px dashed var(--muted); display: inline-block; }
+@media (max-width: 520px) { .legend { display: none; } }
+
+.arr { fill: var(--land); stroke: var(--land-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.outline { fill: none; stroke: var(--muted); stroke-width: 1.4; vector-effect: non-scaling-stroke; opacity: .7; }
+.seine { fill: none; stroke: var(--water); stroke-linecap: round; stroke-linejoin: round; }
+.arrnum { font: 600 15px var(--font-display); fill: var(--muted); opacity: .55; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
+.lm { font: 500 10.5px var(--font-body); fill: var(--ink); paint-order: stroke; stroke: var(--halo); stroke-width: 3px; pointer-events: none; }
+.lmdot { fill: var(--ink); }
+.route { fill: none; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; opacity: .85; }
+.route.sel { stroke-width: 6.5; opacity: 1; }
+.route.past { opacity: .35; stroke-dasharray: 2 5; }
+.mk { cursor: pointer; }
+.mk .hit { fill: transparent; }
+.mk .shape { stroke: var(--halo); stroke-width: 2; }
+.mk.unconfirmed .shape { stroke: var(--ink); stroke-dasharray: 3 2; stroke-width: 1.5; }
+.mk.past { opacity: .4; }
+.mk.sel .shape { stroke: var(--ink); stroke-width: 3; }
+.mk .pulse { fill: none; stroke-width: 2; opacity: 0; }
+.mk.live .pulse { animation: pulse 2s ease-out infinite; }
+@keyframes pulse { 0% { opacity: .8; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.8); } }
+@media (prefers-reduced-motion: reduce) { .mk.live .pulse { animation: none; opacity: .5; } }
+.endcap { stroke: var(--halo); stroke-width: 1.5; }
+
+aside.list { background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; min-width: 0; }
+.list h2 { margin: 0; padding: 12px 14px 8px; font: 700 20px var(--font-display); letter-spacing: .02em; text-transform: uppercase; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.list h2 span { font: 500 12px var(--font-mono); color: var(--muted); text-transform: none; letter-spacing: 0; }
+.daygroup { border-bottom: 1px solid var(--rule); }
+.daygroup:last-child { border-bottom: 0; }
+.dayhead { padding: 8px 14px 2px; font: 500 11.5px var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; display: flex; gap: 8px; align-items: center; }
+.dayhead .now { font-family: var(--font-body); font-weight: 600; letter-spacing: .04em; background: var(--ink); color: var(--paper); border-radius: 3px; padding: 0 5px; }
+.item { display: grid; grid-template-columns: 6px minmax(0,1fr); gap: 11px; padding: 9px 14px 11px; cursor: pointer; border-left: 0; }
+.item:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+.item.sel { background: color-mix(in srgb, var(--enamel) 10%, transparent); }
+.item .bar { border-radius: 3px; }
+.item.past { opacity: .62; }
+.item h3 { margin: 0; font-size: 14.5px; font-weight: 600; line-height: 1.3; text-wrap: balance; }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 3px; color: var(--muted); font-size: 12.5px; }
+.meta .t { font-family: var(--font-mono); font-size: 12px; color: var(--ink); }
+.pill { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; border-radius: 3px; padding: 0 5px; border: 1px solid currentColor; }
+.pill.confirmed { color: var(--k-blockade); }
+.pill.announced { color: var(--k-rally); }
+.pill.unconfirmed { color: var(--k-strike); border-style: dashed; }
+.pill.offmap { color: var(--muted); }
+.detail { margin-top: 7px; display: grid; gap: 6px; font-size: 13px; }
+.detail p { margin: 0; max-width: 60ch; }
+.detail .route-txt { font-size: 12.5px; color: var(--muted); }
+.detail .src { font-size: 12px; display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.detail .src a { color: var(--enamel); text-underline-offset: 2px; }
+:root[data-theme="dark"] .detail .src a { color: var(--k-march); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .detail .src a { color: var(--k-march); } }
+.empty { padding: 18px 14px; color: var(--muted); }
+
+footer.note { color: var(--muted); font-size: 12.5px; display: grid; gap: 4px; max-width: 95ch; }
+footer.note p { margin: 0; }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div style="display:grid;gap:8px;min-width:0">
+      <div class="sign"><small>Grèves · manifs · rassemblements</small><h1>Paris dans la rue</h1></div>
+      <p class="lede">Strikes, marches, rallies and blockades in Paris, late September to late October 2026. Compiled from news and organizer sources on <b>1 October 2026</b>. Routes and times change; check the linked source before you go.</p>
+    </div>
+    <div class="controls" role="toolbar" aria-label="Filters">
+      <div class="group" id="f-when"><span>When</span></div>
+      <div class="group" id="f-kind"><span>Type</span></div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="mapbox">
+      <svg id="map" viewBox="0 0 1000 610" role="img" aria-label="Map of Paris with protest locations"></svg>
+      <div class="zoom">
+        <button class="ctl" id="zin" aria-label="Zoom in">+</button>
+        <button class="ctl" id="zout" aria-label="Zoom out">−</button>
+        <button class="ctl" id="zreset" aria-label="Reset view" style="font-size:12px">⤢</button>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <div><i class="sw march"></i>March (with route)</div>
+        <div><i class="sw rally"></i>Rally</div>
+        <div><i class="sw strike"></i>Strike / picket</div>
+        <div><i class="sw blockade"></i>Blockade</div>
+        <div><i class="ring"></i>Unconfirmed call</div>
+        <div><i class="sw rally" style="opacity:.4"></i>Already happened</div>
+      </div>
+    </div>
+    <aside class="list" aria-label="Agenda">
+      <h2>Agenda <span id="count"></span></h2>
+      <div id="items"></div>
+    </aside>
+  </div>
+
+  <footer class="note">
+    <p>Base map: Paris arrondissements (OpenStreetMap-derived boundaries); the Seine and route lines are drawn by hand and approximate. Marker positions are the announced meeting points.</p>
+    <p>Not listed: events whose Paris meeting point wasn't found in published sources. Police (Préfecture de police) can ban or reroute any demonstration at short notice.</p>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const ARR=[{"n":1,"name":"Louvre","r":[[[2.3208,48.863],[2.3252,48.8689],[2.3251,48.8694],[2.328,48.8699],[2.3303,48.8683],[2.3509,48.8634],[2.3474,48.8571],[2.3469,48.857],[2.346,48.8554],[2.3445,48.854],[2.3424,48.8552],[2.3405,48.8568],[2.3373,48.8585],[2.3315,48.8597],[2.3208,48.863]]]},{"n":2,"name":"Bourse","r":[[[2.34,48.872],[2.3479,48.8707],[2.3543,48.8693],[2.351,48.8634],[2.3303,48.8683],[2.3282,48.8697],[2.3281,48.8699],[2.34,48.872]]]},{"n":3,"name":"Temple","r":[[[2.3624,48.8679],[2.3648,48.8664],[2.3667,48.8632],[2.3685,48.8558],[2.3643,48.8564],[2.3616,48.8573],[2.3586,48.8588],[2.3568,48.8601],[2.3534,48.8612],[2.3502,48.862],[2.3542,48.8693],[2.3624,48.8679]]]},{"n":4,"name":"Hôtel-de-Ville","r":[[[2.3647,48.846],[2.3609,48.8486],[2.3547,48.8508],[2.3501,48.852],[2.347,48.8533],[2.3446,48.854],[2.346,48.8554],[2.347,48.857],[2.3473,48.8571],[2.3502,48.862],[2.3533,48.8612],[2.3568,48.8602],[2.3586,48.8587],[2.3617,48.8573],[2.3643,48.8564],[2.3684,48.8559],[2.3692,48.8528],[2.3663,48.847],[2.3647,48.846]]]},{"n":5,"name":"Panthéon","r":[[[2.3518,48.8368],[2.3455,48.8376],[2.3365,48.8396],[2.3426,48.8503],[2.3442,48.8538],[2.3445,48.854],[2.3469,48.8533],[2.3502,48.852],[2.3548,48.8508],[2.361,48.8486],[2.366,48.845],[2.3649,48.8444],[2.3618,48.84],[2.3518,48.8368]]]},{"n":6,"name":"Luxembourg","r":[[[2.3165,48.8469],[2.319,48.8479],[2.3241,48.8503],[2.327,48.8516],[2.3287,48.852],[2.3316,48.8563],[2.3339,48.8592],[2.3375,48.8585],[2.3406,48.8567],[2.3425,48.8552],[2.3445,48.854],[2.3443,48.8538],[2.3426,48.8503],[2.3365,48.8396],[2.32,48.8451],[2.3165,48.8469]]]},{"n":7,"name":"Palais-Bourbon","r":[[[2.3095,48.8458],[2.3073,48.8472],[2.2899,48.8582],[2.2948,48.8619],[2.3002,48.8635],[2.3183,48.8638],[2.3315,48.8597],[2.3338,48.8592],[2.3316,48.8563],[2.3304,48.8544],[2.3293,48.8527],[2.3285,48.8518],[2.3271,48.8516],[2.3193,48.8478],[2.3137,48.8459],[2.3114,48.8452],[2.3095,48.8458]]]},{"n":8,"name":"Élysée","r":[[[2.3016,48.8646],[2.2999,48.8651],[2.2988,48.8687],[2.2973,48.8712],[2.2955,48.8733],[2.2946,48.8732],[2.294,48.8737],[2.2944,48.8743],[2.2954,48.8743],[2.2978,48.8777],[2.2976,48.878],[2.298,48.8785],[2.2988,48.8783],[2.309,48.8805],[2.3166,48.8813],[2.3272,48.8835],[2.3268,48.8759],[2.3266,48.8754],[2.327,48.8738],[2.3269,48.8733],[2.3263,48.8726],[2.3265,48.8725],[2.3258,48.8695],[2.3252,48.8694],[2.3253,48.869],[2.3208,48.8631],[2.3183,48.8638],[2.3017,48.8635],[2.3016,48.8646]]]},{"n":9,"name":"Opéra","r":[[[2.3396,48.882],[2.3495,48.8838],[2.3499,48.8807],[2.3492,48.8789],[2.349,48.8772],[2.3481,48.8757],[2.3479,48.8739],[2.3479,48.8707],[2.34,48.872],[2.3258,48.8696],[2.3265,48.8725],[2.3263,48.8726],[2.3269,48.8733],[2.327,48.8738],[2.3266,48.8754],[2.3268,48.876],[2.3272,48.8834],[2.3279,48.8836],[2.3295,48.8847],[2.3374,48.8823],[2.3396,48.882]]]},{"n":10,"name":"Enclos-St-Laurent","r":[[[2.3688,48.8841],[2.3691,48.8833],[2.3702,48.8826],[2.3703,48.8786],[2.3708,48.8781],[2.3706,48.8776],[2.377,48.8721],[2.3729,48.8706],[2.3642,48.8678],[2.3635,48.8672],[2.3624,48.8679],[2.3543,48.8693],[2.3479,48.8707],[2.3478,48.8739],[2.3482,48.8758],[2.349,48.8773],[2.3493,48.8792],[2.3499,48.8807],[2.3495,48.8838],[2.3592,48.8845],[2.3648,48.8844],[2.3688,48.8841]]]},{"n":11,"name":"Popincourt","r":[[[2.3832,48.8671],[2.3838,48.8661],[2.3875,48.8628],[2.3897,48.8584],[2.3922,48.8576],[2.3943,48.8565],[2.3984,48.8513],[2.3992,48.8487],[2.3991,48.8481],[2.3959,48.8484],[2.3843,48.8502],[2.38,48.8505],[2.3715,48.8525],[2.3703,48.8532],[2.3692,48.8531],[2.3667,48.8632],[2.3647,48.8664],[2.3635,48.8673],[2.3642,48.8678],[2.3769,48.8721],[2.3832,48.8671]]]},{"n":12,"name":"Reuilly","r":[[[2.4145,48.8468],[2.4125,48.8365],[2.4096,48.8343],[2.4141,48.8337],[2.4221,48.8359],[2.4202,48.8406],[2.4193,48.8421],[2.42,48.8436],[2.4218,48.8445],[2.4245,48.8418],[2.4384,48.8406],[2.4392,48.8445],[2.4409,48.8444],[2.4408,48.846],[2.4466,48.8459],[2.4463,48.8449],[2.4555,48.8441],[2.4633,48.8422],[2.4698,48.8365],[2.4691,48.8341],[2.4652,48.8315],[2.4643,48.8276],[2.466,48.8273],[2.4648,48.823],[2.4626,48.8195],[2.4589,48.8171],[2.4539,48.817],[2.4486,48.8182],[2.4375,48.8184],[2.4373,48.8196],[2.4319,48.8226],[2.4276,48.8242],[2.422,48.8242],[2.4197,48.8241],[2.4173,48.8246],[2.4111,48.825],[2.4067,48.827],[2.4035,48.8293],[2.4011,48.8297],[2.3956,48.828],[2.3907,48.8272],[2.3886,48.8265],[2.3645,48.8461],[2.3664,48.847],[2.3692,48.8531],[2.3704,48.8531],[2.3715,48.8524],[2.3802,48.8504],[2.3845,48.8501],[2.396,48.8483],[2.4145,48.8468]]]},{"n":13,"name":"Gobelins","r":[[[2.342,48.8383],[2.3454,48.8376],[2.3489,48.8371],[2.3519,48.8367],[2.3619,48.84],[2.3649,48.8444],[2.366,48.845],[2.3886,48.8265],[2.3853,48.8253],[2.3788,48.8215],[2.3633,48.8161],[2.3568,48.8164],[2.3544,48.8175],[2.3517,48.818],[2.3468,48.8164],[2.3441,48.8164],[2.3441,48.8176],[2.3446,48.8194],[2.3439,48.8203],[2.3424,48.8215],[2.3415,48.8237],[2.3417,48.8264],[2.3413,48.8314],[2.3411,48.8319],[2.342,48.8383]]]},{"n":14,"name":"Observatoire","r":[[[2.3015,48.8254],[2.321,48.8415],[2.3215,48.841],[2.3246,48.8437],[2.3364,48.8397],[2.3421,48.8383],[2.3411,48.832],[2.3415,48.8288],[2.3416,48.8256],[2.3415,48.8233],[2.3425,48.8213],[2.344,48.8201],[2.3446,48.8194],[2.3442,48.8176],[2.3441,48.8165],[2.3357,48.8168],[2.3329,48.8185],[2.3015,48.8254]]]},{"n":15,"name":"Vaugirard","r":[[[2.2924,48.8275],[2.277,48.8338],[2.2743,48.8304],[2.275,48.8298],[2.2728,48.829],[2.2706,48.8281],[2.2678,48.8282],[2.2673,48.8311],[2.2706,48.8336],[2.2692,48.8353],[2.2662,48.8347],[2.2641,48.8352],[2.2782,48.849],[2.2876,48.8557],[2.29,48.8583],[2.3093,48.8459],[2.3113,48.8453],[2.3165,48.8468],[2.32,48.8452],[2.3246,48.8436],[2.3216,48.841],[2.3209,48.8416],[2.3015,48.8255],[2.2924,48.8275]]]},{"n":16,"name":"Passy","r":[[[2.2801,48.8783],[2.2949,48.8739],[2.2974,48.8712],[2.299,48.8684],[2.2999,48.8653],[2.3016,48.8646],[2.3018,48.8634],[2.2941,48.8617],[2.2889,48.8576],[2.286,48.8543],[2.2774,48.848],[2.264,48.8351],[2.2579,48.8357],[2.2539,48.8393],[2.2548,48.8454],[2.2503,48.8455],[2.2417,48.8483],[2.2273,48.8486],[2.2259,48.8554],[2.2316,48.8665],[2.2393,48.8705],[2.2467,48.8763],[2.2551,48.8742],[2.2582,48.8805],[2.2801,48.8783]]]},{"n":17,"name":"Batignolles-Monceau","r":[[[2.28,48.8784],[2.2832,48.8828],[2.2919,48.8884],[2.2977,48.8896],[2.3062,48.8951],[2.3141,48.8982],[2.3219,48.9006],[2.3301,48.9008],[2.3256,48.8876],[2.3272,48.8835],[2.3169,48.8813],[2.3087,48.8804],[2.2981,48.8782],[2.295,48.8739],[2.28,48.8784]]]},{"n":18,"name":"Butte-Montmartre","r":[[[2.3704,48.9007],[2.3704,48.8967],[2.3718,48.8954],[2.3703,48.8945],[2.3671,48.8876],[2.3666,48.8866],[2.3647,48.8844],[2.3588,48.8844],[2.3495,48.8837],[2.3397,48.8819],[2.3373,48.8823],[2.3295,48.8844],[2.3279,48.8835],[2.3272,48.8834],[2.3256,48.8876],[2.3302,48.9008],[2.3532,48.9013],[2.3704,48.9007]]]},{"n":19,"name":"Buttes-Chaumont","r":[[[2.4087,48.8779],[2.4023,48.876],[2.3953,48.8753],[2.3902,48.8755],[2.3877,48.8745],[2.3865,48.8746],[2.3847,48.8739],[2.3768,48.8722],[2.3704,48.8781],[2.3702,48.8828],[2.3689,48.8833],[2.3687,48.8841],[2.3647,48.8844],[2.3668,48.8867],[2.3683,48.8902],[2.3703,48.8945],[2.3718,48.8955],[2.3703,48.8966],[2.3704,48.9008],[2.3769,48.9003],[2.3885,48.9007],[2.392,48.8998],[2.3938,48.8982],[2.3973,48.8859],[2.4019,48.8818],[2.4066,48.8801],[2.4087,48.8779]]]},{"n":20,"name":"Ménilmontant","r":[[[2.4133,48.8653],[2.4141,48.8591],[2.414,48.8538],[2.4147,48.8526],[2.4153,48.851],[2.4144,48.8468],[2.399,48.8481],[2.3993,48.8488],[2.3984,48.8513],[2.3944,48.8565],[2.3897,48.8585],[2.3874,48.863],[2.3835,48.8662],[2.3832,48.8671],[2.3768,48.8722],[2.385,48.874],[2.3865,48.8747],[2.3879,48.8745],[2.3904,48.8755],[2.3953,48.8752],[2.4022,48.876],[2.4086,48.8779],[2.411,48.8743],[2.4134,48.8711],[2.4133,48.8653]]]}];
+
+const SEINE=[[2.4155,48.8235],[2.4040,48.8262],[2.3950,48.8292],[2.3830,48.8362],[2.3720,48.8428],[2.3640,48.8474],[2.3560,48.8510],[2.3480,48.8548],[2.3410,48.8575],[2.3330,48.8592],[2.3240,48.8622],[2.3170,48.8640],[2.3100,48.8642],[2.3020,48.8638],[2.2940,48.8608],[2.2865,48.8556],[2.2800,48.8497],[2.2745,48.8455],[2.2680,48.8405],[2.2590,48.8350],[2.2510,48.8310]];
+const PLACES={
+  republique:[2.3632,48.8674], bastille:[2.3692,48.8532], nation:[2.3958,48.8484], italie:[2.3557,48.8311],
+  jussieu:[2.3548,48.8462], champdemars:[2.2985,48.8560], chatelet:[2.3470,48.8580]
+};
+const LANDMARKS=[["République",PLACES.republique,"r"],["Bastille",PLACES.bastille,"r"],["Nation",PLACES.nation,"r"],["Pl. d'Italie",PLACES.italie,"r"],["Jussieu",PLACES.jussieu,"l"],["Champ-de-Mars",PLACES.champdemars,"l"],["Châtelet",PLACES.chatelet,"l"]];
+
+const EVENTS=[
+ {id:"climat",date:"2026-09-26",time:"Afternoon",kind:"rally",status:"confirmed",
+  title:"Climate & social justice rally",where:"Place de la République (11e/3e/10e)",
+  pts:[PLACES.republique],
+  desc:"The national climate march was turned into a static rally at République because of the Pope's visit to Paris that weekend.",
+  src:[["Vert","https://vert.eco/rapports-de-force/a-cause-de-la-venue-du-pape-la-marche-climat-du-26-septembre-remplacee-par-un-rassemblement-statique-a-paris/"]]},
+ {id:"pompiers",date:"2026-09-27",end:"2026-10-20",time:"Camp since Sun. morning",kind:"strike",status:"confirmed",
+  title:"Firefighters' strike camp",where:"Champ-de-Mars, foot of the Eiffel Tower (7e)",
+  pts:[PLACES.champdemars],
+  desc:"Eight professional firefighter unions set up a \"colonne de renfort de la colère\" on the Champ-de-Mars, asking for more staff, resources and the civil-security modernisation bill. Their national strike notice runs 8 Sept – 20 Oct, the day of the vote on the first part of the 2027 budget; unions say they won't lift it without results. About 2,682 firefighters a day (9.3%) have been on strike.",
+  src:[["France 24","https://www.france24.com/fr/france/20260927-pompiers-en-gr%C3%A8ve-la-mobilisation-prend-de-l-ampleur-au-pied-de-la-tour-eiffel"],["France 3 Paris IDF","https://france3-regions.franceinfo.fr/paris-ile-de-france/paris/sapeurs-pompiers-en-greve-ils-s-installent-au-pied-de-la-tour-eiffel-pour-defendre-la-securite-civile-3423998.html"],["Sortiraparis (strike notice)","https://www.sortiraparis.com/en/news/in-paris/articles/351328-firefighters-strike-notice-filed-for-september-8-to-october-20-2026"]]},
+ {id:"fp29",date:"2026-09-29",time:"14:00",kind:"march",status:"confirmed",
+  title:"Public-sector strike march",where:"République → Nation",
+  pts:[PLACES.republique],
+  route:[PLACES.republique,[2.3655,48.8648],[2.3667,48.8622],[2.3680,48.8580],PLACES.bastille,[2.3718,48.8500],[2.3740,48.8462],[2.3800,48.8440],[2.3880,48.8405],[2.3925,48.8420],[2.3950,48.8460],PLACES.nation],
+  routeTxt:"Pl. de la République, bd du Temple, bd des Filles-du-Calvaire, bd Beaumarchais, Pl. de la Bastille, rue de Lyon, av. Daumesnil, Pl. de la Nation.",
+  desc:"Fonction publique inter-union day of strikes: teachers, hospital staff, firefighters and other public servants marching over pay, the frozen point d'indice, working conditions and public-service funding.",
+  src:[["Paris Rouge","https://parisrouge.fr/2026/09/28/journee-de-greve-et-de-mobilisation-du-mardi-29-septembre-la-manifestation-parisienne-defilera-entre-republique-et-nation/"],["Affiches Parisiennes","https://mesinfos.fr/75000-paris/greve-du-29-septembre-le-parcours-de-la-manifestation-a-paris-339736.html"],["CGT","https://www.cgt.fr/actualites/france/mobilisation/manifestations-du-29-septembre-2026-les-lieux-et-horaires-pres-de-chez-vous"]]},
+ {id:"lycees",date:"2026-09-29",end:"2026-10-06",time:"Mornings, outside the gates",kind:"blockade",status:"confirmed",
+  title:"High-school blockades (blocus des lycées)",where:"Lycées across Paris, incl. Turgot (3e), Lamartine (9e), Arago (12e), Hélène-Boucher & Maurice-Ravel (20e)",
+  pts:[[2.3606,48.8664],[2.3486,48.8780],[2.3939,48.8478],[2.4046,48.8478],[2.4086,48.8476]],
+  ptNames:["Lycée Turgot","Lycée Lamartine","Lycée Arago","Lycée Hélène-Boucher","Lycée Maurice-Ravel"],
+  desc:"Student-led blockades over teacher shortages, class sizes, heavy timetables and Parcoursup pressure. At least 16 Paris lycées were disrupted on Thu 1 Oct after a national call by the USL and Union étudiante to block lycées and universities; 356 lycées were blocked nationwide on 30 Sept. Markers show schools named in reports, not a complete list.",
+  src:[["franceinfo","https://www.franceinfo.fr/societe/education/le-blocage-des-lycees-se-poursuit-partout-en-france-des-universites-pourraient-rejoindre-le-mouvement_8216944.html"],["VousNousIls","https://www.vousnousils.fr/2026/09/30/blocage-des-lycees-les-syndicats-demandent-la-fin-des-violences-lusl-appelle-a-nouvelles-actions-le-1er-octobre-705175"],["Seven Radio","https://sevenradio.fr/2026/09/30/mobilisation-lyceenne-des-etablissements-bloques-a-travers-la-france/"]]},
+ {id:"l214",date:"2026-10-03",time:"Village 12:00 · speeches 14:00",kind:"march",status:"confirmed",
+  title:"March to close the slaughterhouses",where:"Place de la République",
+  pts:[PLACES.republique],
+  desc:"L214's annual march, moved from 11 July because of the heatwave. République becomes a \"Vegan Place\" with stalls from noon; the march leaves after the 14:00 speeches. Route not yet published in the sources found.",
+  src:[["L214","https://www.l214.com/campagnes/marche-fermeture-abattoirs/"],["Savoir Animal","https://savoir-animal.fr/3-octobre-marche-fermeture-abattoirs-mobilisation-nationale-pour-animaux/"]]},
+ {id:"fiertes",date:"2026-10-03",time:"Speeches 12:30 · departs 13:00",kind:"march",status:"confirmed",
+  title:"Marche des Fiertés (Paris Pride)",where:"Place d'Italie → Bastille",
+  pts:[PLACES.italie],
+  route:[PLACES.italie,[2.3527,48.8355],[2.3500,48.8392],[2.3462,48.8409],[2.3430,48.8428],[2.3407,48.8455],[2.3425,48.8505],[2.3445,48.8533],[2.3458,48.8552],[2.3468,48.8572],[2.3483,48.8588],[2.3530,48.8571],[2.3580,48.8558],[2.3640,48.8541],PLACES.bastille],
+  routeTxt:"Pl. d'Italie, av. des Gobelins, rue Claude-Bernard, rue Gay-Lussac, bd Saint-Michel, bd du Palais, bd de Sébastopol, rue de Rivoli, rue Saint-Antoine, Pl. de la Bastille. Shortened route.",
+  desc:"Inter-LGBT's Pride, cancelled on 27 June for the heatwave and rescheduled. The route was shortened because so many postponed events landed on the same weekend.",
+  src:[["Inter-LGBT","https://www.inter-lgbt.org/save-the-date-samedi-27-juin-2026-marche-des-fiertes-lgbtqia-de-paris-ile-de-france/"],["queer.paris","https://queer.paris/blog/parcours-marche-des-fiertes-paris-2026"],["Têtu","https://tetu.com/2026/08/20/pride-2026-marche-des-fiertes-paris-juin-reportee-octobre-lgbt/"]]},
+ {id:"pesticides",date:"2026-10-03",time:"From 12:00",kind:"rally",status:"confirmed",offmap:true,
+  title:"Stop Pesticides – Arrêtons Syngenta",where:"Saint-Pierre-la-Garenne (Eure), ~90 km from Paris",
+  desc:"National and international convergence on the Syngenta site, called by the Confédération paysanne, Cancer Colère, CSVPO and Les Soulèvements de la Terre. Listed in the Île-de-France \"Bloquons tout\" calendar, with group departures from Paris.",
+  src:[["Solidaires","https://www.solidaires.org/stop-pesticides-le-3-octobre-2026-arretons-syngenta/"],["Paris-luttes.info","https://paris-luttes.info/calendrier-bloquons-tout-ile-de-21093?lang=fr"]]},
+ {id:"jeunesse",date:"2026-10-06",time:"Time TBA",kind:"march",status:"announced",offmap:true,
+  title:"National youth demonstration",where:"Paris meeting point not yet announced",
+  desc:"The Union étudiante and the Union syndicale lycéenne call a \"grande manifestation nationale\" of school and university students, following the blockades.",
+  src:[["franceinfo","https://www.franceinfo.fr/societe/education/parcoursup/parcoursup/manifestations-des-lyceens/l-union-etudiante-et-l-union-syndicale-lyceenne-appellent-a-une-grande-manifestation-nationale-le-6-octobre_8216203.html"],["Union étudiante","https://union-etudiante.fr/communique-de-presse/appel-de-lusl-et-ue-a-bloquer-les-lycees-et-facs-ce-jeudi-1er-octobre-et-a-une-grande-manifestation-de-la-jeunesse-le-6-octobre"]]},
+ {id:"gj10",date:"2026-10-10",time:"Gathering 14:00 · departs 15:00",kind:"march",status:"announced",
+  title:"Gilets jaunes: audit of public finances",where:"Place Jussieu (5e)",
+  pts:[PLACES.jussieu],
+  desc:"Gilets jaunes demonstration calling for an audit of public finances and a \"Grenelle\" on taxation. Speeches from 14:15. Route not published.",
+  src:[["manifestationgiletsjaunesparis.fr","https://manifestationgiletsjaunesparis.fr/"]]},
+ {id:"pal10",date:"2026-10-10",time:"14:00",kind:"march",status:"announced",
+  title:"Global day of action for Palestine",where:"Place de la République",
+  pts:[PLACES.republique],
+  desc:"Paris leg of a worldwide demonstration for Palestine, called by a collective of solidarity associations.",
+  src:[["Patrice Leclerc (relay of the call)","https://www.patrice-leclerc.org/2026/09/26/10-octobre-manifestation-mondiale-pour-la-palestine/"]]},
+ {id:"gj17",date:"2026-10-17",time:"Time TBA",kind:"rally",status:"unconfirmed",
+  title:"\"Gilets jaunes\" call against fuel prices",where:"République, or Bastille depending on route",
+  pts:[PLACES.republique,PLACES.bastille],ptNames:["Place de la République","Place de la Bastille"],
+  desc:"Viral TikTok call to freeze pump prices, tax oil superprofits and bring in citizens' referendums. No identified organizer or declared route; some figures of the original movement tell people not to come to Paris. Actions at fuel depots and refineries are also mentioned.",
+  src:[["Le Bonbon","https://www.lebonbon.fr/paris/news/rassemblement-gilets-jaunes-prevu-octobre-2026/"],["Public Sénat","https://www.publicsenat.fr/actualites/societe/appel-a-manifester-le-17-octobre-y-a-t-il-une-realite-derriere-cette-tendance-des-reseaux-sociaux"],["Affiches Parisiennes","https://mesinfos.fr/75000-paris/a-paris-le-mouvement-des-gilets-jaunes-va-t-il-reprendre-le-17-octobre-338773.html"]]},
+ {id:"aerien",date:"2026-10-17",end:"2026-10-21",time:"Sat 00:01 → Wed 23:59",kind:"strike",status:"confirmed",offmap:true,
+  title:"Pilots & cabin crew strike",where:"Paris-CDG and Orly airports (all French-law airlines)",
+  desc:"Five-day national strike by UNSA PNC, SNPNC-FO, SNGAF, SNPL and UNAC against the reform of combining work and pension (cumul emploi-retraite). Falls at the start of the Toussaint holidays; airlines haven't announced cancellations yet.",
+  src:[["Air Journal","https://www.air-journal.fr/2026-09-19-reforme-du-cumul-emploi-retraite-les-pilotes-et-personnels-de-cabine-appeles-a-la-greve-du-17-au-21-octobre-5277588.html"],["Le Quotidien des Entreprises","https://www.lequotidiendesentreprises.fr/secteurs/aeronautique/pilotes-et-hotesses-de-lair-en-greve-du-17-au-21-octobre/"]]}
+];
+
+const KINDS={march:"March",rally:"Rally",strike:"Strike",blockade:"Blockade"};
+const STATUS={confirmed:"Confirmed",announced:"Announced",unconfirmed:"Unconfirmed call"};
+
+/* ---------- dates ---------- */
+const pad=n=>String(n).padStart(2,"0");
+const now=new Date(); const TODAY=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+const addDays=(iso,d)=>{const t=new Date(iso+"T12:00:00");t.setDate(t.getDate()+d);return `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;};
+const WEEK=addDays(TODAY,7);
+function phase(e){const end=e.end||e.date; if(end<TODAY) return "past"; if(e.date<=TODAY) return "live"; return e.date<=WEEK?"soon":"later";}
+const fmtDay=iso=>new Date(iso+"T12:00:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
+
+/* ---------- filters ---------- */
+const WHEN=[["upcoming","Now & upcoming"],["soon","Next 7 days"],["all","All"],["past","Past"]];
+let state={when:"upcoming",kinds:new Set(Object.keys(KINDS)),sel:null};
+try{const s=JSON.parse(localStorage.getItem("pdlr-filters")||"null"); if(s){state.when=s.when||state.when; if(Array.isArray(s.kinds)&&s.kinds.length) state.kinds=new Set(s.kinds);}}catch(_){}
+function save(){try{localStorage.setItem("pdlr-filters",JSON.stringify({when:state.when,kinds:[...state.kinds]}));}catch(_){}}
+function visible(e){
+  if(!state.kinds.has(e.kind)) return false;
+  const p=phase(e);
+  if(state.when==="upcoming") return p!=="past";
+  if(state.when==="soon") return p==="live"||p==="soon";
+  if(state.when==="past") return p==="past";
+  return true;
+}
+const fw=document.getElementById("f-when"), fk=document.getElementById("f-kind");
+WHEN.forEach(([k,l])=>{const b=document.createElement("button");b.className="chip";b.id="when-"+k;b.textContent=l;b.onclick=()=>{state.when=k;save();render();};fw.appendChild(b);});
+Object.entries(KINDS).forEach(([k,l])=>{const b=document.createElement("button");b.className="chip";b.id="kind-"+k;b.innerHTML=`<i class="sw ${k}"></i>${l}`;b.onclick=()=>{state.kinds.has(k)?state.kinds.delete(k):state.kinds.add(k); if(!state.kinds.size) state.kinds.add(k); save();render();};fk.appendChild(b);});
+
+/* ---------- projection ---------- */
+const W=1000,H=610,LON0=2.2259,LAT1=48.9013,KX=Math.cos(48.859*Math.PI/180);
+const S=Math.min((W-40)/((2.4698-LON0)*KX),(H-40)/(LAT1-48.8161));
+const OX=(W-(2.4698-LON0)*KX*S)/2, OY=(H-(LAT1-48.8161)*S)/2;
+const P=([lon,lat])=>[OX+(lon-LON0)*KX*S, OY+(LAT1-lat)*S];
+const line=pts=>"M"+pts.map(p=>P(p).map(v=>v.toFixed(1)).join(",")).join("L");
+
+const svg=d3.select("#map"), g=svg.append("g");
+const gBase=g.append("g"), gRoutes=g.append("g"), gLabels=g.append("g"), gMarks=g.append("g");
+ARR.forEach(a=>a.r.forEach(r=>gBase.append("path").attr("class","arr").attr("d",line(r)+"Z")));
+const seine=gBase.append("path").attr("class","seine").attr("d",line(SEINE));
+function centroid(r){let A=0,cx=0,cy=0;const pts=r.map(P);for(let i=0;i<pts.length-1;i++){const[x0,y0]=pts[i],[x1,y1]=pts[i+1],f=x0*y1-x1*y0;A+=f;cx+=(x0+x1)*f;cy+=(y0+y1)*f;}A/=2;return[cx/(6*A),cy/(6*A)];}
+const numNodes=ARR.map(a=>{const big=a.r.reduce((m,r)=>r.length>m.length?r:m,a.r[0]);const[x,y]=centroid(big);return gLabels.append("text").attr("class","arrnum").attr("data-x",x).attr("data-y",y).text(a.n+(a.n===1?"er":"e"));});
+const lmNodes=LANDMARKS.map(([name,pt,side])=>{const[x,y]=P(pt);const gg=gLabels.append("g").attr("data-x",x).attr("data-y",y);gg.append("circle").attr("class","lmdot").attr("r",1.6);gg.append("text").attr("class","lm").attr("x",side==="r"?5:-5).attr("y",-5).attr("text-anchor",side==="r"?"start":"end").text(name);return gg;});
+
+const color=k=>`var(--k-${k})`;
+function shape(sel,kind,r){
+  if(kind==="strike") return sel.append("rect").attr("class","shape").attr("x",-r).attr("y",-r).attr("width",2*r).attr("height",2*r).attr("rx",1.5);
+  if(kind==="blockade") return sel.append("path").attr("class","shape").attr("d",`M0,${-r*1.3}L${r*1.3},0L0,${r*1.3}L${-r*1.3},0Z`);
+  return sel.append("circle").attr("class","shape").attr("r",r);
+}
+
+let K=1, markerNodes=[], routeNodes=[];
+function placeAll(){
+  const s=1/K;
+  numNodes.forEach(n=>n.attr("transform",`translate(${n.attr("data-x")},${n.attr("data-y")}) scale(${s})`));
+  lmNodes.forEach(n=>n.attr("transform",`translate(${n.attr("data-x")},${n.attr("data-y")}) scale(${s})`));
+  markerNodes.forEach(m=>m.node.attr("transform",`translate(${m.x},${m.y}) scale(${s}) translate(${m.dx},${m.dy})`));
+  seine.attr("stroke-width",Math.max(5,7*Math.sqrt(K))/K);
+}
+
+function drawMap(list){
+  gRoutes.selectAll("*").remove(); gMarks.selectAll("*").remove(); markerNodes=[]; routeNodes=[];
+  const mapped=list.filter(e=>e.pts);
+  // routes under markers
+  mapped.filter(e=>e.route).forEach(e=>{
+    const ph=phase(e);
+    const p=gRoutes.append("path").attr("class","route"+(ph==="past"?" past":"")+(state.sel===e.id?" sel":"")).attr("d",line(e.route)).attr("stroke",color(e.kind));
+    const [ex,ey]=P(e.route[e.route.length-1]);
+    gRoutes.append("rect").attr("class","endcap").attr("x",ex-4).attr("y",ey-4).attr("width",8).attr("height",8).attr("fill",color(e.kind)).attr("opacity",ph==="past"?.4:1).attr("vector-effect","non-scaling-stroke");
+    routeNodes.push(p);
+  });
+  // fan out markers sharing a spot
+  const groups=new Map();
+  mapped.forEach(e=>e.pts.forEach((pt,i)=>{const key=pt[0].toFixed(3)+","+pt[1].toFixed(3);if(!groups.has(key))groups.set(key,[]);groups.get(key).push({e,pt,i});}));
+  groups.forEach(arr=>{
+    const n=arr.length;
+    arr.sort((a,b)=>(a.e.id===state.sel)-(b.e.id===state.sel));
+    arr.forEach((o,j)=>{
+      const [x,y]=P(o.pt); const ang=-Math.PI/2+j*2*Math.PI/n; const R=n>1?11+n:0;
+      const dx=Math.cos(ang)*R, dy=Math.sin(ang)*R;
+      const ph=phase(o.e);
+      const node=gMarks.append("g").attr("class",`mk ${o.e.status} ${ph==="past"?"past":""} ${ph==="live"?"live":""} ${state.sel===o.e.id?"sel":""}`)
+        .attr("tabindex",0).attr("role","button").attr("aria-label",`${o.e.title}, ${fmtDay(o.e.date)}`);
+      node.append("title").text(`${o.e.title}\n${fmtDay(o.e.date)} · ${o.e.ptNames?o.e.ptNames[o.i]:o.e.where}`);
+      node.append("circle").attr("class","hit").attr("r",13);
+      node.append("circle").attr("class","pulse").attr("r",9).attr("stroke",color(o.e.kind));
+      const r=o.e.kind==="blockade"?5.5:7;
+      shape(node,o.e.kind,r).attr("fill",color(o.e.kind));
+      node.on("click",ev=>{ev.stopPropagation();select(o.e.id,true);});
+      node.on("keydown",ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();select(o.e.id,true);}});
+      markerNodes.push({node,x,y,dx,dy});
+    });
+  });
+  placeAll();
+}
+
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function drawList(list){
+  const box=document.getElementById("items"); box.innerHTML="";
+  document.getElementById("count").textContent=`${list.length} shown`;
+  if(!list.length){box.innerHTML='<div class="empty">Nothing matches these filters. Try "All" or switch a type back on.</div>';return;}
+  const byDay=new Map(); list.forEach(e=>{if(!byDay.has(e.date))byDay.set(e.date,[]);byDay.get(e.date).push(e);});
+  byDay.forEach((evs,day)=>{
+    const grp=document.createElement("section"); grp.className="daygroup";
+    const live=evs.some(e=>phase(e)==="live");
+    grp.innerHTML=`<div class="dayhead">${fmtDay(day)}${day===TODAY?'<span class="now">Today</span>':""}</div>`;
+    evs.forEach(e=>{
+      const ph=phase(e), sel=state.sel===e.id;
+      const it=document.createElement("div"); it.className=`item ${ph==="past"?"past":""} ${sel?"sel":""}`; it.tabIndex=0; it.id="ev-"+e.id; it.setAttribute("role","button"); it.setAttribute("aria-expanded",sel);
+      const range=e.end?` → ${fmtDay(e.end)}`:"";
+      const livePill=ph==="live"?'<span class="pill confirmed">Ongoing</span>':"";
+      it.innerHTML=`<div class="bar" style="background:${color(e.kind)}"></div><div style="min-width:0">
+        <h3>${esc(e.title)}</h3>
+        <div class="meta"><span class="t">${esc(e.time)}${esc(range)}</span><span>${esc(e.where)}</span></div>
+        <div class="meta"><span class="pill ${e.status}">${STATUS[e.status]}</span>${livePill}${e.offmap?'<span class="pill offmap">Not on map</span>':""}<span>${KINDS[e.kind]}</span></div>
+        ${sel?`<div class="detail"><p>${esc(e.desc)}</p>${e.routeTxt?`<p class="route-txt"><b>Route:</b> ${esc(e.routeTxt)}</p>`:""}<div class="src">Sources: ${e.src.map(([t,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join("")}</div></div>`:""}
+      </div>`;
+      it.onclick=ev=>{if(ev.target.closest("a"))return; select(sel?null:e.id,false);};
+      it.onkeydown=ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();select(sel?null:e.id,false);}};
+      grp.appendChild(it);
+    });
+    box.appendChild(grp);
+  });
+}
+
+function render(){
+  WHEN.forEach(([k])=>document.getElementById("when-"+k).setAttribute("aria-pressed",state.when===k));
+  Object.keys(KINDS).forEach(k=>document.getElementById("kind-"+k).setAttribute("aria-pressed",state.kinds.has(k)));
+  const list=EVENTS.filter(visible).sort((a,b)=>a.date.localeCompare(b.date)||(a.time>b.time?1:-1));
+  if(state.when==="past") list.reverse();
+  drawMap(list); drawList(list);
+}
+
+function select(id,fromMap){
+  state.sel=id; render();
+  if(id&&fromMap){const el=document.getElementById("ev-"+id); if(el) el.scrollIntoView({block:"nearest",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});}
+  if(id&&!fromMap){const e=EVENTS.find(x=>x.id===id); if(e&&e.pts) focusOn(e);}
+}
+
+/* ---------- zoom ---------- */
+const zoom=d3.zoom().scaleExtent([1,8]).translateExtent([[-100,-100],[W+100,H+100]]).on("zoom",ev=>{g.attr("transform",ev.transform);K=ev.transform.k;placeAll();});
+svg.call(zoom).on("dblclick.zoom",null);
+svg.on("click",()=>{if(state.sel){state.sel=null;render();}});
+document.getElementById("zin").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1.6);
+document.getElementById("zout").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1/1.6);
+document.getElementById("zreset").onclick=()=>svg.transition().duration(300).call(zoom.transform,d3.zoomIdentity);
+function focusOn(e){
+  const pts=(e.route||e.pts).map(P); const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+  const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+  const k=Math.max(K,Math.min(4,0.6/Math.max((x1-x0)/W,(y1-y0)/H,0.15)));
+  const t=d3.zoomIdentity.translate(W/2,H/2).scale(k).translate(-(x0+x1)/2,-(y0+y1)/2);
+  svg.transition().duration(matchMedia("(prefers-reduced-motion: reduce)").matches?0:450).call(zoom.transform,t);
+}
+
+render();
+</script>
