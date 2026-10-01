@@ -2,7 +2,7 @@
 import pathlib
 here = pathlib.Path(__file__).parent
 tpl = (here / "template.html").read_text()
-geo = (here / "geo.js").read_text()
+geo = (here / "geo.js").read_text() + (here / "basemap.js").read_text()
 body = tpl.replace("/*GEO*/", geo)
 (here / "index.html").write_text(body)
 head = """<!doctype html>

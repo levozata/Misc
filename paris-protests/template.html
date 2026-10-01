@@ -12,6 +12,11 @@
   --land: #eef0f2;
   --land-line: #c8ced5;
   --water: #b3cde3;
+  --road-minor: #ffffff;
+  --road-main: #ffffff;
+  --road-motor: #f7d9a8;
+  --road-case: #c9d0d8;
+  --stn: #ffffff;
   --ink: #001f33;
   --muted: #4b5a68;
   --rule: #dde1e5;
@@ -34,14 +39,14 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #07131d; --paper: #0e1e2b; --land: #142636; --land-line: #2b4054; --water: #1f4060;
+    --bg: #07131d; --road-minor: #24384b; --road-main: #2c4459; --road-motor: #5b4a2c; --road-case: #0a1a27; --stn: #0e1e2b; --paper: #0e1e2b; --land: #142636; --land-line: #2b4054; --water: #1f4060;
     --ink: #e8eef3; --muted: #9fb0bf; --rule: #22374a; --enamel: #001f33; --enamel-ink: #ffffff; --band-sub: #9fb6c9; --link: #8cc4f5;
     --k-march: #6aa8f5; --k-rally: #f0a540; --k-strike: #f06d97; --k-blockade: #3cc4a8; --k-disruption: #b49be8; --halo: #0e1e2b;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #07131d; --paper: #0e1e2b; --land: #142636; --land-line: #2b4054; --water: #1f4060;
+  --bg: #07131d; --road-minor: #24384b; --road-main: #2c4459; --road-motor: #5b4a2c; --road-case: #0a1a27; --stn: #0e1e2b; --paper: #0e1e2b; --land: #142636; --land-line: #2b4054; --water: #1f4060;
   --ink: #e8eef3; --muted: #9fb0bf; --rule: #22374a; --enamel: #001f33; --enamel-ink: #ffffff; --band-sub: #9fb6c9; --link: #8cc4f5;
   --k-march: #6aa8f5; --k-rally: #f0a540; --k-strike: #f06d97; --k-blockade: #3cc4a8; --k-disruption: #b49be8; --halo: #0e1e2b;
   color-scheme: dark;
@@ -88,7 +93,23 @@ header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-cont
 
 .mapbox { position: relative; background: var(--paper); border: 1px solid var(--rule); border-radius: 0; overflow: hidden; min-width: 0; }
 @media (min-width: 901px) { .mapbox { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); } }
-#map { display: block; width: 100%; height: auto; aspect-ratio: 1000 / 610; max-width: 100%; touch-action: none; cursor: grab; }
+#map { display: block; width: 100%; height: auto; aspect-ratio: 1000 / 610; max-width: 100%; touch-action: none; cursor: grab; -webkit-user-select: none; user-select: none; }
+@media (max-width: 700px) { #map { aspect-ratio: auto; height: 72vh; min-height: 420px; max-height: 760px; } }
+.hint { position: absolute; left: 10px; top: 10px; right: 56px; width: fit-content; background: color-mix(in srgb, var(--paper) 92%, transparent); border: 1px solid var(--rule); font-size: 11.5px; font-weight: 600; padding: 4px 8px; pointer-events: none; transition: opacity .4s; }
+.hint.gone { opacity: 0; }
+.ctl[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.road { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.road.case { stroke: var(--road-case); }
+.road.r2 { stroke: var(--road-minor); }
+.road.r1 { stroke: var(--road-main); }
+.road.r0 { stroke: var(--road-motor); }
+.mline { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; opacity: .8; }
+.stn circle { fill: var(--stn); stroke: var(--ink); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+.stn text { font: 600 9.5px var(--font-body); fill: var(--ink); paint-order: stroke; stroke: var(--halo); stroke-width: 3px; display: none; }
+#map:not(.z-st) .stn { display: none; }
+#map.z-lbl .stn text { display: inline; }
+#map.no-metro .metro { display: none; }
+#map:not(.z-lm) .lm2 { display: none; }
 #map:active { cursor: grabbing; }
 .zoom { position: absolute; right: 10px; top: 10px; display: flex; flex-direction: column; gap: 4px; }
 .ctl { width: 34px; height: 34px; border-radius: 4px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); font: 600 16px/1 var(--font-body); cursor: pointer; }
@@ -99,6 +120,7 @@ header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-cont
 
 .arr { fill: var(--land); stroke: var(--land-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .seine { fill: none; stroke: var(--water); stroke-linecap: round; stroke-linejoin: round; }
+.lm2 text { font-weight: 500; font-style: italic; }
 .arrnum { font: 700 14px var(--font-display); fill: var(--muted); opacity: .55; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
 .lm { font: 600 10.5px var(--font-body); fill: var(--ink); paint-order: stroke; stroke: var(--halo); stroke-width: 3px; pointer-events: none; }
 .lmdot { fill: var(--ink); }
@@ -169,10 +191,12 @@ footer.note p { margin: 0; }
   <div class="main">
     <div class="mapbox">
       <svg id="map" viewBox="0 0 1000 610" role="img"></svg>
+      <div class="hint" id="hint" data-i18n="hint"></div>
       <div class="zoom">
         <button class="ctl" id="zin">+</button>
         <button class="ctl" id="zout">−</button>
         <button class="ctl" id="zreset" style="font-size:12px">⤢</button>
+        <button class="ctl" id="tmetro" aria-pressed="true" style="font-size:13px;font-weight:800">M</button>
       </div>
       <div class="legend" aria-hidden="true">
         <div><i class="sw march"></i><span data-i18n="lgMarch"></span></div>
@@ -201,7 +225,7 @@ footer.note p { margin: 0; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script>
 /*GEO*/
-const SEINE=[[2.4155,48.8235],[2.4040,48.8262],[2.3950,48.8292],[2.3830,48.8362],[2.3720,48.8428],[2.3640,48.8474],[2.3560,48.8510],[2.3480,48.8548],[2.3410,48.8575],[2.3330,48.8592],[2.3240,48.8622],[2.3170,48.8640],[2.3100,48.8642],[2.3020,48.8638],[2.2940,48.8608],[2.2865,48.8556],[2.2800,48.8497],[2.2745,48.8455],[2.2680,48.8405],[2.2590,48.8350],[2.2510,48.8310]];
+const SEINE=[[2.4150,48.8240],[2.4030,48.8262],[2.3960,48.8278],[2.3870,48.8300],[2.3800,48.8343],[2.3758,48.8387],[2.3700,48.8424],[2.3660,48.8463],[2.3591,48.8507],[2.3545,48.8523],[2.3491,48.8558],[2.3412,48.8577],[2.3375,48.8583],[2.3297,48.8603],[2.3196,48.8637],[2.3137,48.8638],[2.3104,48.8637],[2.3013,48.8628],[2.2925,48.8598],[2.2876,48.8553],[2.2795,48.8497],[2.2753,48.8466],[2.2684,48.8392],[2.2600,48.8346],[2.2520,48.8300]]; /* centreline through bridge positions */
 const PLACES={
   republique:[2.3632,48.8674], bastille:[2.3692,48.8532], nation:[2.3958,48.8484], italie:[2.3557,48.8311],
   jussieu:[2.3548,48.8462], champdemars:[2.2985,48.8560], chatelet:[2.3470,48.8580],
@@ -209,6 +233,7 @@ const PLACES={
   concorde:[2.3212,48.8656], notredame:[2.3499,48.8530], champs:[2.3070,48.8698], elysee:[2.3165,48.8704], ocde:[2.2697,48.8618],
   longchamp:[2.2335,48.8565], iena:[2.2928,48.8598], portedeversailles:[2.2875,48.8320], parcdesprinces:[2.2530,48.8414]
 };
+const LANDMARKS2=[["Tour Eiffel",[2.2945,48.8584],"r"],["Louvre",[2.3376,48.8606],"r"],["Arc de Triomphe",[2.2950,48.8738],"r"],["Gare du Nord",[2.3553,48.8809],"r"],["Gare de Lyon",[2.3733,48.8443],"r"],["Montparnasse",[2.3212,48.8412],"r"],["Saint-Lazare",[2.3253,48.8763],"r"],["Sacré-Cœur",[2.3431,48.8867],"r"],["Opéra",[2.3316,48.8720],"r"],["Panthéon",[2.3464,48.8462],"l"],["Invalides",[2.3125,48.8566],"r"],["Buttes-Chaumont",[2.3828,48.8809],"r"]];
 const LANDMARKS=[["République",PLACES.republique,"r"],["Bastille",PLACES.bastille,"r"],["Nation",PLACES.nation,"r"],["Pl. d'Italie",PLACES.italie,"r"],["Jussieu",PLACES.jussieu,"l"],["Champ-de-Mars",PLACES.champdemars,"l"],["Châtelet",PLACES.chatelet,"r"],["Pl. de l'Europe",PLACES.europe,"l"],["Pont St-Michel",PLACES.stmichel,"l"],["Concorde",PLACES.concorde,"l"],["Porte de Versailles",PLACES.portedeversailles,"r"]];
 
 /* ---------- last data update (YYYY-MM-DD); bump on every refresh ---------- */
@@ -224,9 +249,9 @@ const UI={
   lgMarch:"March (with route)",lgRally:"Rally",lgStrike:"Strike / picket",lgBlockade:"Blockade",lgDisruption:"Disruption (closures, big events)",lgUnconf:"Unconfirmed call",lgPast:"Already happened",
   agenda:"Agenda",shown:n=>`${n} shown`,today:"Today",ongoing:"Ongoing",notOnMap:"Not on map",citywide:"Citywide",
   route:"Route:",impact:"Impact:",sources:"Sources:",empty:"Nothing matches these filters. Try \"All\" or switch a type back on.",
-  zin:"Zoom in",zout:"Zoom out",zreset:"Reset view",mapLabel:"Map of Paris with protest locations",filters:"Filters",
+  zin:"Zoom in",zout:"Zoom out",zreset:"Reset view",tmetro:"Show or hide the metro",hint:"Pinch to zoom · drag to move",mapLabel:"Map of Paris with protest locations",filters:"Filters",
   foot1:"Sources include mainstream media and less mainstream ones: Démosphère, Paris-luttes.info, Agenda militant, C'est la grève, union and association sites. Activist listings are often the first and only place a rally is announced.",
-  foot2:"Base map: Paris arrondissements (OpenStreetMap-derived). The Seine and route lines are drawn by hand and approximate. Markers show announced meeting points.",
+  foot2:"Base map: arrondissements (OpenStreetMap-derived), main roads (IGN, via the MultilayerParis dataset), metro lines and stations (Île-de-France Mobilités open data, Licence Mobilités). The Seine and march routes are drawn by hand and approximate. Markers show announced meeting points.",
   foot3:"The Préfecture de police can ban or reroute any demonstration at short notice.",
   foot4:"Independent project, not affiliated with or endorsed by the Ville de Paris. The visual style follows the City of Paris public graphic charter (Montserrat, anthracite blue)."},
  es:{kicker:"Huelgas · protestas · alteraciones",
@@ -237,9 +262,9 @@ const UI={
   lgMarch:"Marcha (con recorrido)",lgRally:"Concentración",lgStrike:"Huelga / piquete",lgBlockade:"Bloqueo",lgDisruption:"Alteración (cortes, grandes eventos)",lgUnconf:"Convocatoria sin confirmar",lgPast:"Ya celebrado",
   agenda:"Agenda",shown:n=>`${n} visibles`,today:"Hoy",ongoing:"En curso",notOnMap:"Fuera del mapa",citywide:"Toda la ciudad",
   route:"Recorrido:",impact:"Impacto:",sources:"Fuentes:",empty:"Ningún evento coincide con estos filtros. Prueba \"Todos\" o vuelve a activar un tipo.",
-  zin:"Acercar",zout:"Alejar",zreset:"Restablecer vista",mapLabel:"Mapa de París con los lugares de las protestas",filters:"Filtros",
+  zin:"Acercar",zout:"Alejar",zreset:"Restablecer vista",tmetro:"Mostrar u ocultar el metro",hint:"Pellizca para hacer zoom · arrastra para moverte",mapLabel:"Mapa de París con los lugares de las protestas",filters:"Filtros",
   foot1:"Las fuentes incluyen medios generalistas y otros menos conocidos: Démosphère, Paris-luttes.info, Agenda militant, C'est la grève y webs de sindicatos y asociaciones. Muchas concentraciones solo se anuncian en agendas militantes.",
-  foot2:"Mapa base: distritos (arrondissements) de París, a partir de OpenStreetMap. El Sena y los recorridos están dibujados a mano y son aproximados. Los marcadores indican los puntos de encuentro anunciados.",
+  foot2:"Mapa base: distritos (a partir de OpenStreetMap), vías principales (IGN, mediante el conjunto MultilayerParis), líneas y estaciones de metro (datos abiertos de Île-de-France Mobilités, Licence Mobilités). El Sena y los recorridos de las marchas están dibujados a mano y son aproximados. Los marcadores indican los puntos de encuentro anunciados.",
   foot3:"La Prefectura de Policía puede prohibir o desviar cualquier manifestación con poca antelación.",
   foot4:"Proyecto independiente, sin relación con el Ayuntamiento de París ni respaldo suyo. El estilo visual sigue la carta gráfica pública de la ciudad (Montserrat, azul antracita)."},
  fr:{kicker:"Grèves · manifs · perturbations",
@@ -250,9 +275,9 @@ const UI={
   lgMarch:"Manif (avec parcours)",lgRally:"Rassemblement",lgStrike:"Grève / piquet",lgBlockade:"Blocage",lgDisruption:"Perturbation (fermetures, grands événements)",lgUnconf:"Appel non confirmé",lgPast:"Déjà passé",
   agenda:"Agenda",shown:n=>`${n} affichés`,today:"Aujourd'hui",ongoing:"En cours",notOnMap:"Hors carte",citywide:"Toute la ville",
   route:"Parcours :",impact:"Impact :",sources:"Sources :",empty:"Aucun événement ne correspond. Essayez « Tout » ou réactivez un type.",
-  zin:"Zoomer",zout:"Dézoomer",zreset:"Réinitialiser la vue",mapLabel:"Carte de Paris avec les lieux de mobilisation",filters:"Filtres",
+  zin:"Zoomer",zout:"Dézoomer",zreset:"Réinitialiser la vue",tmetro:"Afficher ou masquer le métro",hint:"Pincez pour zoomer · glissez pour bouger",mapLabel:"Carte de Paris avec les lieux de mobilisation",filters:"Filtres",
   foot1:"Sources : grands médias et sources moins connues (Démosphère, Paris-luttes.info, Agenda militant, C'est la grève, sites syndicaux et associatifs). Beaucoup de rassemblements ne sont annoncés que dans les agendas militants.",
-  foot2:"Fond de carte : arrondissements de Paris (dérivés d'OpenStreetMap). La Seine et les parcours sont tracés à la main et approximatifs. Les marqueurs indiquent les points de rendez-vous annoncés.",
+  foot2:"Fond de carte : arrondissements (dérivés d'OpenStreetMap), grands axes (IGN, via le jeu de données MultilayerParis), lignes et stations de métro (open data Île-de-France Mobilités, Licence Mobilités). La Seine et les parcours sont tracés à la main et approximatifs. Les marqueurs indiquent les points de rendez-vous annoncés.",
   foot3:"La Préfecture de police peut interdire ou modifier une manifestation au dernier moment.",
   foot4:"Projet indépendant, sans lien avec la Ville de Paris ni validation de sa part. Le style visuel suit la charte graphique publique de la Ville (Montserrat, bleu anthracite)."}
 };
@@ -606,7 +631,7 @@ function applyLang(){
   document.querySelectorAll("[data-i18n-html]").forEach(el=>el.innerHTML=T(el.dataset.i18nHtml).replace("{date}",new Date(UPDATED+"T12:00:00").toLocaleDateString(LOCALE[LANG],{day:"numeric",month:"long",year:"numeric"})));
   WHEN.forEach(k=>document.getElementById("when-"+k).textContent=T(k));
   KIND_KEYS.forEach(k=>document.getElementById("kind-"+k).innerHTML=`<i class="sw ${k}"></i>${T(k)}`);
-  ["zin","zout","zreset"].forEach(id=>{const b=document.getElementById(id);b.setAttribute("aria-label",T(id));b.title=T(id);});
+  ["zin","zout","zreset","tmetro"].forEach(id=>{const b=document.getElementById(id);b.setAttribute("aria-label",T(id));b.title=T(id);});
   document.getElementById("map").setAttribute("aria-label",T("mapLabel"));
   document.querySelector(".controls").setAttribute("aria-label",T("filters"));
   ["en","es","fr"].forEach(l=>document.getElementById("lang-"+l).setAttribute("aria-pressed",l===LANG));
@@ -625,13 +650,19 @@ const OX=(W-(2.4698-LON0)*KX*S)/2, OY=(H-(LAT1-48.8161)*S)/2;
 const P=([lon,lat])=>[OX+(lon-LON0)*KX*S, OY+(LAT1-lat)*S];
 const line=pts=>"M"+pts.map(p=>P(p).map(v=>v.toFixed(1)).join(",")).join("L");
 
-const svg=d3.select("#map"), g=svg.append("g");
-const gBase=g.append("g"), gRoutes=g.append("g"), gLabels=g.append("g"), gMarks=g.append("g");
+const svg=d3.select("#map"), svgEl=document.getElementById("map"), g=svg.append("g");
+const gBase=g.append("g"), gRoads=g.append("g"), gMetro=g.append("g").attr("class","metro"), gRoutes=g.append("g"), gStations=g.append("g").attr("class","metro"), gLabels=g.append("g"), gMarks=g.append("g");
 ARR.forEach(a=>a.r.forEach(r=>gBase.append("path").attr("class","arr").attr("d",line(r)+"Z")));
 const seine=gBase.append("path").attr("class","seine").attr("d",line(SEINE));
+const flat=a=>{const o=[];for(let i=0;i<a.length;i+=2)o.push([a[i],a[i+1]]);return o;};
+const roadD=ROADS.map(list=>list.map(a=>line(flat(a))).join(""));
+const roadCase=[0,1,2].map(i=>gRoads.append("path").attr("class","road case").attr("d",roadD[i]));
+const roadFill=[2,1,0].map(i=>gRoads.append("path").attr("class","road r"+i).attr("d",roadD[i]));
+const metroLines=METRO.map(m=>gMetro.append("path").attr("class","mline").attr("stroke",m.c).attr("d",m.p.map(a=>line(flat(a))).join("")));
+const stnNodes=STATIONS.map(([n,lon,lat,ls])=>{const[x,y]=P([lon,lat]);const gg=gStations.append("g").attr("class","stn").attr("data-x",x).attr("data-y",y);gg.append("title").text(`${n} · M${ls.join(", M")}`);gg.append("circle").attr("r",2.6);gg.append("text").attr("x",4).attr("y",3.5).text(n);return gg;});
 function centroid(r){let A=0,cx=0,cy=0;const pts=r.map(P);for(let i=0;i<pts.length-1;i++){const[x0,y0]=pts[i],[x1,y1]=pts[i+1],f=x0*y1-x1*y0;A+=f;cx+=(x0+x1)*f;cy+=(y0+y1)*f;}A/=2;return[cx/(6*A),cy/(6*A)];}
 const numNodes=ARR.map(a=>{const big=a.r.reduce((m,r)=>r.length>m.length?r:m,a.r[0]);const[x,y]=centroid(big);return gLabels.append("text").attr("class","arrnum").attr("data-x",x).attr("data-y",y).text(a.n+(a.n===1?"er":"e"));});
-const lmNodes=LANDMARKS.map(([name,pt,side])=>{const[x,y]=P(pt);const gg=gLabels.append("g").attr("data-x",x).attr("data-y",y);gg.append("circle").attr("class","lmdot").attr("r",1.6);gg.append("text").attr("class","lm").attr("x",side==="r"?5:-5).attr("y",-5).attr("text-anchor",side==="r"?"start":"end").text(name);return gg;});
+const lmNodes=LANDMARKS.concat(LANDMARKS2.map(l=>[...l,1])).map(([name,pt,side,minor])=>{const[x,y]=P(pt);const gg=gLabels.append("g").attr("class",minor?"lm2":null).attr("data-x",x).attr("data-y",y);gg.append("circle").attr("class","lmdot").attr("r",1.6);gg.append("text").attr("class","lm").attr("x",side==="r"?5:-5).attr("y",-5).attr("text-anchor",side==="r"?"start":"end").text(name);return gg;});
 
 const color=k=>`var(--k-${k})`;
 function shape(sel,kind,r){
@@ -648,6 +679,11 @@ function placeAll(){
   lmNodes.forEach(n=>n.attr("transform",`translate(${n.attr("data-x")},${n.attr("data-y")}) scale(${s})`));
   markerNodes.forEach(m=>m.node.attr("transform",`translate(${m.x},${m.y}) scale(${s}) translate(${m.dx},${m.dy})`));
   seine.attr("stroke-width",Math.max(5,7*Math.sqrt(K))/K);
+  const q=Math.sqrt(K);
+  [[2,1.1],[1,1.8],[0,2.6]].forEach(([i,w],j)=>{roadFill[j].attr("stroke-width",w*q);roadCase[i].attr("stroke-width",w*q+1.4);});
+  metroLines.forEach(m=>m.attr("stroke-width",1.6*q));
+  stnNodes.forEach(n=>n.attr("transform",`translate(${n.attr("data-x")},${n.attr("data-y")}) scale(${s})`));
+  svgEl.classList.toggle("z-st",K>=2.2); svgEl.classList.toggle("z-lbl",K>=4.5); svgEl.classList.toggle("z-lm",K>=1.8);
 }
 
 function drawMap(list){
@@ -728,16 +764,31 @@ function select(id,fromMap){
 }
 
 /* ---------- zoom ---------- */
-const zoom=d3.zoom().scaleExtent([1,8]).translateExtent([[-100,-100],[W+100,H+100]]).on("zoom",ev=>{g.attr("transform",ev.transform);K=ev.transform.k;placeAll();});
-svg.call(zoom).on("dblclick.zoom",null);
+const zoom=d3.zoom().scaleExtent([1,14]).on("zoom",ev=>{g.attr("transform",ev.transform);K=ev.transform.k;placeAll();});
+let padY=0;
+function fitViewBox(){
+  const r=svgEl.getBoundingClientRect(); if(!r.width) return;
+  const vbH=Math.max(H,W*r.height/r.width); padY=(vbH-H)/2;
+  svg.attr("viewBox",`0 ${-padY} ${W} ${vbH}`);
+  zoom.extent([[0,-padY],[W,H+padY]]).translateExtent([[-60,-padY-60],[W+60,H+padY+60]]);
+}
+fitViewBox();
+svg.call(zoom);
 svg.on("click",()=>{if(state.sel){state.sel=null;render();}});
+const isNarrow=()=>matchMedia("(max-width: 700px)").matches;
+function homeView(){ return isNarrow()? d3.zoomIdentity.translate(W/2,H/2).scale(2.1).translate(-P(PLACES.chatelet)[0],-P(PLACES.chatelet)[1]) : d3.zoomIdentity; }
+svg.call(zoom.transform,homeView());
+let rz; window.addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{fitViewBox();svg.call(zoom.transform,d3.zoomTransform(svgEl));},150);});
 document.getElementById("zin").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1.6);
 document.getElementById("zout").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1/1.6);
-document.getElementById("zreset").onclick=()=>svg.transition().duration(300).call(zoom.transform,d3.zoomIdentity);
+document.getElementById("zreset").onclick=()=>svg.transition().duration(300).call(zoom.transform,homeView());
+document.getElementById("tmetro").onclick=e=>{const on=svgEl.classList.toggle("no-metro"); e.currentTarget.setAttribute("aria-pressed",!on);};
+const hint=document.getElementById("hint"); const hideHint=()=>hint.classList.add("gone");
+svgEl.addEventListener("pointerdown",hideHint,{once:true}); svgEl.addEventListener("wheel",hideHint,{once:true,passive:true}); setTimeout(hideHint,8000);
 function focusOn(e){
   const pts=(e.route||e.pts).map(P); const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
   const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
-  const k=Math.max(K,Math.min(4,0.6/Math.max((x1-x0)/W,(y1-y0)/H,0.15)));
+  const k=Math.max(K,Math.min(isNarrow()?5:4,0.6/Math.max((x1-x0)/W,(y1-y0)/H,0.15)));
   const t=d3.zoomIdentity.translate(W/2,H/2).scale(k).translate(-(x0+x1)/2,-(y0+y1)/2);
   svg.transition().duration(matchMedia("(prefers-reduced-motion: reduce)").matches?0:450).call(zoom.transform,t);
 }
