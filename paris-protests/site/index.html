@@ -104,7 +104,46 @@ header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-cont
 .mapbox { position: relative; background: var(--paper); border: 1px solid var(--rule); border-radius: 0; overflow: hidden; min-width: 0; }
 @media (min-width: 901px) { .mapbox { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); } }
 #map { display: block; width: 100%; height: auto; aspect-ratio: 1000 / 610; max-width: 100%; touch-action: none; cursor: grab; -webkit-user-select: none; user-select: none; }
-@media (max-width: 700px) { #map { aspect-ratio: auto; height: 72vh; min-height: 420px; max-height: 760px; } }
+.mfilters { display: none; }
+@media (max-width: 700px) {
+  /* Phone layout: filters as two drop-downs, then a near-full-screen map, then intro, agenda, footer. */
+  header.top, .main { display: contents; }
+  .controls { order: 1; width: 100%; }
+  .mapbox { order: 2; margin-inline: -16px; border-inline: 0; }
+  .lede { order: 3; }
+  aside.list { order: 4; }
+  footer.note { order: 5; }
+  .controls .group { display: none; }
+  .mfilters { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
+  #map { aspect-ratio: auto; height: calc(100vh - 128px); height: calc(100svh - 128px); min-height: 440px; }
+  .band { padding-block: 10px 12px; }
+  .band-in { flex-wrap: nowrap; gap: 10px; }
+  .sign { padding: 4px 12px 6px; min-width: 0; flex: 0 1 auto; }
+  .sign h1 { font-size: min(27px, 6vw); white-space: nowrap; }
+  .sign small { font-size: 9.5px; line-height: 1.45; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .lang { flex: none; padding-inline: 8px 2px; }
+  .lang svg { display: none; }
+  .lang select { font-size: 12.5px; padding-right: 20px; }
+}
+@media (max-width: 360px) {
+  .band-in { flex-wrap: wrap; }
+  .sign h1 { font-size: 24px; }
+}
+.mctl { position: relative; display: grid; gap: 2px; min-width: 0; border: 1.5px solid var(--ink); border-radius: 4px; background: var(--paper); padding: 5px 10px 6px; }
+.mlab { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.mctl select { font: 700 14px var(--font-body); color: var(--ink); background: transparent; border: 0; padding: 0 18px 0 0; appearance: none; -webkit-appearance: none; width: 100%; min-width: 0; text-overflow: ellipsis;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 7px) 55%, calc(100% - 2px) 55%; background-size: 5px 5px; background-repeat: no-repeat; }
+.mctl:focus-within { outline: 2px solid var(--k-march); outline-offset: 1px; }
+.mtype summary { list-style: none; display: grid; gap: 2px; cursor: pointer; }
+.mtype summary::-webkit-details-marker { display: none; }
+#typesum { font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 18px;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 7px) 55%, calc(100% - 2px) 55%; background-size: 5px 5px; background-repeat: no-repeat; }
+.mtype-list { position: absolute; z-index: 20; right: -1.5px; top: calc(100% + 4px); min-width: 100%; width: max-content; max-width: calc(100vw - 32px); background: var(--paper); border: 1.5px solid var(--ink); border-radius: 4px; padding: 6px; display: grid; gap: 2px; box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+.mtype-list label { display: flex; align-items: center; gap: 10px; padding: 9px 8px; font-weight: 600; font-size: 14px; cursor: pointer; border-radius: 3px; }
+.mtype-list label:hover { background: color-mix(in srgb, var(--ink) 6%, transparent); }
+.mtype-list input { width: 18px; height: 18px; accent-color: var(--ink); margin: 0; }
 .hint { position: absolute; left: 10px; top: 10px; right: 56px; width: fit-content; background: color-mix(in srgb, var(--paper) 92%, transparent); border: 1px solid var(--rule); font-size: 11.5px; font-weight: 600; padding: 4px 8px; pointer-events: none; transition: opacity .4s; }
 .hint.gone { opacity: 0; }
 .ctl[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
@@ -197,6 +236,10 @@ footer.note p { margin: 0; }
     <div class="controls" role="toolbar">
       <div class="group" id="f-when"><span data-i18n="when"></span></div>
       <div class="group" id="f-kind"><span data-i18n="type"></span></div>
+      <div class="mfilters">
+        <label class="mctl"><span class="mlab" data-i18n="when"></span><select id="whensel"></select></label>
+        <details class="mctl mtype" id="typedd"><summary><span class="mlab" data-i18n="type"></span><span id="typesum"></span></summary><div class="mtype-list" id="typelist"></div></details>
+      </div>
     </div>
   </header>
 
@@ -677,12 +720,17 @@ const fw=document.getElementById("f-when"), fk=document.getElementById("f-kind")
 WHEN.forEach(k=>{const b=document.createElement("button");b.className="chip";b.id="when-"+k;b.onclick=()=>{state.when=k;save();render();};fw.appendChild(b);});
 KIND_KEYS.forEach(k=>{const b=document.createElement("button");b.className="chip";b.id="kind-"+k;b.onclick=()=>{state.kinds.has(k)?state.kinds.delete(k):state.kinds.add(k); if(!state.kinds.size) state.kinds.add(k); save();render();};fk.appendChild(b);});
 
+document.getElementById("whensel").addEventListener("change",e=>{state.when=e.target.value;save();render();});
+document.getElementById("typelist").addEventListener("change",e=>{const k=e.target.value; e.target.checked?state.kinds.add(k):state.kinds.delete(k); if(!state.kinds.size){state.kinds.add(k);} save();render();});
+document.addEventListener("click",e=>{const d=document.getElementById("typedd"); if(d.open&&!d.contains(e.target)) d.open=false;});
 function applyLang(){
   document.documentElement.lang=LANG;
   document.querySelectorAll("[data-i18n]").forEach(el=>el.textContent=T(el.dataset.i18n));
   document.querySelectorAll("[data-i18n-html]").forEach(el=>el.innerHTML=T(el.dataset.i18nHtml).replace("{date}",new Date(UPDATED+"T12:00:00").toLocaleDateString(LOCALE[LANG],{day:"numeric",month:"long",year:"numeric"})));
   WHEN.forEach(k=>document.getElementById("when-"+k).textContent=T(k));
   KIND_KEYS.forEach(k=>document.getElementById("kind-"+k).innerHTML=`<i class="sw ${k}"></i>${T(k)}`);
+  document.getElementById("whensel").innerHTML=WHEN.map(k=>`<option value="${k}">${T(k)}</option>`).join("");
+  document.getElementById("typelist").innerHTML=KIND_KEYS.map(k=>`<label><input type="checkbox" value="${k}"><i class="sw ${k}"></i>${T(k)}</label>`).join("");
   ["zin","zout","zreset"].forEach(id=>{const b=document.getElementById(id);b.setAttribute("aria-label",T(id));b.title=T(id);});
   document.getElementById("map").setAttribute("aria-label",T("mapLabel"));
   document.querySelector(".controls").setAttribute("aria-label",T("filters"));
@@ -799,6 +847,10 @@ function drawList(list){
 
 function render(){
   WHEN.forEach(k=>document.getElementById("when-"+k).setAttribute("aria-pressed",state.when===k));
+  document.getElementById("whensel").value=state.when;
+  document.querySelectorAll("#typelist input").forEach(i=>i.checked=state.kinds.has(i.value));
+  const n=state.kinds.size;
+  document.getElementById("typesum").textContent= n===KIND_KEYS.length? T("all") : n<=2? [...state.kinds].map(k=>T(k)).join(", ") : `${n}/${KIND_KEYS.length}`;
   KIND_KEYS.forEach(k=>document.getElementById("kind-"+k).setAttribute("aria-pressed",state.kinds.has(k)));
   const list=EVENTS.filter(visible).sort((a,b)=>a.date.localeCompare(b.date));
   if(state.when==="past") list.reverse();
@@ -824,7 +876,7 @@ fitViewBox();
 svg.call(zoom);
 svg.on("click",()=>{if(state.sel){state.sel=null;render();}});
 const isNarrow=()=>matchMedia("(max-width: 700px)").matches;
-function homeView(){ return isNarrow()? d3.zoomIdentity.translate(W/2,H/2).scale(2.1).translate(-P(PLACES.chatelet)[0],-P(PLACES.chatelet)[1]) : d3.zoomIdentity; }
+function homeView(){ return isNarrow()? d3.zoomIdentity.translate(W/2,H/2).scale(Math.max(2.1,(H+2*padY)/H*1.02)).translate(-P(PLACES.chatelet)[0],-P(PLACES.chatelet)[1]) : d3.zoomIdentity; }
 svg.call(zoom.transform,homeView());
 let rz; window.addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{fitViewBox();svg.call(zoom.transform,d3.zoomTransform(svgEl));},150);});
 document.getElementById("zin").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1.6);
