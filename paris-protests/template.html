@@ -267,7 +267,7 @@ footer.note p { margin: 0; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script>
 /*GEO*/
-const SEINE=[[2.4150,48.8240],[2.4030,48.8262],[2.3960,48.8278],[2.3870,48.8300],[2.3800,48.8343],[2.3758,48.8387],[2.3700,48.8424],[2.3660,48.8463],[2.3591,48.8507],[2.3545,48.8523],[2.3491,48.8558],[2.3412,48.8577],[2.3375,48.8583],[2.3297,48.8603],[2.3196,48.8637],[2.3137,48.8638],[2.3104,48.8637],[2.3013,48.8628],[2.2925,48.8598],[2.2876,48.8553],[2.2795,48.8497],[2.2753,48.8466],[2.2684,48.8392],[2.2600,48.8346],[2.2520,48.8300]]; /* centreline through bridge positions */
+const SEINE=[[2.4150,48.8240],[2.4030,48.8262],[2.3960,48.8278],[2.3870,48.8300],[2.3800,48.8343],[2.3758,48.8387],[2.3700,48.8424],[2.3660,48.8463],null,[2.3375,48.8583],[2.3297,48.8603],[2.3196,48.8637],[2.3137,48.8638],[2.3104,48.8637],[2.3013,48.8628],[2.2925,48.8598],[2.2876,48.8553],[2.2795,48.8497],[2.2753,48.8466],[2.2684,48.8392],[2.2600,48.8346],[2.2520,48.8300]]; /* centreline through bridge positions */
 const PLACES={
   republique:[2.3632,48.8674], bastille:[2.3692,48.8532], nation:[2.3958,48.8484], italie:[2.3557,48.8311],
   jussieu:[2.3548,48.8462], champdemars:[2.2985,48.8560], chatelet:[2.3470,48.8580],
@@ -737,7 +737,16 @@ const line=pts=>"M"+pts.map(p=>P(p).map(v=>v.toFixed(1)).join(",")).join("L");
 const svg=d3.select("#map"), svgEl=document.getElementById("map"), g=svg.append("g");
 const gBase=g.append("g"), gRoads=g.append("g"), gRoutes=g.append("g"), gLabels=g.append("g"), gMarks=g.append("g");
 ARR.forEach(a=>a.r.forEach(r=>gBase.append("path").attr("class","arr").attr("d",line(r)+"Z")));
-const seine=gBase.append("path").attr("class","seine").attr("d",line(SEINE));
+const seineSplit=SEINE.indexOf(null);
+const seine=gBase.append("path").attr("class","seine").attr("d",line(SEINE.slice(0,seineSplit))+line(SEINE.slice(seineSplit+1)));
+/* The two arms of the Seine around Île de la Cité and Île Saint-Louis, then the islands drawn as land on top. */
+const SEINE_N=[[2.3375,48.8583],[2.3412,48.8584],[2.3440,48.8582],[2.3468,48.8575],[2.3490,48.8567],[2.3512,48.8557],[2.3532,48.8546],[2.3556,48.8543],[2.3580,48.8538],[2.3603,48.8527],[2.3618,48.8512],[2.3640,48.8492],[2.3660,48.8463]];
+const SEINE_S=[[2.3375,48.8583],[2.3400,48.8566],[2.3420,48.8553],[2.3445,48.8538],[2.3462,48.8529],[2.3485,48.8517],[2.3510,48.8508],[2.3540,48.8512],[2.3560,48.8508],[2.3580,48.8502],[2.3600,48.8496],[2.3622,48.8490],[2.3640,48.8480],[2.3660,48.8463]];
+const ISLANDS=[
+  [[2.3390,48.8574],[2.3412,48.8580],[2.3440,48.8575],[2.3468,48.8569],[2.3490,48.8560],[2.3512,48.8549],[2.3527,48.8535],[2.3534,48.8522],[2.3522,48.8516],[2.3505,48.8514],[2.3485,48.8522],[2.3466,48.8530],[2.3446,48.8541],[2.3425,48.8556],[2.3405,48.8566]],
+  [[2.3537,48.8530],[2.3556,48.8538],[2.3580,48.8531],[2.3600,48.8521],[2.3613,48.8507],[2.3598,48.8503],[2.3575,48.8509],[2.3553,48.8517],[2.3540,48.8524]]];
+const seineArms=[SEINE_N,SEINE_S].map(a=>gBase.append("path").attr("class","seine").attr("d",line(a)));
+ISLANDS.forEach(r=>gBase.append("path").attr("class","arr isle").attr("d",line(r)+"Z"));
 const flat=a=>{const o=[];for(let i=0;i<a.length;i+=2)o.push([a[i],a[i+1]]);return o;};
 const roadD=ROADS.map(list=>list.map(a=>line(flat(a))).join(""));
 const roadCase=[0,1,2].map(i=>gRoads.append("path").attr("class","road case").attr("d",roadD[i]));
@@ -755,25 +764,32 @@ function shape(sel,kind,r){
 }
 
 let K=1, markerNodes=[];
+let PPU=1; /* screen px per map unit at zoom 1 */
+let endcaps=[];
 function placeAll(){
-  const s=1/K;
-  numNodes.forEach(n=>n.attr("transform",`translate(${n.attr("data-x")},${n.attr("data-y")}) scale(${s})`));
-  lmNodes.forEach(n=>n.attr("transform",`translate(${n.attr("data-x")},${n.attr("data-y")}) scale(${s})`));
-  markerNodes.forEach(m=>m.node.attr("transform",`translate(${m.x},${m.y}) scale(${s}) translate(${m.dx},${m.dy})`));
-  seine.attr("stroke-width",Math.max(5,7*Math.sqrt(K))/K);
+  const s=1/K, narrow=isNarrow();
+  const ms=narrow? s*Math.max(1, 1.3/PPU) : s;    /* event icons ~10px radius on phones */
+  const ls=narrow? s*Math.max(1, 0.82/PPU) : s;   /* place labels ~9px on phones */
+  numNodes.forEach(n=>n.attr("transform",`translate(${n.attr("data-x")},${n.attr("data-y")}) scale(${ls})`));
+  lmNodes.forEach(n=>n.attr("transform",`translate(${n.attr("data-x")},${n.attr("data-y")}) scale(${ls})`));
+  markerNodes.forEach(m=>m.node.attr("transform",`translate(${m.x},${m.y}) scale(${ms}) translate(${m.dx},${m.dy})`));
+  const ec=9*ms; endcaps.forEach(r=>r.attr("x",+r.attr("data-x")-ec/2).attr("y",+r.attr("data-y")-ec/2).attr("width",ec).attr("height",ec));
+  seine.attr("stroke-width",Math.max(8,4/(K*PPU)));
+  seineArms.forEach(a=>a.attr("stroke-width",Math.max(4.6,2.5/(K*PPU))));
   const q=Math.sqrt(K);
   [[2,1.1],[1,1.8],[0,2.6]].forEach(([i,w],j)=>{roadFill[j].attr("stroke-width",w*q);roadCase[i].attr("stroke-width",w*q+1.4);});
   svgEl.classList.toggle("z-lm",K>=1.8);
 }
 
 function drawMap(list){
+  endcaps=[];
   gRoutes.selectAll("*").remove(); gMarks.selectAll("*").remove(); markerNodes=[];
   const mapped=list.filter(e=>e.pts);
   mapped.filter(e=>e.route).forEach(e=>{
     const ph=phase(e);
     gRoutes.append("path").attr("class","route"+(ph==="past"?" past":"")+(state.sel===e.id?" sel":"")).attr("d",line(e.route)).attr("stroke",color(e.kind));
     const [ex,ey]=P(e.route[e.route.length-1]);
-    gRoutes.append("rect").attr("class","endcap").attr("x",ex-4).attr("y",ey-4).attr("width",8).attr("height",8).attr("fill",color(e.kind)).attr("opacity",ph==="past"?.4:1).attr("vector-effect","non-scaling-stroke");
+    endcaps.push(gRoutes.append("rect").attr("class","endcap").attr("data-x",ex).attr("data-y",ey).attr("fill",color(e.kind)).attr("opacity",ph==="past"?.4:1).attr("vector-effect","non-scaling-stroke"));
   });
   const groups=new Map();
   mapped.forEach(e=>e.pts.forEach((pt,i)=>{const key=pt[0].toFixed(3)+","+pt[1].toFixed(3);if(!groups.has(key))groups.set(key,[]);groups.get(key).push({e,pt,i});}));
@@ -852,14 +868,14 @@ const zoom=d3.zoom().scaleExtent([1,14]).on("zoom",ev=>{g.attr("transform",ev.tr
 let padY=0;
 function fitViewBox(){
   const r=svgEl.getBoundingClientRect(); if(!r.width) return;
-  const vbH=Math.max(H,W*r.height/r.width); padY=(vbH-H)/2;
+  const vbH=Math.max(H,W*r.height/r.width); padY=(vbH-H)/2; PPU=r.width/W;
   svg.attr("viewBox",`0 ${-padY} ${W} ${vbH}`);
   zoom.extent([[0,-padY],[W,H+padY]]).translateExtent([[-60,-padY-60],[W+60,H+padY+60]]);
 }
 fitViewBox();
 svg.call(zoom);
 svg.on("click",()=>{if(state.sel){state.sel=null;render();}});
-const isNarrow=()=>matchMedia("(max-width: 700px)").matches;
+function isNarrow(){ return matchMedia("(max-width: 700px)").matches; }
 function homeView(){ return isNarrow()? d3.zoomIdentity.translate(W/2,H/2).scale(Math.max(2.1,(H+2*padY)/H*1.02)).translate(-P(PLACES.chatelet)[0],-P(PLACES.chatelet)[1]) : d3.zoomIdentity; }
 svg.call(zoom.transform,homeView());
 let rz; window.addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{fitViewBox();svg.call(zoom.transform,d3.zoomTransform(svgEl));},150);});
