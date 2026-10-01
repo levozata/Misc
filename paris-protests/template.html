@@ -1,7 +1,7 @@
 <title>Paris dans la rue</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Montserrat:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Montserrat:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;700&display=swap">
 <style>
 /* Layout: civic band header over a map pane + dated agenda; stacks map-over-list on phones.
    Look: Ville de Paris public charter cues: Montserrat throughout, anthracite blue (C100 M40 J0 N80 ≈ #001F33)
@@ -30,10 +30,10 @@
   --k-blockade: #00806a;
   --k-disruption: #6a4fa3;
   --halo: #ffffff;
-  --font-display: "Montserrat", "Helvetica Neue", Arial, sans-serif;
-  --font-body: "Montserrat", "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "Montserrat", "Helvetica Neue", Arial, sans-serif;
-  --font-plaque: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-display: "Montserrat", "Helvetica Neue", Arial, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-body: "Montserrat", "Helvetica Neue", Arial, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "Montserrat", "Helvetica Neue", Arial, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-plaque: "Barlow Condensed", "Arial Narrow", "Noto Sans SC", "PingFang SC", sans-serif;
   --plaque: #1f3f78;
   --plaque-frame: #1d4a34;
 }
@@ -65,11 +65,13 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-body); 
 .sign small { font: 600 13px/1.1 var(--font-plaque); letter-spacing: .1em; text-transform: uppercase; opacity: .92; text-align: center; }
 .sign small::after { content: ""; display: block; width: 60%; height: 1px; background: rgba(255,255,255,.7); margin: 3px auto 1px; }
 .sign h1 { margin: 0; font: 700 clamp(28px, 4.6vw, 44px)/1 var(--font-plaque); letter-spacing: .015em; text-align: center; text-wrap: balance; }
-.lang { display: inline-flex; border: 1.5px solid rgba(255,255,255,.55); border-radius: 4px; overflow: hidden; }
-.lang button { font: 700 12.5px var(--font-body); letter-spacing: .06em; border: 0; background: transparent; color: #ffffff; padding: 7px 12px; cursor: pointer; }
-.lang button + button { border-left: 1.5px solid rgba(255,255,255,.55); }
-.lang button[aria-pressed="true"] { background: #ffffff; color: #001f33; }
-.lang button:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+.lang { position: relative; display: inline-flex; align-items: center; gap: 6px; border: 1.5px solid rgba(255,255,255,.6); border-radius: 4px; padding-inline: 10px 6px; color: #ffffff; }
+.lang select { font: 700 13px var(--font-body); color: #ffffff; background: transparent; border: 0; padding: 8px 22px 8px 2px; appearance: none; -webkit-appearance: none; cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, #ffffff 50%), linear-gradient(135deg, #ffffff 50%, transparent 50%);
+  background-position: calc(100% - 9px) 52%, calc(100% - 4px) 52%; background-size: 5px 5px; background-repeat: no-repeat; }
+.lang select option { color: #001f33; background: #ffffff; }
+.lang:focus-within { outline: 2px solid #ffffff; outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; }
 .lede { margin: 0; max-width: 70ch; color: var(--muted); font-size: 14.5px; line-height: 1.6; }
 .lede b { color: var(--ink); font-weight: 600; }
@@ -103,12 +105,6 @@ header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-cont
 .road.r2 { stroke: var(--road-minor); }
 .road.r1 { stroke: var(--road-main); }
 .road.r0 { stroke: var(--road-motor); }
-.mline { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; opacity: .8; }
-.stn circle { fill: var(--stn); stroke: var(--ink); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
-.stn text { font: 600 9.5px var(--font-body); fill: var(--ink); paint-order: stroke; stroke: var(--halo); stroke-width: 3px; display: none; }
-#map:not(.z-st) .stn { display: none; }
-#map.z-lbl .stn text { display: inline; }
-#map.no-metro .metro { display: none; }
 #map:not(.z-lm) .lm2 { display: none; }
 #map:active { cursor: grabbing; }
 .zoom { position: absolute; right: 10px; top: 10px; display: flex; flex-direction: column; gap: 4px; }
@@ -174,9 +170,13 @@ footer.note p { margin: 0; }
 <div class="band">
   <div class="band-in">
     <div class="sign"><small data-i18n="kicker"></small><h1>Paris dans la rue</h1></div>
-    <div class="lang" role="group" aria-label="Language">
-      <button id="lang-en" lang="en">EN</button><button id="lang-es" lang="es">ES</button><button id="lang-fr" lang="fr">FR</button>
-    </div>
+    <label class="lang"><span class="sr" data-i18n="language"></span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"><path fill="none" stroke="currentColor" stroke-width="2" d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm-9 9h18M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3Z"/></svg>
+      <select id="langsel">
+        <option value="fr" lang="fr">Français</option><option value="en" lang="en">English</option><option value="es" lang="es">Español</option>
+        <option value="zh" lang="zh">中文（普通话）</option><option value="pt" lang="pt">Português</option><option value="de" lang="de">Deutsch</option>
+      </select>
+    </label>
   </div>
 </div>
 <div class="wrap">
@@ -196,7 +196,6 @@ footer.note p { margin: 0; }
         <button class="ctl" id="zin">+</button>
         <button class="ctl" id="zout">−</button>
         <button class="ctl" id="zreset" style="font-size:12px">⤢</button>
-        <button class="ctl" id="tmetro" aria-pressed="true" style="font-size:13px;font-weight:800">M</button>
       </div>
       <div class="legend" aria-hidden="true">
         <div><i class="sw march"></i><span data-i18n="lgMarch"></span></div>
@@ -249,9 +248,9 @@ const UI={
   lgMarch:"March (with route)",lgRally:"Rally",lgStrike:"Strike / picket",lgBlockade:"Blockade",lgDisruption:"Disruption (closures, big events)",lgUnconf:"Unconfirmed call",lgPast:"Already happened",
   agenda:"Agenda",shown:n=>`${n} shown`,today:"Today",ongoing:"Ongoing",notOnMap:"Not on map",citywide:"Citywide",
   route:"Route:",impact:"Impact:",sources:"Sources:",empty:"Nothing matches these filters. Try \"All\" or switch a type back on.",
-  zin:"Zoom in",zout:"Zoom out",zreset:"Reset view",tmetro:"Show or hide the metro",hint:"Pinch to zoom · drag to move",mapLabel:"Map of Paris with protest locations",filters:"Filters",
+  zin:"Zoom in",zout:"Zoom out",zreset:"Reset view",hint:"Pinch to zoom · drag to move",mapLabel:"Map of Paris with protest locations",filters:"Filters",language:"Language",
   foot1:"Sources include mainstream media and less mainstream ones: Démosphère, Paris-luttes.info, Agenda militant, C'est la grève, union and association sites. Activist listings are often the first and only place a rally is announced.",
-  foot2:"Base map: arrondissements (OpenStreetMap-derived), main roads (IGN, via the MultilayerParis dataset), metro lines and stations (Île-de-France Mobilités open data, Licence Mobilités). The Seine and march routes are drawn by hand and approximate. Markers show announced meeting points.",
+  foot2:"Base map: arrondissements (OpenStreetMap-derived), main roads (IGN, via the MultilayerParis dataset). The Seine and march routes are drawn by hand and approximate. Markers show announced meeting points.",
   foot3:"The Préfecture de police can ban or reroute any demonstration at short notice.",
   foot4:"Independent project, not affiliated with or endorsed by the Ville de Paris. The visual style follows the City of Paris public graphic charter (Montserrat, anthracite blue)."},
  es:{kicker:"Huelgas · protestas · alteraciones",
@@ -262,9 +261,9 @@ const UI={
   lgMarch:"Marcha (con recorrido)",lgRally:"Concentración",lgStrike:"Huelga / piquete",lgBlockade:"Bloqueo",lgDisruption:"Alteración (cortes, grandes eventos)",lgUnconf:"Convocatoria sin confirmar",lgPast:"Ya celebrado",
   agenda:"Agenda",shown:n=>`${n} visibles`,today:"Hoy",ongoing:"En curso",notOnMap:"Fuera del mapa",citywide:"Toda la ciudad",
   route:"Recorrido:",impact:"Impacto:",sources:"Fuentes:",empty:"Ningún evento coincide con estos filtros. Prueba \"Todos\" o vuelve a activar un tipo.",
-  zin:"Acercar",zout:"Alejar",zreset:"Restablecer vista",tmetro:"Mostrar u ocultar el metro",hint:"Pellizca para hacer zoom · arrastra para moverte",mapLabel:"Mapa de París con los lugares de las protestas",filters:"Filtros",
+  zin:"Acercar",zout:"Alejar",zreset:"Restablecer vista",hint:"Pellizca para hacer zoom · arrastra para moverte",mapLabel:"Mapa de París con los lugares de las protestas",filters:"Filtros",language:"Idioma",
   foot1:"Las fuentes incluyen medios generalistas y otros menos conocidos: Démosphère, Paris-luttes.info, Agenda militant, C'est la grève y webs de sindicatos y asociaciones. Muchas concentraciones solo se anuncian en agendas militantes.",
-  foot2:"Mapa base: distritos (a partir de OpenStreetMap), vías principales (IGN, mediante el conjunto MultilayerParis), líneas y estaciones de metro (datos abiertos de Île-de-France Mobilités, Licence Mobilités). El Sena y los recorridos de las marchas están dibujados a mano y son aproximados. Los marcadores indican los puntos de encuentro anunciados.",
+  foot2:"Mapa base: distritos (a partir de OpenStreetMap), vías principales (IGN, mediante el conjunto MultilayerParis). El Sena y los recorridos de las marchas están dibujados a mano y son aproximados. Los marcadores indican los puntos de encuentro anunciados.",
   foot3:"La Prefectura de Policía puede prohibir o desviar cualquier manifestación con poca antelación.",
   foot4:"Proyecto independiente, sin relación con el Ayuntamiento de París ni respaldo suyo. El estilo visual sigue la carta gráfica pública de la ciudad (Montserrat, azul antracita)."},
  fr:{kicker:"Grèves · manifs · perturbations",
@@ -275,314 +274,354 @@ const UI={
   lgMarch:"Manif (avec parcours)",lgRally:"Rassemblement",lgStrike:"Grève / piquet",lgBlockade:"Blocage",lgDisruption:"Perturbation (fermetures, grands événements)",lgUnconf:"Appel non confirmé",lgPast:"Déjà passé",
   agenda:"Agenda",shown:n=>`${n} affichés`,today:"Aujourd'hui",ongoing:"En cours",notOnMap:"Hors carte",citywide:"Toute la ville",
   route:"Parcours :",impact:"Impact :",sources:"Sources :",empty:"Aucun événement ne correspond. Essayez « Tout » ou réactivez un type.",
-  zin:"Zoomer",zout:"Dézoomer",zreset:"Réinitialiser la vue",tmetro:"Afficher ou masquer le métro",hint:"Pincez pour zoomer · glissez pour bouger",mapLabel:"Carte de Paris avec les lieux de mobilisation",filters:"Filtres",
+  zin:"Zoomer",zout:"Dézoomer",zreset:"Réinitialiser la vue",hint:"Pincez pour zoomer · glissez pour bouger",mapLabel:"Carte de Paris avec les lieux de mobilisation",filters:"Filtres",language:"Langue",
   foot1:"Sources : grands médias et sources moins connues (Démosphère, Paris-luttes.info, Agenda militant, C'est la grève, sites syndicaux et associatifs). Beaucoup de rassemblements ne sont annoncés que dans les agendas militants.",
-  foot2:"Fond de carte : arrondissements (dérivés d'OpenStreetMap), grands axes (IGN, via le jeu de données MultilayerParis), lignes et stations de métro (open data Île-de-France Mobilités, Licence Mobilités). La Seine et les parcours sont tracés à la main et approximatifs. Les marqueurs indiquent les points de rendez-vous annoncés.",
+  foot2:"Fond de carte : arrondissements (dérivés d'OpenStreetMap), grands axes (IGN, via le jeu de données MultilayerParis). La Seine et les parcours sont tracés à la main et approximatifs. Les marqueurs indiquent les points de rendez-vous annoncés.",
   foot3:"La Préfecture de police peut interdire ou modifier une manifestation au dernier moment.",
-  foot4:"Projet indépendant, sans lien avec la Ville de Paris ni validation de sa part. Le style visuel suit la charte graphique publique de la Ville (Montserrat, bleu anthracite)."}
+  foot4:"Projet indépendant, sans lien avec la Ville de Paris ni validation de sa part. Le style visuel suit la charte graphique publique de la Ville (Montserrat, bleu anthracite)."},
+ zh:{kicker:"罢工 · 抗议 · 交通干扰",
+  lede:"巴黎的罢工、游行、集会、封锁以及其他影响日常生活的事件（正式访问、大型体育和文化活动、道路封闭），时间范围为2026年9月底至10月底。于 <b>{date}</b> 根据新闻媒体、工会网站和社运日程更新。路线和时间可能变化，出发前请查看链接中的来源。",
+  when:"时间",type:"类型",upcoming:"进行中及即将举行",soon:"未来7天",all:"全部",past:"已结束",
+  march:"游行",rally:"集会",strike:"罢工",blockade:"封锁",disruption:"干扰",
+  confirmed:"已确认",announced:"已公布",unconfirmed:"未确认",
+  lgMarch:"游行（含路线）",lgRally:"集会",lgStrike:"罢工 / 纠察",lgBlockade:"封锁",lgDisruption:"干扰（封路、大型活动）",lgUnconf:"未确认的号召",lgPast:"已结束",
+  agenda:"日程",shown:n=>`显示 ${n} 项`,today:"今天",ongoing:"进行中",notOnMap:"不在地图上",citywide:"全市",
+  route:"路线：",impact:"影响：",sources:"来源：",empty:"没有符合筛选条件的事件。请选择“全部”或重新开启某个类型。",
+  zin:"放大",zout:"缩小",zreset:"重置视图",hint:"双指缩放 · 拖动移动",mapLabel:"巴黎地图，标示抗议地点",filters:"筛选",language:"语言",
+  foot1:"来源包括主流媒体和较小众的来源：Démosphère、Paris-luttes.info、Agenda militant、C'est la grève，以及工会和协会网站。许多集会只在社运日程上公布。",
+  foot2:"底图：巴黎各区（源自 OpenStreetMap）、主要道路（IGN，来自 MultilayerParis 数据集）。塞纳河和游行路线为手绘，仅为近似位置。标记表示公布的集合地点。",
+  foot3:"巴黎警察局可随时禁止任何示威或更改其路线。",
+  foot4:"独立项目，与巴黎市政府无关，也未获其认可。视觉风格参照巴黎市公开的视觉识别规范（Montserrat 字体、炭蓝色）。"},
+ pt:{kicker:"Greves · protestos · perturbações",
+  lede:"Greves, marchas, concentrações, bloqueios e outros eventos que perturbam o dia a dia em Paris (visitas oficiais, grandes eventos desportivos e culturais, cortes de ruas), do fim de setembro ao fim de outubro de 2026. Atualizado a <b>{date}</b> com base na imprensa, em sites sindicais e em agendas militantes. Percursos e horários mudam: consulte a fonte indicada antes de ir.",
+  when:"Quando",type:"Tipo",upcoming:"Agora e próximos",soon:"Próximos 7 dias",all:"Todos",past:"Passados",
+  march:"Marcha",rally:"Concentração",strike:"Greve",blockade:"Bloqueio",disruption:"Perturbação",
+  confirmed:"Confirmado",announced:"Anunciado",unconfirmed:"Não confirmado",
+  lgMarch:"Marcha (com percurso)",lgRally:"Concentração",lgStrike:"Greve / piquete",lgBlockade:"Bloqueio",lgDisruption:"Perturbação (cortes, grandes eventos)",lgUnconf:"Apelo não confirmado",lgPast:"Já aconteceu",
+  agenda:"Agenda",shown:n=>`${n} visíveis`,today:"Hoje",ongoing:"A decorrer",notOnMap:"Fora do mapa",citywide:"Toda a cidade",
+  route:"Percurso:",impact:"Impacto:",sources:"Fontes:",empty:"Nenhum evento corresponde a estes filtros. Experimente \"Todos\" ou volte a ativar um tipo.",
+  zin:"Aproximar",zout:"Afastar",zreset:"Repor vista",hint:"Junte os dedos para zoom · arraste para mover",mapLabel:"Mapa de Paris com os locais dos protestos",filters:"Filtros",language:"Idioma",
+  foot1:"As fontes incluem a imprensa generalista e fontes menos conhecidas: Démosphère, Paris-luttes.info, Agenda militant, C'est la grève e sites de sindicatos e associações. Muitas concentrações só são anunciadas em agendas militantes.",
+  foot2:"Mapa de base: bairros (arrondissements, a partir do OpenStreetMap), vias principais (IGN, através do conjunto de dados MultilayerParis). O Sena e os percursos das marchas são desenhados à mão e aproximados. Os marcadores indicam os pontos de encontro anunciados.",
+  foot3:"A Prefeitura de Polícia pode proibir ou desviar qualquer manifestação em cima da hora.",
+  foot4:"Projeto independente, sem ligação à Câmara de Paris nem aprovação desta. O estilo visual segue a carta gráfica pública da cidade (Montserrat, azul antracite)."},
+ de:{kicker:"Streiks · Proteste · Störungen",
+  lede:"Streiks, Demos, Kundgebungen, Blockaden und andere Ereignisse, die den Alltag in Paris stören (Staatsbesuche, große Sport- und Kulturveranstaltungen, Sperrungen), von Ende September bis Ende Oktober 2026. Stand <b>{date}</b>, aus Medien, Gewerkschaftsseiten und Aktivisten-Kalendern. Routen und Zeiten ändern sich – prüfen Sie vorher die verlinkte Quelle.",
+  when:"Wann",type:"Art",upcoming:"Laufend & demnächst",soon:"Nächste 7 Tage",all:"Alle",past:"Vergangen",
+  march:"Demo",rally:"Kundgebung",strike:"Streik",blockade:"Blockade",disruption:"Störung",
+  confirmed:"Bestätigt",announced:"Angekündigt",unconfirmed:"Unbestätigt",
+  lgMarch:"Demo (mit Route)",lgRally:"Kundgebung",lgStrike:"Streik / Streikposten",lgBlockade:"Blockade",lgDisruption:"Störung (Sperrungen, Großereignisse)",lgUnconf:"Unbestätigter Aufruf",lgPast:"Bereits vorbei",
+  agenda:"Termine",shown:n=>`${n} angezeigt`,today:"Heute",ongoing:"Laufend",notOnMap:"Nicht auf der Karte",citywide:"Stadtweit",
+  route:"Route:",impact:"Auswirkungen:",sources:"Quellen:",empty:"Keine Einträge für diese Filter. Wählen Sie „Alle“ oder aktivieren Sie eine Art wieder.",
+  zin:"Vergrößern",zout:"Verkleinern",zreset:"Ansicht zurücksetzen",hint:"Mit zwei Fingern zoomen · ziehen zum Verschieben",mapLabel:"Karte von Paris mit Protestorten",filters:"Filter",language:"Sprache",
+  foot1:"Quellen sind große Medien und weniger bekannte Quellen: Démosphère, Paris-luttes.info, Agenda militant, C'est la grève sowie Seiten von Gewerkschaften und Vereinen. Viele Kundgebungen werden nur in Aktivisten-Kalendern angekündigt.",
+  foot2:"Grundkarte: Arrondissements (aus OpenStreetMap), Hauptstraßen (IGN, über den Datensatz MultilayerParis). Seine und Demo-Routen sind von Hand gezeichnet und ungefähr. Markierungen zeigen angekündigte Treffpunkte.",
+  foot3:"Die Polizeipräfektur kann jede Demonstration kurzfristig verbieten oder umleiten.",
+  foot4:"Unabhängiges Projekt, nicht mit der Stadt Paris verbunden und nicht von ihr unterstützt. Der Stil folgt dem öffentlichen Gestaltungsleitfaden der Stadt (Montserrat, Anthrazitblau)."}
 };
-const LOCALE={en:"en-GB",es:"es-ES",fr:"fr-FR"};
+const LANGS=["fr","en","es","zh","pt","de"];
+const LOCALE={fr:"fr-FR",en:"en-GB",es:"es-ES",zh:"zh-CN",pt:"pt-BR",de:"de-DE"};
 
 /* ---------- events (text fields: {en, es, fr}) ---------- */
 const EVENTS=[
  {id:"climat",date:"2026-09-26",kind:"rally",status:"confirmed",pts:[PLACES.republique],
-  time:{en:"Afternoon",es:"Por la tarde",fr:"Après-midi"},
-  title:{en:"Climate & social justice rally",es:"Concentración por el clima y la justicia social",fr:"Rassemblement climat et justice sociale"},
-  where:{en:"Place de la République",es:"Place de la République",fr:"Place de la République"},
+  time:{en:"Afternoon",es:"Por la tarde",fr:"Après-midi",zh:"下午",pt:"À tarde",de:"Nachmittags"},
+  title:{en:"Climate & social justice rally",es:"Concentración por el clima y la justicia social",fr:"Rassemblement climat et justice sociale",zh:"气候与社会正义集会",pt:"Concentração pelo clima e pela justiça social",de:"Kundgebung für Klima und soziale Gerechtigkeit"},
+  where:{en:"Place de la République",es:"Place de la République",fr:"Place de la République",zh:"Place de la République（共和国广场）",pt:"Place de la République",de:"Place de la République"},
   desc:{en:"The national climate march was turned into a static rally because of the Pope's visit to Paris that weekend.",
         es:"La marcha nacional por el clima se convirtió en una concentración estática por la visita del Papa a París ese fin de semana.",
-        fr:"La marche climat nationale a été transformée en rassemblement statique en raison de la venue du pape à Paris ce week-end-là."},
+        fr:"La marche climat nationale a été transformée en rassemblement statique en raison de la venue du pape à Paris ce week-end-là.",zh:"由于教皇当周末访问巴黎，全国气候游行改为原地集会。",pt:"A marcha nacional pelo clima foi transformada numa concentração estática por causa da visita do Papa a Paris nesse fim de semana.",de:"Der landesweite Klimamarsch wurde wegen des Papstbesuchs an diesem Wochenende in eine stationäre Kundgebung umgewandelt."},
   src:[["Vert","https://vert.eco/rapports-de-force/a-cause-de-la-venue-du-pape-la-marche-climat-du-26-septembre-remplacee-par-un-rassemblement-statique-a-paris/"]]},
 
  {id:"pompiers",date:"2026-09-27",end:"2026-10-20",kind:"strike",status:"confirmed",pts:[PLACES.champdemars],
-  time:{en:"Camp since Sun. 27 Sept",es:"Campamento desde el dom. 27 sept.",fr:"Campement depuis le dim. 27 sept."},
-  title:{en:"Firefighters' strike camp",es:"Campamento de bomberos en huelga",fr:"Campement des pompiers en grève"},
-  where:{en:"Champ-de-Mars, foot of the Eiffel Tower (7e)",es:"Champ-de-Mars, al pie de la torre Eiffel (7.º)",fr:"Champ-de-Mars, au pied de la tour Eiffel (7e)"},
+  time:{en:"Camp since Sun. 27 Sept",es:"Campamento desde el dom. 27 sept.",fr:"Campement depuis le dim. 27 sept.",zh:"自9月27日（周日）起扎营",pt:"Acampamento desde dom. 27 set.",de:"Camp seit So. 27. Sept."},
+  title:{en:"Firefighters' strike camp",es:"Campamento de bomberos en huelga",fr:"Campement des pompiers en grève",zh:"消防员罢工营地",pt:"Acampamento dos bombeiros em greve",de:"Streikcamp der Feuerwehrleute"},
+  where:{en:"Champ-de-Mars, foot of the Eiffel Tower (7e)",es:"Champ-de-Mars, al pie de la torre Eiffel (7.º)",fr:"Champ-de-Mars, au pied de la tour Eiffel (7e)",zh:"Champ-de-Mars 战神广场，埃菲尔铁塔脚下（第7区）",pt:"Champ-de-Mars, aos pés da Torre Eiffel (7.º)",de:"Champ-de-Mars, am Fuß des Eiffelturms (7.)"},
   desc:{en:"Eight professional firefighter unions set up a \"colonne de renfort de la colère\" here, asking for more staff and resources. Their national strike notice runs 8 Sept – 20 Oct, the day of the vote on the first part of the 2027 budget, and they say they won't lift it without results. About 2,682 firefighters a day (9.3%) have been on strike.",
         es:"Ocho sindicatos de bomberos profesionales instalaron aquí una \"columna de refuerzo de la ira\" para pedir más personal y medios. Su preaviso de huelga nacional va del 8 de septiembre al 20 de octubre, día de la votación de la primera parte del presupuesto 2027, y dicen que no lo levantarán sin resultados. Unos 2.682 bomberos al día (9,3 %) han hecho huelga.",
-        fr:"Huit syndicats de sapeurs-pompiers professionnels y ont lancé une « colonne de renfort de la colère » pour réclamer des effectifs et des moyens. Leur préavis national court du 8 septembre au 20 octobre, jour du vote de la première partie du budget 2027, et ils refusent de le lever sans avancées. Environ 2 682 pompiers par jour (9,3 %) sont en grève."},
+        fr:"Huit syndicats de sapeurs-pompiers professionnels y ont lancé une « colonne de renfort de la colère » pour réclamer des effectifs et des moyens. Leur préavis national court du 8 septembre au 20 octobre, jour du vote de la première partie du budget 2027, et ils refusent de le lever sans avancées. Environ 2 682 pompiers par jour (9,3 %) sont en grève.",zh:"八个职业消防员工会在此设立“愤怒增援纵队”，要求增加人手和资源。全国罢工预告期为9月8日至10月20日（当天将表决2027年预算第一部分），工会表示没有结果不会撤回。每天约有2,682名消防员（9.3%）参加罢工。",pt:"Oito sindicatos de bombeiros profissionais montaram aqui uma \"coluna de reforço da raiva\" para exigir mais pessoal e meios. O pré-aviso de greve nacional vai de 8 set. a 20 out., dia da votação da primeira parte do orçamento de 2027, e dizem que não o levantam sem resultados. Cerca de 2.682 bombeiros por dia (9,3%) estiveram em greve.",de:"Acht Gewerkschaften der Berufsfeuerwehr haben hier eine „Verstärkungskolonne der Wut“ aufgebaut und fordern mehr Personal und Mittel. Ihre landesweite Streikankündigung gilt vom 8. Sept. bis 20. Okt., dem Tag der Abstimmung über den ersten Teil des Haushalts 2027; ohne Ergebnisse wollen sie sie nicht zurückziehen. Rund 2.682 Feuerwehrleute pro Tag (9,3 %) streiken."},
   src:[["France 24","https://www.france24.com/fr/france/20260927-pompiers-en-gr%C3%A8ve-la-mobilisation-prend-de-l-ampleur-au-pied-de-la-tour-eiffel"],["France 3 Paris IDF","https://france3-regions.franceinfo.fr/paris-ile-de-france/paris/sapeurs-pompiers-en-greve-ils-s-installent-au-pied-de-la-tour-eiffel-pour-defendre-la-securite-civile-3423998.html"],["C'est la grève","https://www.cestlagreve.fr/greve/pompiers-septembre-2026/"]]},
 
  {id:"ratp",date:"2026-09-28",end:"2026-10-31",openEnd:true,kind:"strike",status:"confirmed",citywide:true,
-  time:{en:"From Mon. 28 Sept, 19:00 · no end date",es:"Desde el lun. 28 sept., 19:00 · sin fecha de fin",fr:"Depuis le lun. 28 sept., 19h · sans date de fin"},
-  title:{en:"Open-ended RATP strike notice (CGT-RATP)",es:"Preaviso de huelga indefinida en la RATP (CGT-RATP)",fr:"Préavis de grève illimitée à la RATP (CGT-RATP)"},
-  where:{en:"Metro, RER A & B, buses",es:"Metro, RER A y B, autobuses",fr:"Métro, RER A et B, bus"},
+  time:{en:"From Mon. 28 Sept, 19:00 · no end date",es:"Desde el lun. 28 sept., 19:00 · sin fecha de fin",fr:"Depuis le lun. 28 sept., 19h · sans date de fin",zh:"自9月28日（周一）19:00起 · 无结束日期",pt:"Desde seg. 28 set., 19:00 · sem data de fim",de:"Ab Mo. 28. Sept., 19:00 · ohne Enddatum"},
+  title:{en:"Open-ended RATP strike notice (CGT-RATP)",es:"Preaviso de huelga indefinida en la RATP (CGT-RATP)",fr:"Préavis de grève illimitée à la RATP (CGT-RATP)",zh:"RATP 无限期罢工预告（CGT-RATP）",pt:"Pré-aviso de greve por tempo indeterminado na RATP (CGT-RATP)",de:"Unbefristete Streikankündigung bei der RATP (CGT-RATP)"},
+  where:{en:"Metro, RER A & B, buses",es:"Metro, RER A y B, autobuses",fr:"Métro, RER A et B, bus",zh:"地铁、RER A 线和 B 线、公交",pt:"Metro, RER A e B, autocarros",de:"Metro, RER A und B, Busse"},
   desc:{en:"CGT-RATP covers all RATP staff with an unlimited notice, demanding a fuel allowance and wages indexed to inflation. A notice lets staff walk out on any day; it doesn't mean the network stops every day. Traffic was near normal on the metro on 29 Sept. Check RATP traffic info each morning.",
         es:"La CGT-RATP cubre a toda la plantilla con un preaviso indefinido y exige una ayuda para el carburante y salarios indexados a la inflación. El preaviso permite parar cualquier día, pero no significa que la red se detenga a diario. El 29 de septiembre el metro funcionó casi con normalidad. Consulta el estado del tráfico de la RATP cada mañana.",
-        fr:"La CGT-RATP couvre tout le personnel par un préavis illimité et réclame une prime carburant et l'indexation des salaires sur l'inflation. Un préavis permet de débrayer n'importe quel jour, sans que le réseau s'arrête forcément. Le 29 septembre, le métro roulait presque normalement. Vérifiez l'info trafic RATP chaque matin."},
+        fr:"La CGT-RATP couvre tout le personnel par un préavis illimité et réclame une prime carburant et l'indexation des salaires sur l'inflation. Un préavis permet de débrayer n'importe quel jour, sans que le réseau s'arrête forcément. Le 29 septembre, le métro roulait presque normalement. Vérifiez l'info trafic RATP chaque matin.",zh:"CGT-RATP 以无限期预告覆盖全体 RATP 员工，要求燃油补贴和工资与通胀挂钩。预告意味着员工可在任何一天罢工，并不代表每天都停运。9月29日地铁运行基本正常。请每天早上查看 RATP 交通信息。",pt:"A CGT-RATP cobre todo o pessoal da RATP com um pré-aviso ilimitado e exige um subsídio de combustível e salários indexados à inflação. O pré-aviso permite parar em qualquer dia, mas não significa que a rede pare todos os dias. A 29 set. o metro circulou quase normalmente. Consulte a informação de tráfego da RATP todas as manhãs.",de:"Die CGT-RATP deckt das gesamte RATP-Personal mit einer unbefristeten Ankündigung ab und fordert eine Spritzulage sowie an die Inflation gekoppelte Löhne. Damit kann an jedem Tag gestreikt werden – das Netz steht aber nicht jeden Tag still. Am 29. Sept. fuhr die Metro fast normal. Prüfen Sie jeden Morgen die RATP-Verkehrsinfo."},
   src:[["C'est la grève","https://www.cestlagreve.fr/"],["Yahoo Actualités","https://fr.finance.yahoo.com/actualites/m%C3%A9tro-rer-bus-cgt-ratp-142406895.html"],["Mobility Center","https://mobilitycenter.fr/greve-29-septembre-2026-ratp-preavis-illimite-28-septembre-sncf-fonction-publique/"]]},
 
  {id:"fp29",date:"2026-09-29",kind:"march",status:"confirmed",pts:[PLACES.republique],
   route:[PLACES.republique,[2.3655,48.8648],[2.3667,48.8622],[2.3680,48.8580],PLACES.bastille,[2.3718,48.8500],[2.3740,48.8462],[2.3800,48.8440],[2.3880,48.8405],[2.3925,48.8420],[2.3950,48.8460],PLACES.nation],
-  time:{en:"14:00",es:"14:00",fr:"14h"},
-  title:{en:"Public-sector strike march",es:"Marcha de huelga del sector público",fr:"Manifestation de la fonction publique"},
-  where:{en:"République → Nation",es:"République → Nation",fr:"République → Nation"},
+  time:{en:"14:00",es:"14:00",fr:"14h",zh:"14:00",pt:"14:00",de:"14:00"},
+  title:{en:"Public-sector strike march",es:"Marcha de huelga del sector público",fr:"Manifestation de la fonction publique",zh:"公共部门罢工游行",pt:"Marcha de greve da função pública",de:"Streikdemo des öffentlichen Dienstes"},
+  where:{en:"République → Nation",es:"République → Nation",fr:"République → Nation",zh:"République → Nation",pt:"République → Nation",de:"République → Nation"},
   routeTxt:{en:"Pl. de la République, bd du Temple, bd des Filles-du-Calvaire, bd Beaumarchais, Pl. de la Bastille, rue de Lyon, av. Daumesnil, Pl. de la Nation.",
             es:"Pl. de la République, bd du Temple, bd des Filles-du-Calvaire, bd Beaumarchais, Pl. de la Bastille, rue de Lyon, av. Daumesnil, Pl. de la Nation.",
-            fr:"Pl. de la République, bd du Temple, bd des Filles-du-Calvaire, bd Beaumarchais, Pl. de la Bastille, rue de Lyon, av. Daumesnil, Pl. de la Nation."},
+            fr:"Pl. de la République, bd du Temple, bd des Filles-du-Calvaire, bd Beaumarchais, Pl. de la Bastille, rue de Lyon, av. Daumesnil, Pl. de la Nation.",zh:"Pl. de la République、bd du Temple、bd des Filles-du-Calvaire、bd Beaumarchais、Pl. de la Bastille、rue de Lyon、av. Daumesnil、Pl. de la Nation。",pt:"Pl. de la République, bd du Temple, bd des Filles-du-Calvaire, bd Beaumarchais, Pl. de la Bastille, rue de Lyon, av. Daumesnil, Pl. de la Nation.",de:"Pl. de la République, bd du Temple, bd des Filles-du-Calvaire, bd Beaumarchais, Pl. de la Bastille, rue de Lyon, av. Daumesnil, Pl. de la Nation."},
   desc:{en:"Inter-union day of strikes: teachers, hospital staff, firefighters and other public servants marched over pay, the frozen point d'indice, working conditions and public-service funding.",
         es:"Jornada de huelga intersindical: docentes, personal sanitario, bomberos y otros funcionarios marcharon por los salarios, la congelación del punto de índice, las condiciones de trabajo y la financiación de los servicios públicos.",
-        fr:"Journée de grève intersyndicale : enseignants, soignants, pompiers et autres agents publics ont défilé pour les salaires, contre le gel du point d'indice, pour les conditions de travail et les moyens des services publics."},
+        fr:"Journée de grève intersyndicale : enseignants, soignants, pompiers et autres agents publics ont défilé pour les salaires, contre le gel du point d'indice, pour les conditions de travail et les moyens des services publics.",zh:"跨工会罢工日：教师、医护人员、消防员和其他公务员为工资、冻结的薪点、工作条件和公共服务经费上街游行。",pt:"Dia de greve intersindical: professores, profissionais de saúde, bombeiros e outros funcionários públicos marcharam pelos salários, contra o congelamento do ponto de índice, pelas condições de trabalho e pelo financiamento dos serviços públicos.",de:"Gewerkschaftsübergreifender Streiktag: Lehrkräfte, Klinikpersonal, Feuerwehrleute und weitere Beschäftigte des öffentlichen Dienstes demonstrierten für Löhne, gegen den eingefrorenen Gehaltsindex, für Arbeitsbedingungen und Mittel für öffentliche Dienste."},
   src:[["Paris Rouge","https://parisrouge.fr/2026/09/28/journee-de-greve-et-de-mobilisation-du-mardi-29-septembre-la-manifestation-parisienne-defilera-entre-republique-et-nation/"],["Affiches Parisiennes","https://mesinfos.fr/75000-paris/greve-du-29-septembre-le-parcours-de-la-manifestation-a-paris-339736.html"],["CGT","https://www.cgt.fr/actualites/france/mobilisation/manifestations-du-29-septembre-2026-les-lieux-et-horaires-pres-de-chez-vous"]]},
 
  {id:"lycees",date:"2026-09-29",end:"2026-10-06",kind:"blockade",status:"confirmed",
   pts:[[2.3606,48.8664],[2.3486,48.8780],[2.3939,48.8478],[2.4046,48.8478],[2.4086,48.8476]],
   ptNames:["Lycée Turgot","Lycée Lamartine","Lycée Arago","Lycée Hélène-Boucher","Lycée Maurice-Ravel"],
-  time:{en:"Mornings, outside the gates",es:"Por las mañanas, ante las puertas",fr:"Le matin, devant les grilles"},
-  title:{en:"High-school blockades",es:"Bloqueos de institutos",fr:"Blocus des lycées"},
+  time:{en:"Mornings, outside the gates",es:"Por las mañanas, ante las puertas",fr:"Le matin, devant les grilles",zh:"每天早上，校门口",pt:"De manhã, à porta das escolas",de:"Morgens, vor den Schultoren"},
+  title:{en:"High-school blockades",es:"Bloqueos de institutos",fr:"Blocus des lycées",zh:"高中封锁行动",pt:"Bloqueios de liceus",de:"Blockaden von Gymnasien"},
   where:{en:"Lycées across Paris, incl. Turgot (3e), Lamartine (9e), Arago (12e), Hélène-Boucher & Maurice-Ravel (20e)",
          es:"Institutos de todo París, entre ellos Turgot (3.º), Lamartine (9.º), Arago (12.º), Hélène-Boucher y Maurice-Ravel (20.º)",
-         fr:"Lycées dans tout Paris, dont Turgot (3e), Lamartine (9e), Arago (12e), Hélène-Boucher et Maurice-Ravel (20e)"},
+         fr:"Lycées dans tout Paris, dont Turgot (3e), Lamartine (9e), Arago (12e), Hélène-Boucher et Maurice-Ravel (20e)",zh:"巴黎多所高中，包括 Turgot（第3区）、Lamartine（第9区）、Arago（第12区）、Hélène-Boucher 和 Maurice-Ravel（第20区）",pt:"Liceus de toda a Paris, incl. Turgot (3.º), Lamartine (9.º), Arago (12.º), Hélène-Boucher e Maurice-Ravel (20.º)",de:"Gymnasien in ganz Paris, u. a. Turgot (3.), Lamartine (9.), Arago (12.), Hélène-Boucher und Maurice-Ravel (20.)"},
   desc:{en:"Student-led blockades over teacher shortages, class sizes, heavy timetables and Parcoursup pressure. At least 16 Paris lycées were disrupted on Thu 1 Oct after a national call by the USL and Union étudiante; 356 lycées were blocked nationwide on 30 Sept. Markers show schools named in reports, not a complete list.",
         es:"Bloqueos organizados por estudiantes contra la falta de profesorado, las clases masificadas, los horarios cargados y la presión de Parcoursup. Al menos 16 institutos de París se vieron afectados el jueves 1 de octubre tras el llamamiento de la USL y la Union étudiante; el 30 de septiembre hubo 356 institutos bloqueados en Francia. Los marcadores señalan los centros citados en la prensa, no la lista completa.",
-        fr:"Blocages menés par les lycéens contre le manque de profs, les classes surchargées, les emplois du temps trop lourds et la pression de Parcoursup. Au moins 16 lycées parisiens perturbés le jeudi 1er octobre après l'appel de l'USL et de l'Union étudiante ; 356 lycées bloqués en France le 30 septembre. Les marqueurs indiquent les établissements cités dans la presse, pas une liste complète."},
+        fr:"Blocages menés par les lycéens contre le manque de profs, les classes surchargées, les emplois du temps trop lourds et la pression de Parcoursup. Au moins 16 lycées parisiens perturbés le jeudi 1er octobre après l'appel de l'USL et de l'Union étudiante ; 356 lycées bloqués en France le 30 septembre. Les marqueurs indiquent les établissements cités dans la presse, pas une liste complète.",zh:"学生发起的封锁，抗议教师短缺、班级人数过多、课时过重和 Parcoursup 升学压力。USL 和 Union étudiante 发出全国号召后，10月1日（周四）巴黎至少16所高中受到影响；9月30日全国有356所高中被封锁。地图标记仅为报道中提到的学校，并非完整名单。",pt:"Bloqueios organizados por alunos contra a falta de professores, turmas sobrelotadas, horários pesados e a pressão do Parcoursup. Pelo menos 16 liceus de Paris foram afetados na qui. 1 out. após o apelo nacional da USL e da Union étudiante; a 30 set. houve 356 liceus bloqueados no país. Os marcadores mostram as escolas citadas na imprensa, não uma lista completa.",de:"Von Schülern organisierte Blockaden gegen Lehrermangel, überfüllte Klassen, volle Stundenpläne und den Druck von Parcoursup. Nach einem landesweiten Aufruf von USL und Union étudiante waren am Do. 1. Okt. mindestens 16 Pariser Gymnasien betroffen; am 30. Sept. waren landesweit 356 blockiert. Die Markierungen zeigen in Berichten genannte Schulen, keine vollständige Liste."},
   src:[["franceinfo","https://www.franceinfo.fr/societe/education/le-blocage-des-lycees-se-poursuit-partout-en-france-des-universites-pourraient-rejoindre-le-mouvement_8216944.html"],["VousNousIls","https://www.vousnousils.fr/2026/09/30/blocage-des-lycees-les-syndicats-demandent-la-fin-des-violences-lusl-appelle-a-nouvelles-actions-le-1er-octobre-705175"],["Seven Radio","https://sevenradio.fr/2026/09/30/mobilisation-lyceenne-des-etablissements-bloques-a-travers-la-france/"]]},
 
  {id:"milei",date:"2026-10-02",kind:"rally",status:"announced",pts:[PLACES.republique],
-  time:{en:"18:00",es:"18:00",fr:"18h"},
-  title:{en:"Rally against Javier Milei's visit (\"Pètons la Facho Week\")",es:"Concentración contra la visita de Javier Milei (\"Pètons la Facho Week\")",fr:"Rassemblement contre la venue de Javier Milei (« Pètons la Facho Week »)"},
-  where:{en:"Place de la République",es:"Place de la République",fr:"Place de la République"},
+  time:{en:"18:00",es:"18:00",fr:"18h",zh:"18:00",pt:"18:00",de:"18:00"},
+  title:{en:"Rally against Javier Milei's visit (\"Pètons la Facho Week\")",es:"Concentración contra la visita de Javier Milei (\"Pètons la Facho Week\")",fr:"Rassemblement contre la venue de Javier Milei (« Pètons la Facho Week »)",zh:"反对哈维尔·米莱访问的集会（“Pètons la Facho Week”）",pt:"Concentração contra a visita de Javier Milei (\"Pètons la Facho Week\")",de:"Kundgebung gegen den Besuch von Javier Milei („Pètons la Facho Week“)"},
+  where:{en:"Place de la République",es:"Place de la République",fr:"Place de la République",zh:"Place de la République（共和国广场）",pt:"Place de la République",de:"Place de la République"},
   desc:{en:"Rally and street performance against the Argentine president's \"Argentina Week\" investor forum in Paris (30 Sept – 2 Oct). Attac also published a statement saying Milei \"is not welcome in Paris\", citing cuts to public services, restrictions on protest and his revisionism about the 1976–83 dictatorship.",
         es:"Concentración y performance contra la \"Argentina Week\", el foro de inversores del presidente argentino en París (30 sept. – 2 oct.). Attac también publicó un comunicado afirmando que Milei \"no es bienvenido en París\", por los recortes en servicios públicos, las restricciones al derecho de protesta y su revisionismo sobre la dictadura de 1976-83.",
-        fr:"Rassemblement et performance contre l'« Argentina Week », le forum d'investisseurs du président argentin à Paris (30 sept. – 2 oct.). Attac a aussi publié un communiqué « Javier Milei n'est pas le bienvenu à Paris », dénonçant la destruction des services publics, les atteintes au droit de manifester et son révisionnisme sur la dictature de 1976-83."},
+        fr:"Rassemblement et performance contre l'« Argentina Week », le forum d'investisseurs du président argentin à Paris (30 sept. – 2 oct.). Attac a aussi publié un communiqué « Javier Milei n'est pas le bienvenu à Paris », dénonçant la destruction des services publics, les atteintes au droit de manifester et son révisionnisme sur la dictature de 1976-83.",zh:"集会和街头表演，反对阿根廷总统在巴黎举办的“Argentina Week”投资论坛（9月30日至10月2日）。Attac 也发表声明称米莱“在巴黎不受欢迎”，指出其削减公共服务、限制抗议权利以及对1976–83年独裁时期的修正主义。",pt:"Concentração e performance contra a \"Argentina Week\", o fórum de investidores do presidente argentino em Paris (30 set. – 2 out.). A Attac também publicou um comunicado dizendo que Milei \"não é bem-vindo em Paris\", apontando cortes nos serviços públicos, restrições ao direito de manifestação e o seu revisionismo sobre a ditadura de 1976-83.",de:"Kundgebung und Straßenperformance gegen das Investorenforum „Argentina Week“ des argentinischen Präsidenten in Paris (30. Sept. – 2. Okt.). Auch Attac erklärte, Milei sei „in Paris nicht willkommen“, und verwies auf Kürzungen öffentlicher Dienste, Einschränkungen des Demonstrationsrechts und seinen Revisionismus zur Diktatur 1976–83."},
   src:[["Paris-luttes.info","https://paris-luttes.info/petons-la-facho-week-21206?lang=fr"],["Attac France","https://france.attac.org/actus-et-medias/salle-de-presse/article/javier-milei-n-est-pas-le-bienvenu-a-paris"],["CNews (visit)","https://www.cnews.fr/france/2026-10-01/visite-de-javier-milei-emmanuel-macron-recoit-le-president-argentin-ce-jeudi-pour"]]},
 
  {id:"l214",date:"2026-10-03",kind:"march",status:"confirmed",pts:[PLACES.republique],
-  time:{en:"Village 12:00 · speeches 14:00",es:"Feria 12:00 · discursos 14:00",fr:"Village 12h · prises de parole 14h"},
-  title:{en:"March to close the slaughterhouses",es:"Marcha por el cierre de los mataderos",fr:"Marche pour la fermeture des abattoirs"},
-  where:{en:"Place de la République",es:"Place de la République",fr:"Place de la République"},
+  time:{en:"Village 12:00 · speeches 14:00",es:"Feria 12:00 · discursos 14:00",fr:"Village 12h · prises de parole 14h",zh:"市集 12:00 · 讲话 14:00",pt:"Feira 12:00 · discursos 14:00",de:"Markt 12:00 · Reden 14:00"},
+  title:{en:"March to close the slaughterhouses",es:"Marcha por el cierre de los mataderos",fr:"Marche pour la fermeture des abattoirs",zh:"要求关闭屠宰场的游行",pt:"Marcha pelo encerramento dos matadouros",de:"Marsch für die Schließung der Schlachthöfe"},
+  where:{en:"Place de la République",es:"Place de la République",fr:"Place de la République",zh:"Place de la République（共和国广场）",pt:"Place de la République",de:"Place de la République"},
   desc:{en:"L214's annual march, moved from 11 July because of the heatwave. The square becomes a \"Vegan Place\" with stalls from noon; the march leaves after the 14:00 speeches. Route not published in the sources found.",
         es:"La marcha anual de L214, aplazada desde el 11 de julio por la ola de calor. La plaza se convierte en una \"Vegan Place\" con puestos desde el mediodía; la marcha sale tras los discursos de las 14:00. Recorrido no publicado en las fuentes consultadas.",
-        fr:"La marche annuelle de L214, reportée du 11 juillet à cause de la canicule. La place devient une « Vegan Place » avec stands dès midi ; le cortège part après les prises de parole de 14h. Parcours non publié dans les sources consultées."},
+        fr:"La marche annuelle de L214, reportée du 11 juillet à cause de la canicule. La place devient une « Vegan Place » avec stands dès midi ; le cortège part après les prises de parole de 14h. Parcours non publié dans les sources consultées.",zh:"L214 的年度游行，因热浪由7月11日推迟至今。中午起广场变为设有摊位的“Vegan Place”；14:00 讲话后游行出发。已查到的资料中未公布路线。",pt:"A marcha anual da L214, adiada de 11 de julho por causa da onda de calor. A praça torna-se uma \"Vegan Place\" com bancas a partir do meio-dia; a marcha parte após os discursos das 14:00. Percurso não publicado nas fontes consultadas.",de:"Der jährliche Marsch von L214, wegen der Hitzewelle vom 11. Juli verschoben. Ab Mittag wird der Platz zur „Vegan Place“ mit Ständen; der Zug startet nach den Reden um 14:00. Route in den gefundenen Quellen nicht veröffentlicht."},
   src:[["L214","https://www.l214.com/campagnes/marche-fermeture-abattoirs/"],["Paris-luttes.info","https://paris-luttes.info/marche-pour-la-fermeture-des-21160?lang=fr"],["Savoir Animal","https://savoir-animal.fr/3-octobre-marche-fermeture-abattoirs-mobilisation-nationale-pour-animaux/"]]},
 
  {id:"fiertes",date:"2026-10-03",kind:"march",status:"confirmed",pts:[PLACES.italie],
   route:[PLACES.italie,[2.3527,48.8355],[2.3500,48.8392],[2.3462,48.8409],[2.3430,48.8428],[2.3407,48.8455],[2.3425,48.8505],[2.3445,48.8533],[2.3458,48.8552],[2.3468,48.8572],[2.3483,48.8588],[2.3530,48.8571],[2.3580,48.8558],[2.3640,48.8541],PLACES.bastille],
-  time:{en:"Speeches 12:30 · departs 13:00",es:"Discursos 12:30 · salida 13:00",fr:"Prises de parole 12h30 · départ 13h"},
-  title:{en:"Marche des Fiertés (Paris Pride)",es:"Marche des Fiertés (Orgullo de París)",fr:"Marche des Fiertés LGBTQIA+"},
-  where:{en:"Place d'Italie → Bastille",es:"Place d'Italie → Bastille",fr:"Place d'Italie → Bastille"},
+  time:{en:"Speeches 12:30 · departs 13:00",es:"Discursos 12:30 · salida 13:00",fr:"Prises de parole 12h30 · départ 13h",zh:"讲话 12:30 · 13:00 出发",pt:"Discursos 12:30 · partida 13:00",de:"Reden 12:30 · Start 13:00"},
+  title:{en:"Marche des Fiertés (Paris Pride)",es:"Marche des Fiertés (Orgullo de París)",fr:"Marche des Fiertés LGBTQIA+",zh:"巴黎骄傲游行（Marche des Fiertés）",pt:"Marche des Fiertés (Marcha do Orgulho de Paris)",de:"Marche des Fiertés (Pariser Pride)"},
+  where:{en:"Place d'Italie → Bastille",es:"Place d'Italie → Bastille",fr:"Place d'Italie → Bastille",zh:"Place d'Italie → Bastille",pt:"Place d'Italie → Bastille",de:"Place d'Italie → Bastille"},
   routeTxt:{en:"Pl. d'Italie, av. des Gobelins, rue Claude-Bernard, rue Gay-Lussac, bd Saint-Michel, bd du Palais, bd de Sébastopol, rue de Rivoli, rue Saint-Antoine, Pl. de la Bastille (shortened route).",
             es:"Pl. d'Italie, av. des Gobelins, rue Claude-Bernard, rue Gay-Lussac, bd Saint-Michel, bd du Palais, bd de Sébastopol, rue de Rivoli, rue Saint-Antoine, Pl. de la Bastille (recorrido acortado).",
-            fr:"Pl. d'Italie, av. des Gobelins, rue Claude-Bernard, rue Gay-Lussac, bd Saint-Michel, bd du Palais, bd de Sébastopol, rue de Rivoli, rue Saint-Antoine, Pl. de la Bastille (parcours raccourci)."},
+            fr:"Pl. d'Italie, av. des Gobelins, rue Claude-Bernard, rue Gay-Lussac, bd Saint-Michel, bd du Palais, bd de Sébastopol, rue de Rivoli, rue Saint-Antoine, Pl. de la Bastille (parcours raccourci).",zh:"Pl. d'Italie、av. des Gobelins、rue Claude-Bernard、rue Gay-Lussac、bd Saint-Michel、bd du Palais、bd de Sébastopol、rue de Rivoli、rue Saint-Antoine、Pl. de la Bastille（缩短路线）。",pt:"Pl. d'Italie, av. des Gobelins, rue Claude-Bernard, rue Gay-Lussac, bd Saint-Michel, bd du Palais, bd de Sébastopol, rue de Rivoli, rue Saint-Antoine, Pl. de la Bastille (percurso encurtado).",de:"Pl. d'Italie, av. des Gobelins, rue Claude-Bernard, rue Gay-Lussac, bd Saint-Michel, bd du Palais, bd de Sébastopol, rue de Rivoli, rue Saint-Antoine, Pl. de la Bastille (verkürzte Route)."},
   desc:{en:"Inter-LGBT's Pride, cancelled on 27 June for the heatwave and rescheduled. The route was shortened because so many postponed events landed on the same weekend.",
         es:"El Orgullo de la Inter-LGBT, cancelado el 27 de junio por la ola de calor y reprogramado. El recorrido se acortó porque muchos actos aplazados coinciden el mismo fin de semana.",
-        fr:"La Marche de l'Inter-LGBT, annulée le 27 juin pour cause de canicule et reprogrammée. Le parcours a été raccourci car de nombreux événements reportés tombent le même week-end."},
+        fr:"La Marche de l'Inter-LGBT, annulée le 27 juin pour cause de canicule et reprogrammée. Le parcours a été raccourci car de nombreux événements reportés tombent le même week-end.",zh:"Inter-LGBT 主办的骄傲游行，原定6月27日因热浪取消后改期。由于许多延期活动集中在同一个周末，路线已缩短。",pt:"A Marcha do Orgulho da Inter-LGBT, cancelada a 27 de junho por causa da onda de calor e reagendada. O percurso foi encurtado porque muitos eventos adiados calharam no mesmo fim de semana.",de:"Die Pride der Inter-LGBT, am 27. Juni wegen der Hitzewelle abgesagt und neu angesetzt. Die Route wurde gekürzt, weil viele verschobene Veranstaltungen auf dasselbe Wochenende fallen."},
   src:[["Inter-LGBT","https://www.inter-lgbt.org/save-the-date-samedi-27-juin-2026-marche-des-fiertes-lgbtqia-de-paris-ile-de-france/"],["queer.paris","https://queer.paris/blog/parcours-marche-des-fiertes-paris-2026"],["Têtu","https://tetu.com/2026/08/20/pride-2026-marche-des-fiertes-paris-juin-reportee-octobre-lgbt/"]]},
 
  {id:"syngenta",date:"2026-10-03",kind:"rally",status:"confirmed",offmap:true,
-  time:{en:"From 12:00",es:"Desde las 12:00",fr:"À partir de 12h"},
-  title:{en:"Stop Pesticides – Arrêtons Syngenta",es:"Stop Pesticidas – Paremos a Syngenta",fr:"Stop Pesticides – Arrêtons Syngenta"},
-  where:{en:"Saint-Pierre-la-Garenne (Eure), ~90 km from Paris",es:"Saint-Pierre-la-Garenne (Eure), a ~90 km de París",fr:"Saint-Pierre-la-Garenne (Eure), à ~90 km de Paris"},
+  time:{en:"From 12:00",es:"Desde las 12:00",fr:"À partir de 12h",zh:"12:00 起",pt:"A partir das 12:00",de:"Ab 12:00"},
+  title:{en:"Stop Pesticides – Arrêtons Syngenta",es:"Stop Pesticidas – Paremos a Syngenta",fr:"Stop Pesticides – Arrêtons Syngenta",zh:"停止农药 – 阻止先正达（Syngenta）",pt:"Stop Pesticidas – Travemos a Syngenta",de:"Stopp Pestizide – Syngenta stoppen"},
+  where:{en:"Saint-Pierre-la-Garenne (Eure), ~90 km from Paris",es:"Saint-Pierre-la-Garenne (Eure), a ~90 km de París",fr:"Saint-Pierre-la-Garenne (Eure), à ~90 km de Paris",zh:"Saint-Pierre-la-Garenne（厄尔省），距巴黎约90公里",pt:"Saint-Pierre-la-Garenne (Eure), a ~90 km de Paris",de:"Saint-Pierre-la-Garenne (Eure), ca. 90 km von Paris"},
   desc:{en:"National and international convergence on the Syngenta site, called by the Confédération paysanne, Cancer Colère, CSVPO and Les Soulèvements de la Terre. Listed in the Île-de-France \"Bloquons tout\" calendar with group departures from Paris.",
         es:"Convergencia nacional e internacional ante la planta de Syngenta, convocada por la Confédération paysanne, Cancer Colère, el CSVPO y Les Soulèvements de la Terre. Figura en el calendario \"Bloquons tout\" de Île-de-France, con salidas en grupo desde París.",
-        fr:"Convergence nationale et internationale vers le site Syngenta, à l'appel de la Confédération paysanne, Cancer Colère, du CSVPO et des Soulèvements de la Terre. Inscrite au calendrier « Bloquons tout » Île-de-France, avec départs collectifs depuis Paris."},
+        fr:"Convergence nationale et internationale vers le site Syngenta, à l'appel de la Confédération paysanne, Cancer Colère, du CSVPO et des Soulèvements de la Terre. Inscrite au calendrier « Bloquons tout » Île-de-France, avec départs collectifs depuis Paris.",zh:"由 Confédération paysanne、Cancer Colère、CSVPO 和 Les Soulèvements de la Terre 发起的全国及国际汇聚行动，目标为先正达工厂。已列入法兰西岛“Bloquons tout”日程，有从巴黎出发的集体行程。",pt:"Convergência nacional e internacional junto à fábrica da Syngenta, convocada pela Confédération paysanne, Cancer Colère, CSVPO e Les Soulèvements de la Terre. Consta do calendário \"Bloquons tout\" da Île-de-France, com partidas em grupo de Paris.",de:"Nationale und internationale Sternfahrt zum Syngenta-Werk, aufgerufen von Confédération paysanne, Cancer Colère, CSVPO und Les Soulèvements de la Terre. Steht im Île-de-France-Kalender von „Bloquons tout“, mit gemeinsamer Abfahrt aus Paris."},
   src:[["Solidaires","https://www.solidaires.org/stop-pesticides-le-3-octobre-2026-arretons-syngenta/"],["Paris-luttes.info","https://paris-luttes.info/stop-pesticides-mobilisation-21215?lang=fr"],["L'Antivol","https://www.lantivol.com/2026/09/stop-pesticides-mobilisation-nationale.html"]]},
 
  {id:"jeunesse",date:"2026-10-06",kind:"march",status:"announced",offmap:true,
-  time:{en:"Time TBA",es:"Hora por confirmar",fr:"Horaire à venir"},
-  title:{en:"National youth demonstration",es:"Manifestación nacional de la juventud",fr:"Manifestation nationale de la jeunesse"},
-  where:{en:"Paris meeting point not yet announced",es:"Punto de encuentro en París aún sin anunciar",fr:"Lieu de rendez-vous parisien pas encore annoncé"},
+  time:{en:"Time TBA",es:"Hora por confirmar",fr:"Horaire à venir",zh:"时间待定",pt:"Hora a confirmar",de:"Uhrzeit folgt"},
+  title:{en:"National youth demonstration",es:"Manifestación nacional de la juventud",fr:"Manifestation nationale de la jeunesse",zh:"全国青年游行",pt:"Manifestação nacional da juventude",de:"Landesweite Jugenddemo"},
+  where:{en:"Paris meeting point not yet announced",es:"Punto de encuentro en París aún sin anunciar",fr:"Lieu de rendez-vous parisien pas encore annoncé",zh:"巴黎集合地点尚未公布",pt:"Ponto de encontro em Paris ainda não anunciado",de:"Treffpunkt in Paris noch nicht bekannt"},
   desc:{en:"The Union étudiante and the Union syndicale lycéenne call a \"grande manifestation nationale\" of school and university students, following the blockades.",
         es:"La Union étudiante y la Union syndicale lycéenne convocan una \"gran manifestación nacional\" de estudiantes de instituto y universidad, tras los bloqueos.",
-        fr:"L'Union étudiante et l'Union syndicale lycéenne appellent à une « grande manifestation nationale » des lycéens et étudiants, dans la foulée des blocages."},
+        fr:"L'Union étudiante et l'Union syndicale lycéenne appellent à une « grande manifestation nationale » des lycéens et étudiants, dans la foulée des blocages.",zh:"继封锁行动之后，Union étudiante 和 Union syndicale lycéenne 号召中学生和大学生举行“全国大游行”。",pt:"Na sequência dos bloqueios, a Union étudiante e a Union syndicale lycéenne convocam uma \"grande manifestação nacional\" de alunos do secundário e estudantes universitários.",de:"Nach den Blockaden rufen Union étudiante und Union syndicale lycéenne Schüler und Studierende zu einer „großen landesweiten Demonstration“ auf."},
   src:[["franceinfo","https://www.franceinfo.fr/societe/education/parcoursup/parcoursup/manifestations-des-lyceens/l-union-etudiante-et-l-union-syndicale-lyceenne-appellent-a-une-grande-manifestation-nationale-le-6-octobre_8216203.html"],["Union étudiante","https://union-etudiante.fr/communique-de-presse/appel-de-lusl-et-ue-a-bloquer-les-lycees-et-facs-ce-jeudi-1er-octobre-et-a-une-grande-manifestation-de-la-jeunesse-le-6-octobre"]]},
 
  {id:"total",date:"2026-10-08",kind:"strike",status:"confirmed",offmap:true,
-  time:{en:"All day",es:"Todo el día",fr:"Toute la journée"},
-  title:{en:"TotalEnergies strike (CGT)",es:"Huelga en TotalEnergies (CGT)",fr:"Grève chez TotalEnergies (CGT)"},
-  where:{en:"All group sites: refineries, fuel depots, some service stations",es:"Todos los centros del grupo: refinerías, depósitos y algunas gasolineras",fr:"Tous les sites du groupe : raffineries, dépôts, certaines stations-service"},
+  time:{en:"All day",es:"Todo el día",fr:"Toute la journée",zh:"全天",pt:"Todo o dia",de:"Ganztägig"},
+  title:{en:"TotalEnergies strike (CGT)",es:"Huelga en TotalEnergies (CGT)",fr:"Grève chez TotalEnergies (CGT)",zh:"道达尔能源罢工（CGT）",pt:"Greve na TotalEnergies (CGT)",de:"Streik bei TotalEnergies (CGT)"},
+  where:{en:"All group sites: refineries, fuel depots, some service stations",es:"Todos los centros del grupo: refinerías, depósitos y algunas gasolineras",fr:"Tous les sites du groupe : raffineries, dépôts, certaines stations-service",zh:"集团所有站点：炼油厂、燃料库及部分加油站",pt:"Todos os locais do grupo: refinarias, depósitos e alguns postos de abastecimento",de:"Alle Standorte des Konzerns: Raffinerien, Tanklager, einige Tankstellen"},
   desc:{en:"CGT strike call across TotalEnergies. Fuel supply at some Paris-region stations may be affected. No Paris picket location was published.",
         es:"Convocatoria de huelga de la CGT en todo TotalEnergies. Puede afectar al suministro de algunas gasolineras de la región de París. No se ha publicado ningún piquete en París.",
-        fr:"Appel à la grève de la CGT sur l'ensemble de TotalEnergies. L'approvisionnement de certaines stations franciliennes peut être touché. Aucun piquet parisien n'a été annoncé."},
+        fr:"Appel à la grève de la CGT sur l'ensemble de TotalEnergies. L'approvisionnement de certaines stations franciliennes peut être touché. Aucun piquet parisien n'a été annoncé.",zh:"CGT 在 TotalEnergies 全集团发起罢工。巴黎地区部分加油站的供油可能受影响。未公布巴黎的罢工纠察地点。",pt:"Convocatória de greve da CGT em toda a TotalEnergies. O abastecimento de alguns postos da região de Paris pode ser afetado. Não foi anunciado nenhum piquete em Paris.",de:"Streikaufruf der CGT im gesamten TotalEnergies-Konzern. Die Versorgung einiger Tankstellen im Großraum Paris kann betroffen sein. Kein Streikposten in Paris angekündigt."},
   src:[["C'est la grève","https://www.cestlagreve.fr/greve/total-energies-octobre-2026/"]]},
 
  {id:"omnibus",date:"2026-10-10",kind:"rally",status:"announced",pts:[PLACES.europe],
-  time:{en:"11:00",es:"11:00",fr:"11h"},
-  title:{en:"Pots-and-pans rally against the EU \"Omnibus\" pesticides law",es:"Cacerolada contra la ley europea \"Omnibus\" de pesticidas",fr:"Rassemblement-casseroles contre l'Omnibus pesticides"},
-  where:{en:"Place de l'Europe – Simone Veil (8e)",es:"Place de l'Europe – Simone Veil (8.º)",fr:"Place de l'Europe – Simone Veil (8e)"},
+  time:{en:"11:00",es:"11:00",fr:"11h",zh:"11:00",pt:"11:00",de:"11:00"},
+  title:{en:"Pots-and-pans rally against the EU \"Omnibus\" pesticides law",es:"Cacerolada contra la ley europea \"Omnibus\" de pesticidas",fr:"Rassemblement-casseroles contre l'Omnibus pesticides",zh:"反对欧盟“Omnibus”农药法的敲锅集会",pt:"Panelaço contra a lei europeia \"Omnibus\" dos pesticidas",de:"Topfschlag-Kundgebung gegen das EU-„Omnibus“-Pestizidgesetz"},
+  where:{en:"Place de l'Europe – Simone Veil (8e)",es:"Place de l'Europe – Simone Veil (8.º)",fr:"Place de l'Europe – Simone Veil (8e)",zh:"Place de l'Europe – Simone Veil（第8区）",pt:"Place de l'Europe – Simone Veil (8.º)",de:"Place de l'Europe – Simone Veil (8.)"},
   desc:{en:"Part of a national weekend of loud rallies (10–11 Oct) before the European Parliament vote on the Omnibus text, which would extend pesticide approvals and loosen controls. Called by France Nature Environnement, Générations Futures, Greenpeace, unions and about a hundred other groups. Bring a pot to bang at the time of the vote.",
         es:"Forma parte de un fin de semana nacional de concentraciones ruidosas (10-11 oct.) antes de la votación en el Parlamento Europeo del texto Omnibus, que alargaría las autorizaciones de pesticidas y relajaría los controles. Convocan France Nature Environnement, Générations Futures, Greenpeace, sindicatos y un centenar de organizaciones. Lleva una cacerola para la hora de la votación.",
-        fr:"Dans le cadre d'un week-end national de rassemblements bruyants (10-11 oct.) avant le vote du Parlement européen sur l'Omnibus, qui prolongerait les autorisations de pesticides et allégerait les contrôles. À l'appel de France Nature Environnement, Générations Futures, Greenpeace, de syndicats et d'une centaine d'organisations. Casseroles bienvenues au moment du vote."},
+        fr:"Dans le cadre d'un week-end national de rassemblements bruyants (10-11 oct.) avant le vote du Parlement européen sur l'Omnibus, qui prolongerait les autorisations de pesticides et allégerait les contrôles. À l'appel de France Nature Environnement, Générations Futures, Greenpeace, de syndicats et d'une centaine d'organisations. Casseroles bienvenues au moment du vote.",zh:"属于全国“喧闹集会”周末（10月10–11日）的一部分，赶在欧洲议会表决 Omnibus 文本之前；该文本将延长农药许可并放松管控。由 France Nature Environnement、Générations Futures、绿色和平、工会及约一百个组织发起。表决时请带锅来敲。",pt:"Faz parte de um fim de semana nacional de concentrações ruidosas (10-11 out.) antes da votação no Parlamento Europeu do texto Omnibus, que prolongaria as autorizações de pesticidas e aliviaria os controlos. Convocada pela France Nature Environnement, Générations Futures, Greenpeace, sindicatos e cerca de cem organizações. Traga um tacho para bater na hora da votação.",de:"Teil eines landesweiten Wochenendes lauter Kundgebungen (10.–11. Okt.) vor der Abstimmung im Europäischen Parlament über den Omnibus-Text, der Pestizidzulassungen verlängern und Kontrollen lockern würde. Aufgerufen von France Nature Environnement, Générations Futures, Greenpeace, Gewerkschaften und rund hundert Organisationen. Zur Abstimmung einen Topf zum Schlagen mitbringen."},
   src:[["Démosphère Paris","https://paris.demosphere.net/"],["Générations Futures","https://www.generations-futures.fr/actualites/mobilisations-pesticides/"],["FNE","https://fne.asso.fr/agenda/mobilisations-pour-dire-non-a-l-omnibus-pesticides"],["Solidaires","https://www.solidaires.org/contre-lomnibus-pesticides-les-10-et-11-octobre/"]]},
 
  {id:"gj10",date:"2026-10-10",kind:"march",status:"announced",pts:[PLACES.jussieu],
-  time:{en:"Gathering 14:00 · departs 15:00",es:"Concentración 14:00 · salida 15:00",fr:"Rendez-vous 14h · départ 15h"},
-  title:{en:"Gilets jaunes: audit of public finances",es:"Chalecos amarillos: auditoría de las finanzas públicas",fr:"Gilets jaunes : audit des finances publiques"},
-  where:{en:"Place Jussieu (5e)",es:"Place Jussieu (5.º)",fr:"Place Jussieu (5e)"},
+  time:{en:"Gathering 14:00 · departs 15:00",es:"Concentración 14:00 · salida 15:00",fr:"Rendez-vous 14h · départ 15h",zh:"14:00 集合 · 15:00 出发",pt:"Concentração 14:00 · partida 15:00",de:"Treffen 14:00 · Start 15:00"},
+  title:{en:"Gilets jaunes: audit of public finances",es:"Chalecos amarillos: auditoría de las finanzas públicas",fr:"Gilets jaunes : audit des finances publiques",zh:"黄背心：审计公共财政",pt:"Coletes amarelos: auditoria às finanças públicas",de:"Gelbwesten: Prüfung der Staatsfinanzen"},
+  where:{en:"Place Jussieu (5e)",es:"Place Jussieu (5.º)",fr:"Place Jussieu (5e)",zh:"Place Jussieu（第5区）",pt:"Place Jussieu (5.º)",de:"Place Jussieu (5.)"},
   desc:{en:"Gilets jaunes demonstration calling for an audit of public finances and a \"Grenelle\" on taxation. Speeches from 14:15. Route not published.",
         es:"Manifestación de los chalecos amarillos que pide una auditoría de las finanzas públicas y un \"Grenelle\" (mesa de negociación) sobre fiscalidad. Discursos desde las 14:15. Recorrido no publicado.",
-        fr:"Manifestation des Gilets jaunes pour un audit des finances publiques et un Grenelle de la fiscalité. Prises de parole à 14h15. Parcours non publié."},
+        fr:"Manifestation des Gilets jaunes pour un audit des finances publiques et un Grenelle de la fiscalité. Prises de parole à 14h15. Parcours non publié.",zh:"黄背心游行，要求审计公共财政并召开税收“Grenelle”协商会议。14:15 起讲话。路线未公布。",pt:"Manifestação dos coletes amarelos que exige uma auditoria às finanças públicas e um \"Grenelle\" (mesa de negociação) sobre a fiscalidade. Discursos a partir das 14:15. Percurso não publicado.",de:"Demonstration der Gelbwesten für eine Prüfung der Staatsfinanzen und einen „Grenelle“ (Verhandlungsrunde) zur Steuerpolitik. Reden ab 14:15. Route nicht veröffentlicht."},
   src:[["manifestationgiletsjaunesparis.fr","https://manifestationgiletsjaunesparis.fr/"]]},
 
  {id:"pal10",date:"2026-10-10",kind:"march",status:"announced",pts:[PLACES.republique],
-  time:{en:"14:00",es:"14:00",fr:"14h"},
-  title:{en:"Global day of action for Palestine",es:"Jornada mundial de movilización por Palestina",fr:"Manifestation mondiale pour la Palestine"},
-  where:{en:"Place de la République",es:"Place de la République",fr:"Place de la République"},
+  time:{en:"14:00",es:"14:00",fr:"14h",zh:"14:00",pt:"14:00",de:"14:00"},
+  title:{en:"Global day of action for Palestine",es:"Jornada mundial de movilización por Palestina",fr:"Manifestation mondiale pour la Palestine",zh:"声援巴勒斯坦全球行动日",pt:"Dia mundial de ação pela Palestina",de:"Weltweiter Aktionstag für Palästina"},
+  where:{en:"Place de la République",es:"Place de la République",fr:"Place de la République",zh:"Place de la République（共和国广场）",pt:"Place de la République",de:"Place de la République"},
   desc:{en:"Paris leg of a worldwide demonstration for Palestine, called by a collective of solidarity associations. Also listed on Démosphère.",
         es:"Etapa parisina de una manifestación mundial por Palestina, convocada por un colectivo de asociaciones de solidaridad. También figura en Démosphère.",
-        fr:"Volet parisien d'une manifestation mondiale pour la Palestine, à l'appel d'un collectif d'associations de solidarité. Également listée sur Démosphère."},
+        fr:"Volet parisien d'une manifestation mondiale pour la Palestine, à l'appel d'un collectif d'associations de solidarité. Également listée sur Démosphère.",zh:"全球声援巴勒斯坦游行的巴黎站，由多个团结组织联合发起。Démosphère 上也有列出。",pt:"Etapa parisiense de uma manifestação mundial pela Palestina, convocada por um coletivo de associações de solidariedade. Também consta da Démosphère.",de:"Pariser Teil einer weltweiten Demonstration für Palästina, aufgerufen von einem Bündnis von Solidaritätsvereinen. Auch auf Démosphère gelistet."},
   src:[["Patrice Leclerc (relay of the call)","https://www.patrice-leclerc.org/2026/09/26/10-octobre-manifestation-mondiale-pour-la-palestine/"],["Démosphère Paris","https://paris.demosphere.net/"]]},
 
  {id:"gj17",date:"2026-10-17",kind:"rally",status:"unconfirmed",pts:[PLACES.republique,PLACES.bastille],ptNames:["Place de la République","Place de la Bastille"],
-  time:{en:"Time TBA",es:"Hora por confirmar",fr:"Horaire à venir"},
-  title:{en:"\"Gilets jaunes\" call against fuel prices",es:"Convocatoria de \"chalecos amarillos\" contra el precio del carburante",fr:"Appel « Gilets jaunes » contre le prix des carburants"},
-  where:{en:"République, or Bastille depending on route",es:"République, o Bastille según el recorrido",fr:"République, ou Bastille selon le parcours"},
+  time:{en:"Time TBA",es:"Hora por confirmar",fr:"Horaire à venir",zh:"时间待定",pt:"Hora a confirmar",de:"Uhrzeit folgt"},
+  title:{en:"\"Gilets jaunes\" call against fuel prices",es:"Convocatoria de \"chalecos amarillos\" contra el precio del carburante",fr:"Appel « Gilets jaunes » contre le prix des carburants",zh:"“黄背心”反对油价号召",pt:"Apelo dos \"coletes amarelos\" contra o preço dos combustíveis",de:"„Gelbwesten“-Aufruf gegen Spritpreise"},
+  where:{en:"République, or Bastille depending on route",es:"République, o Bastille según el recorrido",fr:"République, ou Bastille selon le parcours",zh:"République，或视路线定在 Bastille",pt:"République, ou Bastille conforme o percurso",de:"République oder je nach Route Bastille"},
   desc:{en:"Viral TikTok call to freeze pump prices, tax oil superprofits and bring in citizens' referendums. No identified organizer or declared route; some figures of the original movement tell people not to come to Paris. Actions at fuel depots and refineries are also mentioned.",
         es:"Llamamiento viral en TikTok para congelar el precio de los surtidores, gravar los superbeneficios petroleros e instaurar referendos de iniciativa ciudadana. No hay organizador identificado ni recorrido declarado; algunas figuras del movimiento original desaconsejan ir a París. También se mencionan acciones en depósitos y refinerías.",
-        fr:"Appel viral sur TikTok pour bloquer les prix à la pompe, taxer les superprofits pétroliers et instaurer le RIC. Aucun organisateur identifié ni parcours déclaré ; des figures du mouvement d'origine déconseillent de venir à Paris. Des actions dans des dépôts et raffineries sont aussi évoquées."},
+        fr:"Appel viral sur TikTok pour bloquer les prix à la pompe, taxer les superprofits pétroliers et instaurer le RIC. Aucun organisateur identifié ni parcours déclaré ; des figures du mouvement d'origine déconseillent de venir à Paris. Des actions dans des dépôts et raffineries sont aussi évoquées.",zh:"TikTok 上的病毒式号召：冻结油价、对石油超额利润征税、引入公民倡议公投。没有明确的组织者或申报路线；原运动的部分人物劝大家不要来巴黎。也有人提到在油库和炼油厂的行动。",pt:"Apelo viral no TikTok para congelar o preço nas bombas, taxar os superlucros petrolíferos e criar referendos de iniciativa cidadã. Sem organizador identificado nem percurso declarado; algumas figuras do movimento original desaconselham ir a Paris. Também se fala de ações em depósitos e refinarias.",de:"Viraler TikTok-Aufruf, die Spritpreise einzufrieren, Übergewinne der Ölkonzerne zu besteuern und Bürgerentscheide einzuführen. Kein bekannter Organisator, keine angemeldete Route; einige Figuren der ursprünglichen Bewegung raten davon ab, nach Paris zu kommen. Auch Aktionen an Tanklagern und Raffinerien werden erwähnt."},
   src:[["Le Bonbon","https://www.lebonbon.fr/paris/news/rassemblement-gilets-jaunes-prevu-octobre-2026/"],["Public Sénat","https://www.publicsenat.fr/actualites/societe/appel-a-manifester-le-17-octobre-y-a-t-il-une-realite-derriere-cette-tendance-des-reseaux-sociaux"],["Contre Attaque","https://contre-attaque.net/2026/09/15/blocages-du-17-octobre-le-mouvement-a-deja-commence/"]]},
 
  {id:"oct1961",date:"2026-10-17",kind:"rally",status:"unconfirmed",pts:[PLACES.stmichel],
-  time:{en:"18:00 (usual time)",es:"18:00 (hora habitual)",fr:"18h (horaire habituel)"},
-  title:{en:"Remembrance of the 17 October 1961 massacre",es:"Homenaje a las víctimas de la masacre del 17 de octubre de 1961",fr:"Commémoration du massacre du 17 octobre 1961"},
-  where:{en:"Pont Saint-Michel",es:"Pont Saint-Michel",fr:"Pont Saint-Michel"},
+  time:{en:"18:00 (usual time)",es:"18:00 (hora habitual)",fr:"18h (horaire habituel)",zh:"18:00（惯常时间）",pt:"18:00 (hora habitual)",de:"18:00 (übliche Zeit)"},
+  title:{en:"Remembrance of the 17 October 1961 massacre",es:"Homenaje a las víctimas de la masacre del 17 de octubre de 1961",fr:"Commémoration du massacre du 17 octobre 1961",zh:"纪念1961年10月17日屠杀",pt:"Homenagem às vítimas do massacre de 17 de outubro de 1961",de:"Gedenken an das Massaker vom 17. Oktober 1961"},
+  where:{en:"Pont Saint-Michel",es:"Pont Saint-Michel",fr:"Pont Saint-Michel",zh:"Pont Saint-Michel（圣米歇尔桥）",pt:"Pont Saint-Michel",de:"Pont Saint-Michel"},
   desc:{en:"Every year at 18:00 on 17 October, associations, unions and left parties gather on the bridge where Algerian demonstrators were killed and thrown into the Seine by Maurice Papon's police in 1961. They ask for recognition as a state crime and open archives. The 2026 call wasn't found yet, so this is based on the yearly tradition.",
         es:"Cada 17 de octubre a las 18:00, asociaciones, sindicatos y partidos de izquierda se reúnen en el puente donde en 1961 la policía de Maurice Papon mató y arrojó al Sena a manifestantes argelinos. Piden que se reconozca como crimen de Estado y la apertura de los archivos. Aún no se ha encontrado la convocatoria de 2026; se basa en la tradición anual.",
-        fr:"Chaque 17 octobre à 18h, associations, syndicats et partis de gauche se rassemblent sur le pont où des manifestants algériens furent tués et jetés dans la Seine par la police de Maurice Papon en 1961. Ils demandent la reconnaissance d'un crime d'État et l'ouverture des archives. L'appel 2026 n'a pas encore été trouvé : l'entrée repose sur le rendez-vous annuel."},
+        fr:"Chaque 17 octobre à 18h, associations, syndicats et partis de gauche se rassemblent sur le pont où des manifestants algériens furent tués et jetés dans la Seine par la police de Maurice Papon en 1961. Ils demandent la reconnaissance d'un crime d'État et l'ouverture des archives. L'appel 2026 n'a pas encore été trouvé : l'entrée repose sur le rendez-vous annuel.",zh:"每年10月17日18:00，协会、工会和左翼政党会聚集在这座桥上——1961年，莫里斯·帕蓬领导的警察在此杀害阿尔及利亚示威者并将其抛入塞纳河。他们要求承认这是国家罪行并开放档案。尚未找到2026年的号召，此条目基于每年的惯例。",pt:"Todos os anos, a 17 de outubro às 18:00, associações, sindicatos e partidos de esquerda reúnem-se na ponte onde em 1961 a polícia de Maurice Papon matou manifestantes argelinos e os atirou ao Sena. Pedem o reconhecimento como crime de Estado e a abertura dos arquivos. A convocatória de 2026 ainda não foi encontrada; baseia-se na tradição anual.",de:"Jedes Jahr am 17. Oktober um 18:00 versammeln sich Vereine, Gewerkschaften und linke Parteien auf der Brücke, auf der 1961 die Polizei unter Maurice Papon algerische Demonstrierende tötete und in die Seine warf. Sie fordern die Anerkennung als Staatsverbrechen und offene Archive. Der Aufruf für 2026 wurde noch nicht gefunden; der Eintrag beruht auf der jährlichen Tradition."},
   src:[["Le Courrier de l'Atlas","https://www.lecourrierdelatlas.com/paris-un-rassemblement-en-memoire-des-victimes-algeriennes-du-17-octobre-1961-sur-le-pont-saint-michel/"],["Wikipedia","https://en.wikipedia.org/wiki/1961_Paris_massacre"]]},
 
  {id:"aerien",openEnd:true,date:"2026-10-17",end:"2026-10-21",kind:"strike",status:"confirmed",offmap:true,
-  time:{en:"Sat 00:01 → Wed 23:59",es:"Sáb. 00:01 → mié. 23:59",fr:"Sam. 0h01 → mer. 23h59"},
-  title:{en:"Pilots & cabin crew strike",es:"Huelga de pilotos y tripulantes de cabina",fr:"Grève des pilotes et personnels navigants"},
-  where:{en:"Paris-CDG and Orly airports (all French-law airlines)",es:"Aeropuertos de París-CDG y Orly (aerolíneas bajo derecho francés)",fr:"Aéroports de Roissy-CDG et Orly (compagnies de droit français)"},
+  time:{en:"Sat 00:01 → Wed 23:59",es:"Sáb. 00:01 → mié. 23:59",fr:"Sam. 0h01 → mer. 23h59",zh:"周六 00:01 → 周三 23:59",pt:"Sáb. 00:01 → qua. 23:59",de:"Sa. 00:01 → Mi. 23:59"},
+  title:{en:"Pilots & cabin crew strike",es:"Huelga de pilotos y tripulantes de cabina",fr:"Grève des pilotes et personnels navigants",zh:"飞行员和空乘罢工",pt:"Greve de pilotos e tripulantes de cabine",de:"Streik von Piloten und Kabinenpersonal"},
+  where:{en:"Paris-CDG and Orly airports (all French-law airlines)",es:"Aeropuertos de París-CDG y Orly (aerolíneas bajo derecho francés)",fr:"Aéroports de Roissy-CDG et Orly (compagnies de droit français)",zh:"巴黎戴高乐机场和奥利机场（所有适用法国法律的航空公司）",pt:"Aeroportos Paris-CDG e Orly (todas as companhias sob lei francesa)",de:"Flughäfen Paris-CDG und Orly (alle Airlines nach französischem Recht)"},
   desc:{en:"Five-day national strike by UNSA PNC, SNPNC-FO, SNGAF, SNPL and UNAC against the reform of combining work and pension (cumul emploi-retraite). It falls at the start of the Toussaint school holidays; airlines haven't announced cancellations yet.",
         es:"Huelga nacional de cinco días de UNSA PNC, SNPNC-FO, SNGAF, SNPL y UNAC contra la reforma que regula compatibilizar empleo y pensión (cumul emploi-retraite). Coincide con el inicio de las vacaciones escolares de Todos los Santos; las aerolíneas aún no han anunciado cancelaciones.",
-        fr:"Grève nationale de cinq jours de l'UNSA PNC, du SNPNC-FO, du SNGAF, du SNPL et de l'UNAC contre la réforme du cumul emploi-retraite. Elle tombe au début des vacances de la Toussaint ; les compagnies n'ont pas encore annoncé d'annulations."},
+        fr:"Grève nationale de cinq jours de l'UNSA PNC, du SNPNC-FO, du SNGAF, du SNPL et de l'UNAC contre la réforme du cumul emploi-retraite. Elle tombe au début des vacances de la Toussaint ; les compagnies n'ont pas encore annoncé d'annulations.",zh:"UNSA PNC、SNPNC-FO、SNGAF、SNPL 和 UNAC 发起为期五天的全国罢工，反对“边工作边领养老金”（cumul emploi-retraite）改革。罢工正值诸圣节学校假期开始；航空公司尚未宣布取消航班。",pt:"Greve nacional de cinco dias da UNSA PNC, SNPNC-FO, SNGAF, SNPL e UNAC contra a reforma da acumulação de emprego e reforma (cumul emploi-retraite). Coincide com o início das férias escolares do Dia de Todos os Santos; as companhias ainda não anunciaram cancelamentos.",de:"Fünftägiger landesweiter Streik von UNSA PNC, SNPNC-FO, SNGAF, SNPL und UNAC gegen die Reform zum Hinzuverdienst neben der Rente (cumul emploi-retraite). Er fällt auf den Beginn der Herbstferien (Toussaint); Airlines haben noch keine Annullierungen angekündigt."},
   src:[["Air Journal","https://www.air-journal.fr/2026-09-19-reforme-du-cumul-emploi-retraite-les-pilotes-et-personnels-de-cabine-appeles-a-la-greve-du-17-au-21-octobre-5277588.html"],["C'est la grève","https://www.cestlagreve.fr/greve/aviation-octobre-2026/"],["PNC Contact","https://pnc-contact.com/2026/09/29/greve-des-navigants-a-la-toussaint-2026"]]},
 
 {id:"pape",openEnd:true,date:"2026-09-25",end:"2026-09-26",kind:"disruption",status:"confirmed",pts:[PLACES.notredame,PLACES.champs],ptNames:["Notre-Dame","Champs-Élysées"],
-  time:{en:"Fri 25 – Sat 26 Sept",es:"Vie. 25 – sáb. 26 sept.",fr:"Ven. 25 – sam. 26 sept."},
-  title:{en:"Pope Leo XIV's visit to Paris",es:"Visita del papa León XIV a París",fr:"Visite du pape Léon XIV à Paris"},
-  where:{en:"Notre-Dame, Élysée, Stade de France, Champs-Élysées",es:"Notre-Dame, Elíseo, Stade de France, Campos Elíseos",fr:"Notre-Dame, Élysée, Stade de France, Champs-Élysées"},
+  time:{en:"Fri 25 – Sat 26 Sept",es:"Vie. 25 – sáb. 26 sept.",fr:"Ven. 25 – sam. 26 sept.",zh:"9月25日（周五）– 26日（周六）",pt:"Sex. 25 – sáb. 26 set.",de:"Fr. 25. – Sa. 26. Sept."},
+  title:{en:"Pope Leo XIV's visit to Paris",es:"Visita del papa León XIV a París",fr:"Visite du pape Léon XIV à Paris",zh:"教皇良十四世访问巴黎",pt:"Visita do Papa Leão XIV a Paris",de:"Besuch von Papst Leo XIV. in Paris"},
+  where:{en:"Notre-Dame, Élysée, Stade de France, Champs-Élysées",es:"Notre-Dame, Elíseo, Stade de France, Campos Elíseos",fr:"Notre-Dame, Élysée, Stade de France, Champs-Élysées",zh:"巴黎圣母院、爱丽舍宫、法兰西体育场、香榭丽舍大街",pt:"Notre-Dame, Eliseu, Stade de France, Campos Elísios",de:"Notre-Dame, Élysée, Stade de France, Champs-Élysées"},
   desc:{en:"First papal trip to France since 1997: popemobile through the 6e and vespers at Notre-Dame on Friday, a vigil at the Stade de France, and an open-air mass on the Champs-Élysées on Saturday at 15:00.",
         es:"Primer viaje papal a Francia desde 1997: papamóvil por el 6.º distrito y vísperas en Notre-Dame el viernes, vigilia en el Stade de France y misa al aire libre en los Campos Elíseos el sábado a las 15:00.",
-        fr:"Premier voyage d'un pape en France depuis 1997 : papamobile dans le 6e et vêpres à Notre-Dame vendredi, veillée au Stade de France, messe en plein air sur les Champs-Élysées samedi à 15h."},
+        fr:"Premier voyage d'un pape en France depuis 1997 : papamobile dans le 6e et vêpres à Notre-Dame vendredi, veillée au Stade de France, messe en plein air sur les Champs-Élysées samedi à 15h.",zh:"自1997年以来教皇首次访问法国：周五乘教皇座驾穿过第6区并在巴黎圣母院主持晚祷，在法兰西体育场举行守夜，周六15:00在香榭丽舍大街举行露天弥撒。",pt:"Primeira viagem papal a França desde 1997: papamóvel pelo 6.º e vésperas em Notre-Dame na sexta, vigília no Stade de France e missa ao ar livre nos Campos Elísios no sábado às 15:00.",de:"Erste Papstreise nach Frankreich seit 1997: Papamobil durch das 6. Arrondissement und Vesper in Notre-Dame am Freitag, Vigil im Stade de France und Freiluftmesse auf den Champs-Élysées am Samstag um 15:00."},
   impact:{en:"About 10 metro stations closed, 14,000–16,500 police and gendarmes deployed, screened security perimeters, dozens of streets closed and parking banned in the 8e from 15 Sept.",
           es:"Unas 10 estaciones de metro cerradas, entre 14.000 y 16.500 policías y gendarmes, perímetros con registros, decenas de calles cortadas y prohibición de aparcar en el 8.º desde el 15 de septiembre.",
-          fr:"Une dizaine de stations de métro fermées, 14 000 à 16 500 policiers et gendarmes, périmètres avec fouilles, des dizaines de rues fermées et stationnement interdit dans le 8e dès le 15 septembre."},
+          fr:"Une dizaine de stations de métro fermées, 14 000 à 16 500 policiers et gendarmes, périmètres avec fouilles, des dizaines de rues fermées et stationnement interdit dans le 8e dès le 15 septembre.",zh:"约10个地铁站关闭，部署14,000–16,500名警察和宪兵，设安检区域，数十条街道封闭，9月15日起第8区禁止停车。",pt:"Cerca de 10 estações de metro fechadas, 14.000 a 16.500 polícias e gendarmes, perímetros com revista, dezenas de ruas cortadas e estacionamento proibido no 8.º desde 15 set.",de:"Rund 10 Metrostationen geschlossen, 14.000–16.500 Polizisten und Gendarmen im Einsatz, Sicherheitszonen mit Kontrollen, Dutzende Straßen gesperrt und Parkverbot im 8. ab 15. Sept."},
   src:[["Diocèse de Paris","https://dioceseparis.fr/le-pape-leon-xiv-en-france-du-25.html"],["franceinfo","https://www.franceinfo.fr/monde/vatican/pape-leon-xiv/stations-fermees-fouilles-policiers-et-gendarmes-les-chiffres-du-dispositif-de-securite-parisien-qui-encadrera-la-visite-du-pape_8207681.html"],["Mairie du 8e","https://mairie08.paris.fr/pages/visite-du-pape-a-paris-toutes-les-informations-pratiques-dans-le-8e-arrondissement-36207"]]},
 
  {id:"concorde",openEnd:true,date:"2026-09-16",end:"2026-10-11",kind:"disruption",status:"announced",pts:[PLACES.concorde],
-  time:{en:"Until Sun. 11 Oct",es:"Hasta el dom. 11 oct.",fr:"Jusqu'au dim. 11 oct."},
-  title:{en:"Concorde closed to traffic (papal stage dismantling)",es:"Concorde cerrada al tráfico (desmontaje del escenario papal)",fr:"Concorde fermée à la circulation (démontage de la messe papale)"},
-  where:{en:"Place de la Concorde, lower Champs-Élysées, rue Royale",es:"Place de la Concorde, parte baja de los Campos Elíseos, rue Royale",fr:"Place de la Concorde, bas des Champs-Élysées, rue Royale"},
+  time:{en:"Until Sun. 11 Oct",es:"Hasta el dom. 11 oct.",fr:"Jusqu'au dim. 11 oct.",zh:"至10月11日（周日）",pt:"Até dom. 11 out.",de:"Bis So. 11. Okt."},
+  title:{en:"Concorde closed to traffic (papal stage dismantling)",es:"Concorde cerrada al tráfico (desmontaje del escenario papal)",fr:"Concorde fermée à la circulation (démontage de la messe papale)",zh:"协和广场禁止通行（拆除教皇弥撒舞台）",pt:"Concorde fechada ao trânsito (desmontagem do palco papal)",de:"Concorde für den Verkehr gesperrt (Abbau der Papstmesse)"},
+  where:{en:"Place de la Concorde, lower Champs-Élysées, rue Royale",es:"Place de la Concorde, parte baja de los Campos Elíseos, rue Royale",fr:"Place de la Concorde, bas des Champs-Élysées, rue Royale",zh:"Place de la Concorde、香榭丽舍大街下段、rue Royale",pt:"Place de la Concorde, parte baixa dos Campos Elísios, rue Royale",de:"Place de la Concorde, unterer Teil der Champs-Élysées, rue Royale"},
   desc:{en:"The structures built for the papal mass are being taken down; dismantling is scheduled to run until midnight on 10 October.",
         es:"Se están desmontando las estructuras instaladas para la misa papal; el desmontaje está previsto hasta la medianoche del 10 de octubre.",
-        fr:"Les installations de la messe papale sont en cours de démontage, prévu jusqu'au 10 octobre à minuit."},
+        fr:"Les installations de la messe papale sont en cours de démontage, prévu jusqu'au 10 octobre à minuit.",zh:"教皇弥撒的搭建设施正在拆除，预计持续到10月10日午夜。",pt:"As estruturas montadas para a missa papal estão a ser desmontadas; a desmontagem deve durar até à meia-noite de 10 de outubro.",de:"Die Aufbauten der Papstmesse werden abgebaut; der Abbau soll bis Mitternacht am 10. Oktober dauern."},
   impact:{en:"No car traffic on the square, the bottom of the Champs-Élysées or rue Royale. Expect detours via the quays and boulevards.",
           es:"Sin tráfico en la plaza, la parte baja de los Campos Elíseos ni la rue Royale. Prevé desvíos por los muelles y bulevares.",
-          fr:"Pas de circulation automobile sur la place, le bas des Champs-Élysées ni la rue Royale. Prévoir des détours par les quais et les boulevards."},
+          fr:"Pas de circulation automobile sur la place, le bas des Champs-Élysées ni la rue Royale. Prévoir des détours par les quais et les boulevards.",zh:"广场、香榭丽舍大街下段和 rue Royale 禁止机动车通行。请经河岸道路和林荫大道绕行。",pt:"Sem trânsito automóvel na praça, na parte baixa dos Campos Elísios e na rue Royale. Conte com desvios pelos cais e bulevares.",de:"Kein Autoverkehr auf dem Platz, dem unteren Teil der Champs-Élysées und der rue Royale. Umleitungen über die Uferstraßen und Boulevards."},
   src:[["Aleteia","https://fr.aleteia.org/2026/09/14/stations-de-metro-fermees-routes-barrees-comment-circuler-a-paris-lors-de-la-venue-du-pape/"],["WebTech360 (Oct. closures)","https://fr.webtech360.com/detail/transports-et-circulation-a-paris-en-hp1-october-2026-local-monthly-calendars-99910050.html"]]},
 
  {id:"fashion",openEnd:true,date:"2026-09-28",end:"2026-10-06",kind:"disruption",status:"confirmed",citywide:true,
-  time:{en:"Until Tue. 6 Oct",es:"Hasta el mar. 6 oct.",fr:"Jusqu'au mar. 6 oct."},
-  title:{en:"Paris Fashion Week (Spring–Summer 2027)",es:"Paris Fashion Week (primavera-verano 2027)",fr:"Fashion Week de Paris (printemps-été 2027)"},
-  where:{en:"Show venues across central Paris",es:"Sedes de desfiles en el centro de París",fr:"Lieux de défilés dans le centre de Paris"},
+  time:{en:"Until Tue. 6 Oct",es:"Hasta el mar. 6 oct.",fr:"Jusqu'au mar. 6 oct.",zh:"至10月6日（周二）",pt:"Até ter. 6 out.",de:"Bis Di. 6. Okt."},
+  title:{en:"Paris Fashion Week (Spring–Summer 2027)",es:"Paris Fashion Week (primavera-verano 2027)",fr:"Fashion Week de Paris (printemps-été 2027)",zh:"巴黎时装周（2027春夏）",pt:"Semana da Moda de Paris (primavera-verão 2027)",de:"Pariser Modewoche (Frühjahr/Sommer 2027)"},
+  where:{en:"Show venues across central Paris",es:"Sedes de desfiles en el centro de París",fr:"Lieux de défilés dans le centre de Paris",zh:"巴黎市中心各秀场",pt:"Locais de desfiles no centro de Paris",de:"Schauorte in der Pariser Innenstadt"},
   desc:{en:"About 100 houses, 68 shows and 33 presentations over nine days. Chanel shows Mon 5 Oct at 20:00; Louis Vuitton closes the week Tue 6 Oct at 18:30.",
         es:"Unas 100 casas, 68 desfiles y 33 presentaciones en nueve días. Chanel desfila el lun. 5 oct. a las 20:00; Louis Vuitton cierra la semana el mar. 6 oct. a las 18:30.",
-        fr:"Une centaine de maisons, 68 défilés et 33 présentations en neuf jours. Chanel défile le lun. 5 oct. à 20h ; Louis Vuitton clôt la semaine le mar. 6 oct. à 18h30."},
+        fr:"Une centaine de maisons, 68 défilés et 33 présentations en neuf jours. Chanel défile le lun. 5 oct. à 20h ; Louis Vuitton clôt la semaine le mar. 6 oct. à 18h30.",zh:"九天内约100个品牌、68场秀和33场展示。香奈儿10月5日（周一）20:00发布；路易威登10月6日（周二）18:30压轴。",pt:"Cerca de 100 casas, 68 desfiles e 33 apresentações em nove dias. A Chanel desfila seg. 5 out. às 20:00; a Louis Vuitton encerra a semana ter. 6 out. às 18:30.",de:"Rund 100 Häuser, 68 Schauen und 33 Präsentationen in neun Tagen. Chanel zeigt am Mo. 5. Okt. um 20:00; Louis Vuitton schließt die Woche am Di. 6. Okt. um 18:30."},
   impact:{en:"Crowds, chauffeured cars and short street closures around show venues, especially in the evening.",
           es:"Aglomeraciones, coches con chófer y cortes breves de calles alrededor de los desfiles, sobre todo por la tarde.",
-          fr:"Foule, voitures avec chauffeur et fermetures ponctuelles de rues autour des défilés, surtout en soirée."},
+          fr:"Foule, voitures avec chauffeur et fermetures ponctuelles de rues autour des défilés, surtout en soirée.",zh:"秀场周边人群聚集、专车往来并有短时封路，晚间尤甚。",pt:"Multidões, carros com motorista e cortes breves de ruas junto aos desfiles, sobretudo à noite.",de:"Menschenmengen, Chauffeur-Autos und kurze Straßensperrungen rund um die Schauorte, vor allem abends."},
   src:[["L'Officiel","https://www.lofficiel.com/fashion-week/paris-fashion-week-printemps-ete-2027-saison-placee-sous-le-signe-du-renouveau"],["Still in Paris","https://fr.stillinparis.com/uncategorized/paris-fashion-week-septembre-2026-programme-defiles/"]]},
 
  {id:"mileivisit",openEnd:true,date:"2026-09-30",end:"2026-10-02",kind:"disruption",status:"announced",pts:[PLACES.elysee,PLACES.ocde],ptNames:["Élysée","OCDE / OECD"],
-  time:{en:"Wed 30 Sept – Fri 2 Oct",es:"Mié. 30 sept. – vie. 2 oct.",fr:"Mer. 30 sept. – ven. 2 oct."},
-  title:{en:"Official visit of Argentine president Javier Milei",es:"Visita oficial del presidente argentino Javier Milei",fr:"Visite officielle du président argentin Javier Milei"},
-  where:{en:"Élysée (8e) and OECD headquarters (16e)",es:"Elíseo (8.º) y sede de la OCDE (16.º)",fr:"Élysée (8e) et siège de l'OCDE (16e)"},
+  time:{en:"Wed 30 Sept – Fri 2 Oct",es:"Mié. 30 sept. – vie. 2 oct.",fr:"Mer. 30 sept. – ven. 2 oct.",zh:"9月30日（周三）– 10月2日（周五）",pt:"Qua. 30 set. – sex. 2 out.",de:"Mi. 30. Sept. – Fr. 2. Okt."},
+  title:{en:"Official visit of Argentine president Javier Milei",es:"Visita oficial del presidente argentino Javier Milei",fr:"Visite officielle du président argentin Javier Milei",zh:"阿根廷总统哈维尔·米莱正式访问",pt:"Visita oficial do presidente argentino Javier Milei",de:"Offizieller Besuch des argentinischen Präsidenten Javier Milei"},
+  where:{en:"Élysée (8e) and OECD headquarters (16e)",es:"Elíseo (8.º) y sede de la OCDE (16.º)",fr:"Élysée (8e) et siège de l'OCDE (16e)",zh:"爱丽舍宫（第8区）和经合组织总部（第16区）",pt:"Eliseu (8.º) e sede da OCDE (16.º)",de:"Élysée (8.) und OECD-Zentrale (16.)"},
   desc:{en:"\"Argentina Week\" investor forum with six ministers and a dozen governors. Speech at the OECD and meeting with Emmanuel Macron at the Élysée on Thu 1 Oct. A protest is called at République on Fri 2 Oct.",
         es:"Foro de inversores \"Argentina Week\" con seis ministros y una decena de gobernadores. Discurso en la OCDE y reunión con Emmanuel Macron en el Elíseo el jue. 1 oct. Hay una protesta convocada en République el vie. 2 oct.",
-        fr:"Forum d'investisseurs « Argentina Week » avec six ministres et une dizaine de gouverneurs. Discours à l'OCDE et entretien avec Emmanuel Macron à l'Élysée le jeu. 1er oct. Un rassemblement est appelé à République le ven. 2 oct."},
+        fr:"Forum d'investisseurs « Argentina Week » avec six ministres et une dizaine de gouverneurs. Discours à l'OCDE et entretien avec Emmanuel Macron à l'Élysée le jeu. 1er oct. Un rassemblement est appelé à République le ven. 2 oct.",zh:"“Argentina Week”投资论坛，有六位部长和十余位省长随行。10月1日（周四）在经合组织演讲，并在爱丽舍宫与马克龙会面。10月2日（周五）在 République 有抗议集会。",pt:"Fórum de investidores \"Argentina Week\" com seis ministros e uma dezena de governadores. Discurso na OCDE e encontro com Emmanuel Macron no Eliseu na qui. 1 out. Há um protesto convocado na République na sex. 2 out.",de:"Investorenforum „Argentina Week“ mit sechs Ministern und einem Dutzend Gouverneuren. Rede bei der OECD und Treffen mit Emmanuel Macron im Élysée am Do. 1. Okt. Für Fr. 2. Okt. ist ein Protest an der République angekündigt."},
   impact:{en:"Expect motorcades and short security perimeters around the Élysée and the OECD (rue André-Pascal). No official closures were published.",
           es:"Habrá comitivas y perímetros de seguridad breves alrededor del Elíseo y la OCDE (rue André-Pascal). No se publicaron cortes oficiales.",
-          fr:"Cortèges officiels et périmètres de sécurité ponctuels autour de l'Élysée et de l'OCDE (rue André-Pascal). Aucune fermeture officielle publiée."},
+          fr:"Cortèges officiels et périmètres de sécurité ponctuels autour de l'Élysée et de l'OCDE (rue André-Pascal). Aucune fermeture officielle publiée.",zh:"爱丽舍宫和经合组织（rue André-Pascal）周边会有车队和短时安保区域。未公布正式封路。",pt:"Conte com comitivas e perímetros de segurança breves junto ao Eliseu e à OCDE (rue André-Pascal). Não foram publicados cortes oficiais.",de:"Mit Fahrzeugkolonnen und kurzen Sicherheitszonen rund um Élysée und OECD (rue André-Pascal) ist zu rechnen. Offizielle Sperrungen wurden nicht veröffentlicht."},
   src:[["CNews","https://www.cnews.fr/france/2026-10-01/visite-de-javier-milei-emmanuel-macron-recoit-le-president-argentin-ce-jeudi-pour"],["Europe 1","https://www.europe1.fr/societe/argentina-week-ocde-que-vient-faire-le-president-argentin-javier-milei-en-france-1113827"],["France 24","https://www.france24.com/fr/am%C3%A9riques/20260930-visite-france-javier-milei-paris-argentina-week-crise-economie-argentine-investissements-pauvrete"]]},
 
  {id:"franceitalie",date:"2026-10-02",kind:"disruption",status:"confirmed",offmap:true,
-  time:{en:"20:45",es:"20:45",fr:"20h45"},
-  title:{en:"Football: France – Italy (Nations League)",es:"Fútbol: Francia – Italia (Liga de Naciones)",fr:"Football : France – Italie (Ligue des nations)"},
-  where:{en:"Stade de France, Saint-Denis",es:"Stade de France, Saint-Denis",fr:"Stade de France, Saint-Denis"},
+  time:{en:"20:45",es:"20:45",fr:"20h45",zh:"20:45",pt:"20:45",de:"20:45"},
+  title:{en:"Football: France – Italy (Nations League)",es:"Fútbol: Francia – Italia (Liga de Naciones)",fr:"Football : France – Italie (Ligue des nations)",zh:"足球：法国 – 意大利（欧洲国家联赛）",pt:"Futebol: França – Itália (Liga das Nações)",de:"Fußball: Frankreich – Italien (Nations League)"},
+  where:{en:"Stade de France, Saint-Denis",es:"Stade de France, Saint-Denis",fr:"Stade de France, Saint-Denis",zh:"法兰西体育场，圣但尼",pt:"Stade de France, Saint-Denis",de:"Stade de France, Saint-Denis"},
   desc:{en:"Sold-out-level crowd expected for France's home Nations League game.",
         es:"Se espera una gran afluencia para el partido de Francia en casa en la Liga de Naciones.",
-        fr:"Forte affluence attendue pour le match à domicile des Bleus en Ligue des nations."},
+        fr:"Forte affluence attendue pour le match à domicile des Bleus en Ligue des nations.",zh:"法国队国家联赛主场比赛，预计接近满场。",pt:"Espera-se casa cheia para o jogo da França em casa na Liga das Nações.",de:"Für das Heimspiel Frankreichs in der Nations League wird ein nahezu ausverkauftes Stadion erwartet."},
   impact:{en:"Packed RER B and D and metro line 13 from about 18:00 and after the final whistle (~22:45).",
           es:"RER B y D y metro 13 abarrotados desde las 18:00 y al terminar el partido (~22:45).",
-          fr:"RER B et D et métro 13 bondés à partir de 18h et après le coup de sifflet final (~22h45)."},
+          fr:"RER B et D et métro 13 bondés à partir de 18h et après le coup de sifflet final (~22h45).",zh:"约18:00起及终场后（约22:45）RER B、D 线和地铁13号线非常拥挤。",pt:"RER B e D e metro 13 cheios a partir das 18:00 e após o apito final (~22:45).",de:"RER B und D sowie Metro 13 ab etwa 18:00 und nach dem Abpfiff (~22:45) überfüllt."},
   src:[["FFF billetterie","https://billetterie.fff.fr/fr/france_italie_vendredi_02_octobre_2026"],["Sortiraparis","https://www.sortiraparis.com/en/what-to-do-in-paris/sport-wellness/guides/347140-where-to-watch-the-france-italy-match-without-a-reservation-in-paris-on-october-2-2026"]]},
 
  {id:"arc",openEnd:true,date:"2026-10-03",end:"2026-10-04",kind:"disruption",status:"confirmed",pts:[PLACES.longchamp],
-  time:{en:"Sat 3 – Sun 4 Oct (main race Sunday)",es:"Sáb. 3 – dom. 4 oct. (carrera principal el domingo)",fr:"Sam. 3 – dim. 4 oct. (course principale dimanche)"},
-  title:{en:"Prix de l'Arc de Triomphe horse race",es:"Carrera hípica Prix de l'Arc de Triomphe",fr:"Qatar Prix de l'Arc de Triomphe"},
-  where:{en:"ParisLongchamp racecourse, Bois de Boulogne (16e)",es:"Hipódromo de ParisLongchamp, Bois de Boulogne (16.º)",fr:"Hippodrome de ParisLongchamp, bois de Boulogne (16e)"},
+  time:{en:"Sat 3 – Sun 4 Oct (main race Sunday)",es:"Sáb. 3 – dom. 4 oct. (carrera principal el domingo)",fr:"Sam. 3 – dim. 4 oct. (course principale dimanche)",zh:"10月3日（周六）– 4日（周日）（主赛在周日）",pt:"Sáb. 3 – dom. 4 out. (corrida principal no domingo)",de:"Sa. 3. – So. 4. Okt. (Hauptrennen am Sonntag)"},
+  title:{en:"Prix de l'Arc de Triomphe horse race",es:"Carrera hípica Prix de l'Arc de Triomphe",fr:"Qatar Prix de l'Arc de Triomphe",zh:"凯旋门大奖赛（赛马）",pt:"Corrida de cavalos Prix de l'Arc de Triomphe",de:"Pferderennen Prix de l'Arc de Triomphe"},
+  where:{en:"ParisLongchamp racecourse, Bois de Boulogne (16e)",es:"Hipódromo de ParisLongchamp, Bois de Boulogne (16.º)",fr:"Hippodrome de ParisLongchamp, bois de Boulogne (16e)",zh:"ParisLongchamp 赛马场，布洛涅森林（第16区）",pt:"Hipódromo de ParisLongchamp, Bois de Boulogne (16.º)",de:"Rennbahn ParisLongchamp, Bois de Boulogne (16.)"},
   desc:{en:"Two-day racing festival with tens of thousands of spectators.",
         es:"Festival hípico de dos días con decenas de miles de espectadores.",
-        fr:"Week-end de courses avec des dizaines de milliers de spectateurs."},
+        fr:"Week-end de courses avec des dizaines de milliers de spectateurs.",zh:"为期两天的赛马节，观众达数万人。",pt:"Festival hípico de dois dias com dezenas de milhares de espectadores.",de:"Zweitägiges Renn-Festival mit Zehntausenden Zuschauern."},
   impact:{en:"Paris Respire (car-free Sundays) is suspended in the Bois de Boulogne on allée de la Reine-Marguerite and avenue de l'Hippodrome; heavy traffic around the racecourse.",
           es:"Se suspende Paris Respire (domingos sin coches) en el Bois de Boulogne en la allée de la Reine-Marguerite y la avenue de l'Hippodrome; mucho tráfico cerca del hipódromo.",
-          fr:"Paris Respire suspendu dans le bois de Boulogne (allée de la Reine-Marguerite, avenue de l'Hippodrome) ; circulation dense autour de l'hippodrome."},
+          fr:"Paris Respire suspendu dans le bois de Boulogne (allée de la Reine-Marguerite, avenue de l'Hippodrome) ; circulation dense autour de l'hippodrome.",zh:"布洛涅森林 allée de la Reine-Marguerite 和 avenue de l'Hippodrome 暂停“Paris Respire”（周日无车）；赛马场周边交通繁忙。",pt:"O Paris Respire (domingos sem carros) fica suspenso no Bois de Boulogne na allée de la Reine-Marguerite e na avenue de l'Hippodrome; muito trânsito junto ao hipódromo.",de:"„Paris Respire“ (autofreie Sonntage) ist im Bois de Boulogne auf der allée de la Reine-Marguerite und der avenue de l'Hippodrome ausgesetzt; dichter Verkehr rund um die Rennbahn."},
   src:[["Sortiraparis","https://www.sortiraparis.com/en/what-to-do-in-paris/sport-wellness/articles/43864-qatar-to-host-the-prix-de-l-arc-de-triomphe-at-parislongchamp-racecourse-in-october-2026"],["Ville de Paris – Paris Respire","https://www.paris.fr/pages/paris-respire-2122"]]},
 
  {id:"champspietons",date:"2026-10-04",kind:"disruption",status:"confirmed",pts:[PLACES.champs],
-  time:{en:"11:00 – 18:00",es:"11:00 – 18:00",fr:"11h – 18h"},
-  title:{en:"Champs-Élysées car-free Sunday",es:"Domingo sin coches en los Campos Elíseos",fr:"Champs-Élysées piétons"},
-  where:{en:"Avenue des Champs-Élysées (8e)",es:"Avenida de los Campos Elíseos (8.º)",fr:"Avenue des Champs-Élysées (8e)"},
+  time:{en:"11:00 – 18:00",es:"11:00 – 18:00",fr:"11h – 18h",zh:"11:00 – 18:00",pt:"11:00 – 18:00",de:"11:00 – 18:00"},
+  title:{en:"Champs-Élysées car-free Sunday",es:"Domingo sin coches en los Campos Elíseos",fr:"Champs-Élysées piétons",zh:"香榭丽舍大街无车日",pt:"Domingo sem carros nos Campos Elísios",de:"Autofreier Sonntag auf den Champs-Élysées"},
+  where:{en:"Avenue des Champs-Élysées (8e)",es:"Avenida de los Campos Elíseos (8.º)",fr:"Avenue des Champs-Élysées (8e)",zh:"香榭丽舍大街（第8区）",pt:"Avenida dos Campos Elísios (8.º)",de:"Avenue des Champs-Élysées (8.)"},
   desc:{en:"First-Sunday-of-the-month pedestrian day (Paris Respire), this time with the Paris Sausage Walk.",
         es:"Jornada peatonal del primer domingo de cada mes (Paris Respire), esta vez con la Paris Sausage Walk.",
-        fr:"Journée piétonne du premier dimanche du mois (Paris Respire), cette fois avec la Paris Sausage Walk."},
-  impact:{en:"No cars on the avenue; buses are usually diverted.",es:"Sin coches en la avenida; los autobuses suelen desviarse.",fr:"Pas de voitures sur l'avenue ; bus habituellement déviés."},
+        fr:"Journée piétonne du premier dimanche du mois (Paris Respire), cette fois avec la Paris Sausage Walk.",zh:"每月第一个周日的步行日（Paris Respire），本次同时举办 Paris Sausage Walk。",pt:"Dia pedonal do primeiro domingo do mês (Paris Respire), desta vez com a Paris Sausage Walk.",de:"Fußgängertag am ersten Sonntag im Monat (Paris Respire), diesmal mit dem Paris Sausage Walk."},
+  impact:{en:"No cars on the avenue; buses are usually diverted.",es:"Sin coches en la avenida; los autobuses suelen desviarse.",fr:"Pas de voitures sur l'avenue ; bus habituellement déviés.",zh:"大街禁止机动车；公交通常绕行。",pt:"Sem carros na avenida; os autocarros costumam ser desviados.",de:"Keine Autos auf der Avenue; Busse werden in der Regel umgeleitet."},
   src:[["Sortiraparis","https://www.sortiraparis.com/en/news/in-paris/articles/103767-champs-elysees-for-pedestrians-the-world-s-most-beautiful-avenue-car-free-this-sunday-october-4-2026"]]},
 
  {id:"metro6",openEnd:true,date:"2026-10-04",end:"2026-10-18",kind:"disruption",status:"announced",citywide:true,
-  time:{en:"Sundays 4, 11 and 18 Oct, all day",es:"Domingos 4, 11 y 18 oct., todo el día",fr:"Dimanches 4, 11 et 18 oct., toute la journée"},
-  title:{en:"Metro line 6 closed on Sundays (works)",es:"Línea 6 del metro cerrada los domingos (obras)",fr:"Ligne 6 du métro fermée le dimanche (travaux)"},
-  where:{en:"Whole line, Charles de Gaulle – Étoile ↔ Nation",es:"Toda la línea, Charles de Gaulle – Étoile ↔ Nation",fr:"Toute la ligne, Charles de Gaulle – Étoile ↔ Nation"},
+  time:{en:"Sundays 4, 11 and 18 Oct, all day",es:"Domingos 4, 11 y 18 oct., todo el día",fr:"Dimanches 4, 11 et 18 oct., toute la journée",zh:"10月4、11、18日（周日）全天",pt:"Domingos 4, 11 e 18 out., todo o dia",de:"Sonntage 4., 11. und 18. Okt., ganztägig"},
+  title:{en:"Metro line 6 closed on Sundays (works)",es:"Línea 6 del metro cerrada los domingos (obras)",fr:"Ligne 6 du métro fermée le dimanche (travaux)",zh:"地铁6号线周日停运（施工）",pt:"Linha 6 do metro fechada aos domingos (obras)",de:"Metrolinie 6 sonntags gesperrt (Bauarbeiten)"},
+  where:{en:"Whole line, Charles de Gaulle – Étoile ↔ Nation",es:"Toda la línea, Charles de Gaulle – Étoile ↔ Nation",fr:"Toute la ligne, Charles de Gaulle – Étoile ↔ Nation",zh:"全线，Charles de Gaulle – Étoile ↔ Nation",pt:"Toda a linha, Charles de Gaulle – Étoile ↔ Nation",de:"Gesamte Linie, Charles de Gaulle – Étoile ↔ Nation"},
   desc:{en:"Full-day closure of line 6 on three Sundays. Separately, RER A is cut between La Varenne-Chennevières and Boissy-Saint-Léger from 21:45 between 16 and 29 Oct.",
         es:"Cierre total de la línea 6 tres domingos. Además, el RER A se interrumpe entre La Varenne-Chennevières y Boissy-Saint-Léger desde las 21:45 del 16 al 29 de octubre.",
-        fr:"Fermeture totale de la ligne 6 trois dimanches. Par ailleurs, le RER A est interrompu entre La Varenne-Chennevières et Boissy-Saint-Léger dès 21h45 du 16 au 29 octobre."},
-  impact:{en:"Use replacement buses or other lines; check RATP before travelling.",es:"Usa los autobuses de sustitución u otras líneas; consulta la RATP antes de viajar.",fr:"Bus de remplacement ou autres lignes ; vérifiez sur le site de la RATP."},
+        fr:"Fermeture totale de la ligne 6 trois dimanches. Par ailleurs, le RER A est interrompu entre La Varenne-Chennevières et Boissy-Saint-Léger dès 21h45 du 16 au 29 octobre.",zh:"6号线在三个周日全天停运。另外，10月16日至29日每晚21:45起，RER A 线 La Varenne-Chennevières 至 Boissy-Saint-Léger 段中断。",pt:"Encerramento total da linha 6 em três domingos. Além disso, de 16 a 29 out., a partir das 21:45, o RER A é interrompido entre La Varenne-Chennevières e Boissy-Saint-Léger.",de:"Linie 6 an drei Sonntagen ganztägig gesperrt. Außerdem ist die RER A vom 16. bis 29. Okt. ab 21:45 zwischen La Varenne-Chennevières und Boissy-Saint-Léger unterbrochen."},
+  impact:{en:"Use replacement buses or other lines; check RATP before travelling.",es:"Usa los autobuses de sustitución u otras líneas; consulta la RATP antes de viajar.",fr:"Bus de remplacement ou autres lignes ; vérifiez sur le site de la RATP.",zh:"请乘坐替代公交或其他线路；出行前请查看 RATP。",pt:"Use os autocarros de substituição ou outras linhas; consulte a RATP antes de viajar.",de:"Ersatzbusse oder andere Linien nutzen; vor der Fahrt bei der RATP nachsehen."},
   src:[["WebTech360 (Oct. closures)","https://fr.webtech360.com/detail/transports-et-circulation-a-paris-en-hp1-october-2026-local-monthly-calendars-99910050.html"],["Bonjour RATP","https://www.bonjour-ratp.fr/en/actualites/articles/bulletin-travaux-26-septembre/"]]},
 
  {id:"20km",date:"2026-10-11",kind:"disruption",status:"confirmed",pts:[PLACES.iena],
-  time:{en:"From 09:00",es:"Desde las 09:00",fr:"À partir de 9h"},
-  title:{en:"20 km de Paris road race",es:"Carrera 20 km de Paris",fr:"20 km de Paris"},
-  where:{en:"Start and finish at Pont d'Iéna / Eiffel Tower",es:"Salida y llegada en el Pont d'Iéna / torre Eiffel",fr:"Départ et arrivée pont d'Iéna / tour Eiffel"},
+  time:{en:"From 09:00",es:"Desde las 09:00",fr:"À partir de 9h",zh:"09:00 起",pt:"A partir das 09:00",de:"Ab 09:00"},
+  title:{en:"20 km de Paris road race",es:"Carrera 20 km de Paris",fr:"20 km de Paris",zh:"巴黎20公里跑",pt:"Corrida 20 km de Paris",de:"Lauf 20 km de Paris"},
+  where:{en:"Start and finish at Pont d'Iéna / Eiffel Tower",es:"Salida y llegada en el Pont d'Iéna / torre Eiffel",fr:"Départ et arrivée pont d'Iéna / tour Eiffel",zh:"起终点在耶拿桥 / 埃菲尔铁塔",pt:"Partida e chegada na Pont d'Iéna / Torre Eiffel",de:"Start und Ziel am Pont d'Iéna / Eiffelturm"},
   routeTxt:{en:"Trocadéro, Arc de Triomphe, Bois de Boulogne, Roland-Garros, Maison de la Radio, Grand Palais, Tuileries, Pont Royal, left-bank quays.",
             es:"Trocadéro, Arco del Triunfo, Bois de Boulogne, Roland-Garros, Maison de la Radio, Grand Palais, Tullerías, Pont Royal, muelles de la orilla izquierda.",
-            fr:"Trocadéro, Arc de Triomphe, bois de Boulogne, Roland-Garros, Maison de la Radio, Grand Palais, Tuileries, pont Royal, quais rive gauche."},
-  desc:{en:"Sold-out race with 60 waves of 500 runners.",es:"Carrera agotada con 60 oleadas de 500 corredores.",fr:"Course complète, 60 vagues de 500 coureurs."},
-  impact:{en:"Western Paris is closed to cars along the route on Sunday morning.",es:"El oeste de París se cierra a los coches a lo largo del recorrido el domingo por la mañana.",fr:"L'ouest parisien est fermé aux voitures le long du parcours dimanche matin."},
+            fr:"Trocadéro, Arc de Triomphe, bois de Boulogne, Roland-Garros, Maison de la Radio, Grand Palais, Tuileries, pont Royal, quais rive gauche.",zh:"Trocadéro、凯旋门、布洛涅森林、Roland-Garros、Maison de la Radio、大皇宫、杜乐丽花园、Pont Royal、左岸河岸道路。",pt:"Trocadéro, Arco do Triunfo, Bois de Boulogne, Roland-Garros, Maison de la Radio, Grand Palais, Tulherias, Pont Royal, cais da margem esquerda.",de:"Trocadéro, Arc de Triomphe, Bois de Boulogne, Roland-Garros, Maison de la Radio, Grand Palais, Tuilerien, Pont Royal, Uferstraßen am linken Ufer."},
+  desc:{en:"Sold-out race with 60 waves of 500 runners.",es:"Carrera agotada con 60 oleadas de 500 corredores.",fr:"Course complète, 60 vagues de 500 coureurs.",zh:"名额已满，共60批、每批500名跑者。",pt:"Corrida esgotada, com 60 vagas de 500 corredores.",de:"Ausgebuchter Lauf mit 60 Startwellen à 500 Läufer."},
+  impact:{en:"Western Paris is closed to cars along the route on Sunday morning.",es:"El oeste de París se cierra a los coches a lo largo del recorrido el domingo por la mañana.",fr:"L'ouest parisien est fermé aux voitures le long du parcours dimanche matin.",zh:"周日上午巴黎西部沿线禁止机动车通行。",pt:"O oeste de Paris fica fechado aos carros ao longo do percurso no domingo de manhã.",de:"Der Pariser Westen ist am Sonntagvormittag entlang der Strecke für Autos gesperrt."},
   src:[["JDS","https://www.jds.fr/paris/sports/courses/20-km-de-paris-262384_A"],["Ahotu","https://www.ahotu.com/fr/evenement/les-20-km-de-paris"]]},
 
  {id:"mondial",openEnd:true,date:"2026-10-12",end:"2026-10-18",kind:"disruption",status:"confirmed",pts:[PLACES.portedeversailles],
-  time:{en:"Public 13–18 Oct (late opening Fri & Sat)",es:"Público 13-18 oct. (cierre tardío vie. y sáb.)",fr:"Grand public 13-18 oct. (nocturnes ven. et sam.)"},
-  title:{en:"Paris Motor Show (Mondial de l'Auto)",es:"Salón del Automóvil de París (Mondial de l'Auto)",fr:"Mondial de l'Auto"},
-  where:{en:"Paris Expo Porte de Versailles (15e)",es:"Paris Expo Porte de Versailles (15.º)",fr:"Paris Expo Porte de Versailles (15e)"},
+  time:{en:"Public 13–18 Oct (late opening Fri & Sat)",es:"Público 13-18 oct. (cierre tardío vie. y sáb.)",fr:"Grand public 13-18 oct. (nocturnes ven. et sam.)",zh:"公众开放 10月13–18日（周五、周六延长开放）",pt:"Público 13-18 out. (aberto até tarde sex. e sáb.)",de:"Publikum 13.–18. Okt. (Fr. und Sa. bis spät geöffnet)"},
+  title:{en:"Paris Motor Show (Mondial de l'Auto)",es:"Salón del Automóvil de París (Mondial de l'Auto)",fr:"Mondial de l'Auto",zh:"巴黎车展（Mondial de l'Auto）",pt:"Salão Automóvel de Paris (Mondial de l'Auto)",de:"Pariser Autosalon (Mondial de l'Auto)"},
+  where:{en:"Paris Expo Porte de Versailles (15e)",es:"Paris Expo Porte de Versailles (15.º)",fr:"Paris Expo Porte de Versailles (15e)",zh:"凡尔赛门展览中心 Paris Expo（第15区）",pt:"Paris Expo Porte de Versailles (15.º)",de:"Paris Expo Porte de Versailles (15.)"},
   desc:{en:"91st edition: 60+ carmakers, 100 exhibitors. Press and trade day on Mon 12 Oct.",
         es:"91.ª edición: más de 60 fabricantes y 100 expositores. Día de prensa y profesionales el lun. 12 oct.",
-        fr:"91e édition : plus de 60 constructeurs et 100 exposants. Journée presse et professionnels le lun. 12 oct."},
+        fr:"91e édition : plus de 60 constructeurs et 100 exposants. Journée presse et professionnels le lun. 12 oct.",zh:"第91届：60多家车企、100家参展商。10月12日（周一）为媒体及专业日。",pt:"91.ª edição: mais de 60 fabricantes e 100 expositores. Dia de imprensa e profissionais seg. 12 out.",de:"91. Ausgabe: über 60 Hersteller, 100 Aussteller. Presse- und Fachbesuchertag am Mo. 12. Okt."},
   impact:{en:"Crowded metro 12 and trams T2/T3a; heavy traffic around Porte de Versailles and the périphérique exit.",
           es:"Metro 12 y tranvías T2/T3a muy llenos; mucho tráfico en Porte de Versailles y la salida del periférico.",
-          fr:"Métro 12 et tramways T2/T3a chargés ; circulation dense porte de Versailles et sortie du périphérique."},
+          fr:"Métro 12 et tramways T2/T3a chargés ; circulation dense porte de Versailles et sortie du périphérique.",zh:"地铁12号线及 T2/T3a 有轨电车拥挤；凡尔赛门和环城大道出口交通繁忙。",pt:"Metro 12 e elétricos T2/T3a cheios; muito trânsito na Porte de Versailles e na saída do periférico.",de:"Metro 12 und Straßenbahnen T2/T3a voll; dichter Verkehr an der Porte de Versailles und der Périphérique-Ausfahrt."},
   src:[["Mondial de l'Auto","https://mondial.paris/"],["PassionAndCar","https://www.passionandcar.fr/2026/08/30/mondial-de-lauto-paris-2026-dates-billets-horaires-et-marques-presentes-tout-savoir/"]]},
 
  {id:"psgbarca",date:"2026-10-20",kind:"disruption",status:"announced",pts:[PLACES.parcdesprinces],
-  time:{en:"Evening (kick-off TBA)",es:"Por la noche (hora por confirmar)",fr:"En soirée (horaire à confirmer)"},
-  title:{en:"Football: PSG – FC Barcelona (Champions League)",es:"Fútbol: PSG – FC Barcelona (Liga de Campeones)",fr:"Football : PSG – FC Barcelone (Ligue des champions)"},
-  where:{en:"Parc des Princes (16e)",es:"Parc des Princes (16.º)",fr:"Parc des Princes (16e)"},
+  time:{en:"Evening (kick-off TBA)",es:"Por la noche (hora por confirmar)",fr:"En soirée (horaire à confirmer)",zh:"晚上（开球时间待定）",pt:"À noite (hora a confirmar)",de:"Abends (Anstoß folgt)"},
+  title:{en:"Football: PSG – FC Barcelona (Champions League)",es:"Fútbol: PSG – FC Barcelona (Liga de Campeones)",fr:"Football : PSG – FC Barcelone (Ligue des champions)",zh:"足球：巴黎圣日耳曼 – 巴塞罗那（欧冠）",pt:"Futebol: PSG – FC Barcelona (Liga dos Campeões)",de:"Fußball: PSG – FC Barcelona (Champions League)"},
+  where:{en:"Parc des Princes (16e)",es:"Parc des Princes (16.º)",fr:"Parc des Princes (16e)",zh:"王子公园球场（第16区）",pt:"Parc des Princes (16.º)",de:"Parc des Princes (16.)"},
   desc:{en:"High-profile Champions League group-stage match. PSG also plays Le Mans (Sat 10 Oct) and Lyon (Sun 25 Oct) at home.",
         es:"Partido destacado de la fase de grupos de la Liga de Campeones. El PSG también juega en casa contra Le Mans (sáb. 10 oct.) y el Lyon (dom. 25 oct.).",
-        fr:"Affiche de phase de groupes de Ligue des champions. Le PSG reçoit aussi Le Mans (sam. 10 oct.) et Lyon (dim. 25 oct.)."},
+        fr:"Affiche de phase de groupes de Ligue des champions. Le PSG reçoit aussi Le Mans (sam. 10 oct.) et Lyon (dim. 25 oct.).",zh:"备受瞩目的欧冠小组赛。巴黎圣日耳曼还将在主场迎战勒芒（10月10日周六）和里昂（10月25日周日）。",pt:"Jogo de destaque da fase de grupos da Liga dos Campeões. O PSG também recebe o Le Mans (sáb. 10 out.) e o Lyon (dom. 25 out.).",de:"Topspiel der Champions-League-Gruppenphase. PSG empfängt außerdem Le Mans (Sa. 10. Okt.) und Lyon (So. 25. Okt.)."},
   impact:{en:"Usually a big police presence, street closures around Porte de Saint-Cloud and Auteuil, crowded metro 9 and 10.",
           es:"Suele haber gran despliegue policial y calles cortadas en Porte de Saint-Cloud y Auteuil, metro 9 y 10 llenos.",
-          fr:"D'habitude, fort dispositif policier et rues fermées autour de la porte de Saint-Cloud et d'Auteuil, métros 9 et 10 chargés."},
+          fr:"D'habitude, fort dispositif policier et rues fermées autour de la porte de Saint-Cloud et d'Auteuil, métros 9 et 10 chargés.",zh:"通常警力部署较多，Porte de Saint-Cloud 和 Auteuil 一带封路，地铁9号线和10号线拥挤。",pt:"Normalmente forte presença policial, ruas cortadas na Porte de Saint-Cloud e em Auteuil, metro 9 e 10 cheios.",de:"Üblicherweise starkes Polizeiaufgebot, Straßensperrungen rund um Porte de Saint-Cloud und Auteuil, volle Metro 9 und 10."},
   src:[["PSG billetterie","https://billetterie.psg.fr/en/schedule"]]},
 
  {id:"nfl",date:"2026-10-25",kind:"disruption",status:"announced",offmap:true,
-  time:{en:"Sunday (time TBA)",es:"Domingo (hora por confirmar)",fr:"Dimanche (horaire à venir)"},
-  title:{en:"NFL game: New Orleans Saints – Pittsburgh Steelers",es:"Partido de la NFL: New Orleans Saints – Pittsburgh Steelers",fr:"Match NFL : New Orleans Saints – Pittsburgh Steelers"},
-  where:{en:"Stade de France, Saint-Denis",es:"Stade de France, Saint-Denis",fr:"Stade de France, Saint-Denis"},
-  desc:{en:"Regular-season NFL game, with Burna Boy at half-time.",es:"Partido de temporada regular de la NFL, con Burna Boy en el descanso.",fr:"Match de saison régulière NFL, avec Burna Boy à la mi-temps."},
-  impact:{en:"Packed RER B, RER D and metro 13 before and after the game.",es:"RER B, RER D y metro 13 abarrotados antes y después del partido.",fr:"RER B, RER D et métro 13 bondés avant et après le match."},
+  time:{en:"Sunday (time TBA)",es:"Domingo (hora por confirmar)",fr:"Dimanche (horaire à venir)",zh:"周日（时间待定）",pt:"Domingo (hora a confirmar)",de:"Sonntag (Uhrzeit folgt)"},
+  title:{en:"NFL game: New Orleans Saints – Pittsburgh Steelers",es:"Partido de la NFL: New Orleans Saints – Pittsburgh Steelers",fr:"Match NFL : New Orleans Saints – Pittsburgh Steelers",zh:"NFL 比赛：新奥尔良圣徒 – 匹兹堡钢人",pt:"Jogo da NFL: New Orleans Saints – Pittsburgh Steelers",de:"NFL-Spiel: New Orleans Saints – Pittsburgh Steelers"},
+  where:{en:"Stade de France, Saint-Denis",es:"Stade de France, Saint-Denis",fr:"Stade de France, Saint-Denis",zh:"法兰西体育场，圣但尼",pt:"Stade de France, Saint-Denis",de:"Stade de France, Saint-Denis"},
+  desc:{en:"Regular-season NFL game, with Burna Boy at half-time.",es:"Partido de temporada regular de la NFL, con Burna Boy en el descanso.",fr:"Match de saison régulière NFL, avec Burna Boy à la mi-temps.",zh:"NFL 常规赛，中场由 Burna Boy 表演。",pt:"Jogo da época regular da NFL, com Burna Boy no intervalo.",de:"NFL-Spiel der regulären Saison, mit Burna Boy in der Halbzeitpause."},
+  impact:{en:"Packed RER B, RER D and metro 13 before and after the game.",es:"RER B, RER D y metro 13 abarrotados antes y después del partido.",fr:"RER B, RER D et métro 13 bondés avant et après le match.",zh:"赛前赛后 RER B、RER D 和地铁13号线非常拥挤。",pt:"RER B, RER D e metro 13 cheios antes e depois do jogo.",de:"RER B, RER D und Metro 13 vor und nach dem Spiel überfüllt."},
   src:[["Sortiraparis","https://www.sortiraparis.com/en/what-to-see-in-paris/concerts-music-festival/articles/352916-nfl-paris-game-2026-here-s-who-will-headline-the-halftime-show-at-the-stade-de-france"]]}
 ];
 const KIND_KEYS=["march","rally","strike","blockade","disruption"];
@@ -590,14 +629,11 @@ const KIND_KEYS=["march","rally","strike","blockade","disruption"];
 /* ---------- language ---------- */
 function pickLang(){
   const h=(location.hash||"").replace("#","").toLowerCase();
-  if(UI[h]) return h;
-  try{const s=localStorage.getItem("pdlr-lang"); if(UI[s]) return s;}catch(_){}
-  const n=(navigator.language||"en").slice(0,2).toLowerCase();
-  return UI[n]?n:"en";
+  return UI[h]?h:"fr";
 }
 let LANG=pickLang();
 const T=k=>UI[LANG][k];
-const L=o=>o?(o[LANG]||o.en):"";
+const L=o=>o?(o[LANG]||o.en||o.fr):"";
 
 /* ---------- dates ---------- */
 const pad=n=>String(n).padStart(2,"0");
@@ -631,14 +667,14 @@ function applyLang(){
   document.querySelectorAll("[data-i18n-html]").forEach(el=>el.innerHTML=T(el.dataset.i18nHtml).replace("{date}",new Date(UPDATED+"T12:00:00").toLocaleDateString(LOCALE[LANG],{day:"numeric",month:"long",year:"numeric"})));
   WHEN.forEach(k=>document.getElementById("when-"+k).textContent=T(k));
   KIND_KEYS.forEach(k=>document.getElementById("kind-"+k).innerHTML=`<i class="sw ${k}"></i>${T(k)}`);
-  ["zin","zout","zreset","tmetro"].forEach(id=>{const b=document.getElementById(id);b.setAttribute("aria-label",T(id));b.title=T(id);});
+  ["zin","zout","zreset"].forEach(id=>{const b=document.getElementById(id);b.setAttribute("aria-label",T(id));b.title=T(id);});
   document.getElementById("map").setAttribute("aria-label",T("mapLabel"));
   document.querySelector(".controls").setAttribute("aria-label",T("filters"));
-  ["en","es","fr"].forEach(l=>document.getElementById("lang-"+l).setAttribute("aria-pressed",l===LANG));
+  document.getElementById("langsel").value=LANG;
 }
-["en","es","fr"].forEach(l=>document.getElementById("lang-"+l).onclick=()=>{
-  LANG=l; try{localStorage.setItem("pdlr-lang",l);}catch(_){}
-  try{history.replaceState(null,"","#"+l);}catch(_){}
+document.getElementById("langsel").addEventListener("change",e=>{
+  LANG=e.target.value;
+  try{history.replaceState(null,"","#"+LANG);}catch(_){}
   applyLang(); render();
 });
 window.addEventListener("hashchange",()=>{const h=location.hash.replace("#","").toLowerCase(); if(UI[h]&&h!==LANG){LANG=h;applyLang();render();}});
@@ -651,15 +687,13 @@ const P=([lon,lat])=>[OX+(lon-LON0)*KX*S, OY+(LAT1-lat)*S];
 const line=pts=>"M"+pts.map(p=>P(p).map(v=>v.toFixed(1)).join(",")).join("L");
 
 const svg=d3.select("#map"), svgEl=document.getElementById("map"), g=svg.append("g");
-const gBase=g.append("g"), gRoads=g.append("g"), gMetro=g.append("g").attr("class","metro"), gRoutes=g.append("g"), gStations=g.append("g").attr("class","metro"), gLabels=g.append("g"), gMarks=g.append("g");
+const gBase=g.append("g"), gRoads=g.append("g"), gRoutes=g.append("g"), gLabels=g.append("g"), gMarks=g.append("g");
 ARR.forEach(a=>a.r.forEach(r=>gBase.append("path").attr("class","arr").attr("d",line(r)+"Z")));
 const seine=gBase.append("path").attr("class","seine").attr("d",line(SEINE));
 const flat=a=>{const o=[];for(let i=0;i<a.length;i+=2)o.push([a[i],a[i+1]]);return o;};
 const roadD=ROADS.map(list=>list.map(a=>line(flat(a))).join(""));
 const roadCase=[0,1,2].map(i=>gRoads.append("path").attr("class","road case").attr("d",roadD[i]));
 const roadFill=[2,1,0].map(i=>gRoads.append("path").attr("class","road r"+i).attr("d",roadD[i]));
-const metroLines=METRO.map(m=>gMetro.append("path").attr("class","mline").attr("stroke",m.c).attr("d",m.p.map(a=>line(flat(a))).join("")));
-const stnNodes=STATIONS.map(([n,lon,lat,ls])=>{const[x,y]=P([lon,lat]);const gg=gStations.append("g").attr("class","stn").attr("data-x",x).attr("data-y",y);gg.append("title").text(`${n} · M${ls.join(", M")}`);gg.append("circle").attr("r",2.6);gg.append("text").attr("x",4).attr("y",3.5).text(n);return gg;});
 function centroid(r){let A=0,cx=0,cy=0;const pts=r.map(P);for(let i=0;i<pts.length-1;i++){const[x0,y0]=pts[i],[x1,y1]=pts[i+1],f=x0*y1-x1*y0;A+=f;cx+=(x0+x1)*f;cy+=(y0+y1)*f;}A/=2;return[cx/(6*A),cy/(6*A)];}
 const numNodes=ARR.map(a=>{const big=a.r.reduce((m,r)=>r.length>m.length?r:m,a.r[0]);const[x,y]=centroid(big);return gLabels.append("text").attr("class","arrnum").attr("data-x",x).attr("data-y",y).text(a.n+(a.n===1?"er":"e"));});
 const lmNodes=LANDMARKS.concat(LANDMARKS2.map(l=>[...l,1])).map(([name,pt,side,minor])=>{const[x,y]=P(pt);const gg=gLabels.append("g").attr("class",minor?"lm2":null).attr("data-x",x).attr("data-y",y);gg.append("circle").attr("class","lmdot").attr("r",1.6);gg.append("text").attr("class","lm").attr("x",side==="r"?5:-5).attr("y",-5).attr("text-anchor",side==="r"?"start":"end").text(name);return gg;});
@@ -681,9 +715,7 @@ function placeAll(){
   seine.attr("stroke-width",Math.max(5,7*Math.sqrt(K))/K);
   const q=Math.sqrt(K);
   [[2,1.1],[1,1.8],[0,2.6]].forEach(([i,w],j)=>{roadFill[j].attr("stroke-width",w*q);roadCase[i].attr("stroke-width",w*q+1.4);});
-  metroLines.forEach(m=>m.attr("stroke-width",1.6*q));
-  stnNodes.forEach(n=>n.attr("transform",`translate(${n.attr("data-x")},${n.attr("data-y")}) scale(${s})`));
-  svgEl.classList.toggle("z-st",K>=2.2); svgEl.classList.toggle("z-lbl",K>=4.5); svgEl.classList.toggle("z-lm",K>=1.8);
+  svgEl.classList.toggle("z-lm",K>=1.8);
 }
 
 function drawMap(list){
@@ -782,7 +814,6 @@ let rz; window.addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=
 document.getElementById("zin").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1.6);
 document.getElementById("zout").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1/1.6);
 document.getElementById("zreset").onclick=()=>svg.transition().duration(300).call(zoom.transform,homeView());
-document.getElementById("tmetro").onclick=e=>{const on=svgEl.classList.toggle("no-metro"); e.currentTarget.setAttribute("aria-pressed",!on);};
 const hint=document.getElementById("hint"); const hideHint=()=>hint.classList.add("gone");
 svgEl.addEventListener("pointerdown",hideHint,{once:true}); svgEl.addEventListener("wheel",hideHint,{once:true,passive:true}); setTimeout(hideHint,8000);
 function focusOn(e){
