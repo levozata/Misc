@@ -16,6 +16,7 @@
   --rule: #d9dcd4;
   --enamel: #1d3d6e;
   --enamel-ink: #ffffff;
+  --link: #1d3d6e;
   --k-march: #1f5fbf;
   --k-rally: #c27a00;
   --k-strike: #b0306a;
@@ -28,14 +29,14 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #12161c; --paper: #181d25; --land: #1f252e; --land-line: #353d49; --water: #22384f;
-    --ink: #e7eaee; --muted: #9aa3ae; --rule: #2c333d; --enamel: #3b67a8; --enamel-ink: #ffffff;
+    --ink: #e7eaee; --muted: #9aa3ae; --rule: #2c333d; --enamel: #3b67a8; --enamel-ink: #ffffff; --link: #8db8f5;
     --k-march: #6aa2f2; --k-rally: #e9a73a; --k-strike: #e66a9f; --k-blockade: #3cbfa8; --halo: #181d25;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #12161c; --paper: #181d25; --land: #1f252e; --land-line: #353d49; --water: #22384f;
-  --ink: #e7eaee; --muted: #9aa3ae; --rule: #2c333d; --enamel: #3b67a8; --enamel-ink: #ffffff;
+  --ink: #e7eaee; --muted: #9aa3ae; --rule: #2c333d; --enamel: #3b67a8; --enamel-ink: #ffffff; --link: #8db8f5;
   --k-march: #6aa2f2; --k-rally: #e9a73a; --k-strike: #e66a9f; --k-blockade: #3cbfa8; --halo: #181d25;
   color-scheme: dark;
 }
@@ -44,10 +45,16 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-body); 
 .wrap { max-width: 1400px; margin: 0 auto; padding-inline: 16px; padding-block: 16px 32px; display: grid; gap: 14px; }
 
 header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 24px; }
+.titlerow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
 .sign { display: inline-flex; flex-direction: column; background: var(--enamel); color: var(--enamel-ink); border: 2px solid var(--enamel-ink); outline: 2px solid var(--enamel); border-radius: 6px; padding: 4px 14px 6px; }
 .sign small { font-family: var(--font-display); font-weight: 600; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; opacity: .85; }
 .sign h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 4vw, 38px); line-height: 1; letter-spacing: .01em; }
-.lede { margin: 0; max-width: 62ch; color: var(--muted); }
+.lang { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--paper); }
+.lang button { font: 600 12.5px var(--font-mono); letter-spacing: .04em; border: 0; background: transparent; color: var(--muted); padding: 6px 10px; cursor: pointer; }
+.lang button + button { border-left: 1px solid var(--rule); }
+.lang button[aria-pressed="true"] { background: var(--enamel); color: var(--enamel-ink); }
+.lang button:focus-visible { outline: 2px solid var(--enamel); outline-offset: -2px; }
+.lede { margin: 0; max-width: 64ch; color: var(--muted); }
 .lede b { color: var(--ink); font-weight: 600; }
 
 .controls { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
@@ -77,7 +84,6 @@ header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-cont
 @media (max-width: 520px) { .legend { display: none; } }
 
 .arr { fill: var(--land); stroke: var(--land-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.outline { fill: none; stroke: var(--muted); stroke-width: 1.4; vector-effect: non-scaling-stroke; opacity: .7; }
 .seine { fill: none; stroke: var(--water); stroke-linecap: round; stroke-linejoin: round; }
 .arrnum { font: 600 15px var(--font-display); fill: var(--muted); opacity: .55; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
 .lm { font: 500 10.5px var(--font-body); fill: var(--ink); paint-order: stroke; stroke: var(--halo); stroke-width: 3px; pointer-events: none; }
@@ -104,7 +110,7 @@ aside.list { background: var(--paper); border: 1px solid var(--rule); border-rad
 .daygroup:last-child { border-bottom: 0; }
 .dayhead { padding: 8px 14px 2px; font: 500 11.5px var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; display: flex; gap: 8px; align-items: center; }
 .dayhead .now { font-family: var(--font-body); font-weight: 600; letter-spacing: .04em; background: var(--ink); color: var(--paper); border-radius: 3px; padding: 0 5px; }
-.item { display: grid; grid-template-columns: 6px minmax(0,1fr); gap: 11px; padding: 9px 14px 11px; cursor: pointer; border-left: 0; }
+.item { display: grid; grid-template-columns: 6px minmax(0,1fr); gap: 11px; padding: 9px 14px 11px; cursor: pointer; }
 .item:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
 .item.sel { background: color-mix(in srgb, var(--enamel) 10%, transparent); }
 .item .bar { border-radius: 3px; }
@@ -121,9 +127,7 @@ aside.list { background: var(--paper); border: 1px solid var(--rule); border-rad
 .detail p { margin: 0; max-width: 60ch; }
 .detail .route-txt { font-size: 12.5px; color: var(--muted); }
 .detail .src { font-size: 12px; display: flex; flex-wrap: wrap; gap: 4px 10px; }
-.detail .src a { color: var(--enamel); text-underline-offset: 2px; }
-:root[data-theme="dark"] .detail .src a { color: var(--k-march); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .detail .src a { color: var(--k-march); } }
+.detail .src a { color: var(--link); text-underline-offset: 2px; }
 .empty { padding: 18px 14px; color: var(--muted); }
 
 footer.note { color: var(--muted); font-size: 12.5px; display: grid; gap: 4px; max-width: 95ch; }
@@ -133,41 +137,47 @@ footer.note p { margin: 0; }
 <div class="wrap">
   <header class="top">
     <div style="display:grid;gap:8px;min-width:0">
-      <div class="sign"><small>Grèves · manifs · rassemblements</small><h1>Paris dans la rue</h1></div>
-      <p class="lede">Strikes, marches, rallies and blockades in Paris, late September to late October 2026. Compiled from news and organizer sources on <b>1 October 2026</b>. Routes and times change; check the linked source before you go.</p>
+      <div class="titlerow">
+        <div class="sign"><small data-i18n="kicker"></small><h1>Paris dans la rue</h1></div>
+        <div class="lang" role="group" aria-label="Language">
+          <button id="lang-en" lang="en">EN</button><button id="lang-es" lang="es">ES</button><button id="lang-fr" lang="fr">FR</button>
+        </div>
+      </div>
+      <p class="lede" data-i18n-html="lede"></p>
     </div>
-    <div class="controls" role="toolbar" aria-label="Filters">
-      <div class="group" id="f-when"><span>When</span></div>
-      <div class="group" id="f-kind"><span>Type</span></div>
+    <div class="controls" role="toolbar">
+      <div class="group" id="f-when"><span data-i18n="when"></span></div>
+      <div class="group" id="f-kind"><span data-i18n="type"></span></div>
     </div>
   </header>
 
   <div class="main">
     <div class="mapbox">
-      <svg id="map" viewBox="0 0 1000 610" role="img" aria-label="Map of Paris with protest locations"></svg>
+      <svg id="map" viewBox="0 0 1000 610" role="img"></svg>
       <div class="zoom">
-        <button class="ctl" id="zin" aria-label="Zoom in">+</button>
-        <button class="ctl" id="zout" aria-label="Zoom out">−</button>
-        <button class="ctl" id="zreset" aria-label="Reset view" style="font-size:12px">⤢</button>
+        <button class="ctl" id="zin">+</button>
+        <button class="ctl" id="zout">−</button>
+        <button class="ctl" id="zreset" style="font-size:12px">⤢</button>
       </div>
       <div class="legend" aria-hidden="true">
-        <div><i class="sw march"></i>March (with route)</div>
-        <div><i class="sw rally"></i>Rally</div>
-        <div><i class="sw strike"></i>Strike / picket</div>
-        <div><i class="sw blockade"></i>Blockade</div>
-        <div><i class="ring"></i>Unconfirmed call</div>
-        <div><i class="sw rally" style="opacity:.4"></i>Already happened</div>
+        <div><i class="sw march"></i><span data-i18n="lgMarch"></span></div>
+        <div><i class="sw rally"></i><span data-i18n="lgRally"></span></div>
+        <div><i class="sw strike"></i><span data-i18n="lgStrike"></span></div>
+        <div><i class="sw blockade"></i><span data-i18n="lgBlockade"></span></div>
+        <div><i class="ring"></i><span data-i18n="lgUnconf"></span></div>
+        <div><i class="sw rally" style="opacity:.4"></i><span data-i18n="lgPast"></span></div>
       </div>
     </div>
-    <aside class="list" aria-label="Agenda">
-      <h2>Agenda <span id="count"></span></h2>
+    <aside class="list">
+      <h2><span data-i18n="agenda" style="font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit"></span> <span id="count"></span></h2>
       <div id="items"></div>
     </aside>
   </div>
 
   <footer class="note">
-    <p>Base map: Paris arrondissements (OpenStreetMap-derived boundaries); the Seine and route lines are drawn by hand and approximate. Marker positions are the announced meeting points.</p>
-    <p>Not listed: events whose Paris meeting point wasn't found in published sources. Police (Préfecture de police) can ban or reroute any demonstration at short notice.</p>
+    <p data-i18n="foot1"></p>
+    <p data-i18n="foot2"></p>
+    <p data-i18n="foot3"></p>
   </footer>
 </div>
 
@@ -175,80 +185,236 @@ footer.note p { margin: 0; }
 <script>
 const ARR=[{"n":1,"name":"Louvre","r":[[[2.3208,48.863],[2.3252,48.8689],[2.3251,48.8694],[2.328,48.8699],[2.3303,48.8683],[2.3509,48.8634],[2.3474,48.8571],[2.3469,48.857],[2.346,48.8554],[2.3445,48.854],[2.3424,48.8552],[2.3405,48.8568],[2.3373,48.8585],[2.3315,48.8597],[2.3208,48.863]]]},{"n":2,"name":"Bourse","r":[[[2.34,48.872],[2.3479,48.8707],[2.3543,48.8693],[2.351,48.8634],[2.3303,48.8683],[2.3282,48.8697],[2.3281,48.8699],[2.34,48.872]]]},{"n":3,"name":"Temple","r":[[[2.3624,48.8679],[2.3648,48.8664],[2.3667,48.8632],[2.3685,48.8558],[2.3643,48.8564],[2.3616,48.8573],[2.3586,48.8588],[2.3568,48.8601],[2.3534,48.8612],[2.3502,48.862],[2.3542,48.8693],[2.3624,48.8679]]]},{"n":4,"name":"Hôtel-de-Ville","r":[[[2.3647,48.846],[2.3609,48.8486],[2.3547,48.8508],[2.3501,48.852],[2.347,48.8533],[2.3446,48.854],[2.346,48.8554],[2.347,48.857],[2.3473,48.8571],[2.3502,48.862],[2.3533,48.8612],[2.3568,48.8602],[2.3586,48.8587],[2.3617,48.8573],[2.3643,48.8564],[2.3684,48.8559],[2.3692,48.8528],[2.3663,48.847],[2.3647,48.846]]]},{"n":5,"name":"Panthéon","r":[[[2.3518,48.8368],[2.3455,48.8376],[2.3365,48.8396],[2.3426,48.8503],[2.3442,48.8538],[2.3445,48.854],[2.3469,48.8533],[2.3502,48.852],[2.3548,48.8508],[2.361,48.8486],[2.366,48.845],[2.3649,48.8444],[2.3618,48.84],[2.3518,48.8368]]]},{"n":6,"name":"Luxembourg","r":[[[2.3165,48.8469],[2.319,48.8479],[2.3241,48.8503],[2.327,48.8516],[2.3287,48.852],[2.3316,48.8563],[2.3339,48.8592],[2.3375,48.8585],[2.3406,48.8567],[2.3425,48.8552],[2.3445,48.854],[2.3443,48.8538],[2.3426,48.8503],[2.3365,48.8396],[2.32,48.8451],[2.3165,48.8469]]]},{"n":7,"name":"Palais-Bourbon","r":[[[2.3095,48.8458],[2.3073,48.8472],[2.2899,48.8582],[2.2948,48.8619],[2.3002,48.8635],[2.3183,48.8638],[2.3315,48.8597],[2.3338,48.8592],[2.3316,48.8563],[2.3304,48.8544],[2.3293,48.8527],[2.3285,48.8518],[2.3271,48.8516],[2.3193,48.8478],[2.3137,48.8459],[2.3114,48.8452],[2.3095,48.8458]]]},{"n":8,"name":"Élysée","r":[[[2.3016,48.8646],[2.2999,48.8651],[2.2988,48.8687],[2.2973,48.8712],[2.2955,48.8733],[2.2946,48.8732],[2.294,48.8737],[2.2944,48.8743],[2.2954,48.8743],[2.2978,48.8777],[2.2976,48.878],[2.298,48.8785],[2.2988,48.8783],[2.309,48.8805],[2.3166,48.8813],[2.3272,48.8835],[2.3268,48.8759],[2.3266,48.8754],[2.327,48.8738],[2.3269,48.8733],[2.3263,48.8726],[2.3265,48.8725],[2.3258,48.8695],[2.3252,48.8694],[2.3253,48.869],[2.3208,48.8631],[2.3183,48.8638],[2.3017,48.8635],[2.3016,48.8646]]]},{"n":9,"name":"Opéra","r":[[[2.3396,48.882],[2.3495,48.8838],[2.3499,48.8807],[2.3492,48.8789],[2.349,48.8772],[2.3481,48.8757],[2.3479,48.8739],[2.3479,48.8707],[2.34,48.872],[2.3258,48.8696],[2.3265,48.8725],[2.3263,48.8726],[2.3269,48.8733],[2.327,48.8738],[2.3266,48.8754],[2.3268,48.876],[2.3272,48.8834],[2.3279,48.8836],[2.3295,48.8847],[2.3374,48.8823],[2.3396,48.882]]]},{"n":10,"name":"Enclos-St-Laurent","r":[[[2.3688,48.8841],[2.3691,48.8833],[2.3702,48.8826],[2.3703,48.8786],[2.3708,48.8781],[2.3706,48.8776],[2.377,48.8721],[2.3729,48.8706],[2.3642,48.8678],[2.3635,48.8672],[2.3624,48.8679],[2.3543,48.8693],[2.3479,48.8707],[2.3478,48.8739],[2.3482,48.8758],[2.349,48.8773],[2.3493,48.8792],[2.3499,48.8807],[2.3495,48.8838],[2.3592,48.8845],[2.3648,48.8844],[2.3688,48.8841]]]},{"n":11,"name":"Popincourt","r":[[[2.3832,48.8671],[2.3838,48.8661],[2.3875,48.8628],[2.3897,48.8584],[2.3922,48.8576],[2.3943,48.8565],[2.3984,48.8513],[2.3992,48.8487],[2.3991,48.8481],[2.3959,48.8484],[2.3843,48.8502],[2.38,48.8505],[2.3715,48.8525],[2.3703,48.8532],[2.3692,48.8531],[2.3667,48.8632],[2.3647,48.8664],[2.3635,48.8673],[2.3642,48.8678],[2.3769,48.8721],[2.3832,48.8671]]]},{"n":12,"name":"Reuilly","r":[[[2.4145,48.8468],[2.4125,48.8365],[2.4096,48.8343],[2.4141,48.8337],[2.4221,48.8359],[2.4202,48.8406],[2.4193,48.8421],[2.42,48.8436],[2.4218,48.8445],[2.4245,48.8418],[2.4384,48.8406],[2.4392,48.8445],[2.4409,48.8444],[2.4408,48.846],[2.4466,48.8459],[2.4463,48.8449],[2.4555,48.8441],[2.4633,48.8422],[2.4698,48.8365],[2.4691,48.8341],[2.4652,48.8315],[2.4643,48.8276],[2.466,48.8273],[2.4648,48.823],[2.4626,48.8195],[2.4589,48.8171],[2.4539,48.817],[2.4486,48.8182],[2.4375,48.8184],[2.4373,48.8196],[2.4319,48.8226],[2.4276,48.8242],[2.422,48.8242],[2.4197,48.8241],[2.4173,48.8246],[2.4111,48.825],[2.4067,48.827],[2.4035,48.8293],[2.4011,48.8297],[2.3956,48.828],[2.3907,48.8272],[2.3886,48.8265],[2.3645,48.8461],[2.3664,48.847],[2.3692,48.8531],[2.3704,48.8531],[2.3715,48.8524],[2.3802,48.8504],[2.3845,48.8501],[2.396,48.8483],[2.4145,48.8468]]]},{"n":13,"name":"Gobelins","r":[[[2.342,48.8383],[2.3454,48.8376],[2.3489,48.8371],[2.3519,48.8367],[2.3619,48.84],[2.3649,48.8444],[2.366,48.845],[2.3886,48.8265],[2.3853,48.8253],[2.3788,48.8215],[2.3633,48.8161],[2.3568,48.8164],[2.3544,48.8175],[2.3517,48.818],[2.3468,48.8164],[2.3441,48.8164],[2.3441,48.8176],[2.3446,48.8194],[2.3439,48.8203],[2.3424,48.8215],[2.3415,48.8237],[2.3417,48.8264],[2.3413,48.8314],[2.3411,48.8319],[2.342,48.8383]]]},{"n":14,"name":"Observatoire","r":[[[2.3015,48.8254],[2.321,48.8415],[2.3215,48.841],[2.3246,48.8437],[2.3364,48.8397],[2.3421,48.8383],[2.3411,48.832],[2.3415,48.8288],[2.3416,48.8256],[2.3415,48.8233],[2.3425,48.8213],[2.344,48.8201],[2.3446,48.8194],[2.3442,48.8176],[2.3441,48.8165],[2.3357,48.8168],[2.3329,48.8185],[2.3015,48.8254]]]},{"n":15,"name":"Vaugirard","r":[[[2.2924,48.8275],[2.277,48.8338],[2.2743,48.8304],[2.275,48.8298],[2.2728,48.829],[2.2706,48.8281],[2.2678,48.8282],[2.2673,48.8311],[2.2706,48.8336],[2.2692,48.8353],[2.2662,48.8347],[2.2641,48.8352],[2.2782,48.849],[2.2876,48.8557],[2.29,48.8583],[2.3093,48.8459],[2.3113,48.8453],[2.3165,48.8468],[2.32,48.8452],[2.3246,48.8436],[2.3216,48.841],[2.3209,48.8416],[2.3015,48.8255],[2.2924,48.8275]]]},{"n":16,"name":"Passy","r":[[[2.2801,48.8783],[2.2949,48.8739],[2.2974,48.8712],[2.299,48.8684],[2.2999,48.8653],[2.3016,48.8646],[2.3018,48.8634],[2.2941,48.8617],[2.2889,48.8576],[2.286,48.8543],[2.2774,48.848],[2.264,48.8351],[2.2579,48.8357],[2.2539,48.8393],[2.2548,48.8454],[2.2503,48.8455],[2.2417,48.8483],[2.2273,48.8486],[2.2259,48.8554],[2.2316,48.8665],[2.2393,48.8705],[2.2467,48.8763],[2.2551,48.8742],[2.2582,48.8805],[2.2801,48.8783]]]},{"n":17,"name":"Batignolles-Monceau","r":[[[2.28,48.8784],[2.2832,48.8828],[2.2919,48.8884],[2.2977,48.8896],[2.3062,48.8951],[2.3141,48.8982],[2.3219,48.9006],[2.3301,48.9008],[2.3256,48.8876],[2.3272,48.8835],[2.3169,48.8813],[2.3087,48.8804],[2.2981,48.8782],[2.295,48.8739],[2.28,48.8784]]]},{"n":18,"name":"Butte-Montmartre","r":[[[2.3704,48.9007],[2.3704,48.8967],[2.3718,48.8954],[2.3703,48.8945],[2.3671,48.8876],[2.3666,48.8866],[2.3647,48.8844],[2.3588,48.8844],[2.3495,48.8837],[2.3397,48.8819],[2.3373,48.8823],[2.3295,48.8844],[2.3279,48.8835],[2.3272,48.8834],[2.3256,48.8876],[2.3302,48.9008],[2.3532,48.9013],[2.3704,48.9007]]]},{"n":19,"name":"Buttes-Chaumont","r":[[[2.4087,48.8779],[2.4023,48.876],[2.3953,48.8753],[2.3902,48.8755],[2.3877,48.8745],[2.3865,48.8746],[2.3847,48.8739],[2.3768,48.8722],[2.3704,48.8781],[2.3702,48.8828],[2.3689,48.8833],[2.3687,48.8841],[2.3647,48.8844],[2.3668,48.8867],[2.3683,48.8902],[2.3703,48.8945],[2.3718,48.8955],[2.3703,48.8966],[2.3704,48.9008],[2.3769,48.9003],[2.3885,48.9007],[2.392,48.8998],[2.3938,48.8982],[2.3973,48.8859],[2.4019,48.8818],[2.4066,48.8801],[2.4087,48.8779]]]},{"n":20,"name":"Ménilmontant","r":[[[2.4133,48.8653],[2.4141,48.8591],[2.414,48.8538],[2.4147,48.8526],[2.4153,48.851],[2.4144,48.8468],[2.399,48.8481],[2.3993,48.8488],[2.3984,48.8513],[2.3944,48.8565],[2.3897,48.8585],[2.3874,48.863],[2.3835,48.8662],[2.3832,48.8671],[2.3768,48.8722],[2.385,48.874],[2.3865,48.8747],[2.3879,48.8745],[2.3904,48.8755],[2.3953,48.8752],[2.4022,48.876],[2.4086,48.8779],[2.411,48.8743],[2.4134,48.8711],[2.4133,48.8653]]]}];
 
+
 const SEINE=[[2.4155,48.8235],[2.4040,48.8262],[2.3950,48.8292],[2.3830,48.8362],[2.3720,48.8428],[2.3640,48.8474],[2.3560,48.8510],[2.3480,48.8548],[2.3410,48.8575],[2.3330,48.8592],[2.3240,48.8622],[2.3170,48.8640],[2.3100,48.8642],[2.3020,48.8638],[2.2940,48.8608],[2.2865,48.8556],[2.2800,48.8497],[2.2745,48.8455],[2.2680,48.8405],[2.2590,48.8350],[2.2510,48.8310]];
 const PLACES={
   republique:[2.3632,48.8674], bastille:[2.3692,48.8532], nation:[2.3958,48.8484], italie:[2.3557,48.8311],
-  jussieu:[2.3548,48.8462], champdemars:[2.2985,48.8560], chatelet:[2.3470,48.8580]
+  jussieu:[2.3548,48.8462], champdemars:[2.2985,48.8560], chatelet:[2.3470,48.8580],
+  europe:[2.3222,48.8786], stmichel:[2.3446,48.8534]
 };
-const LANDMARKS=[["République",PLACES.republique,"r"],["Bastille",PLACES.bastille,"r"],["Nation",PLACES.nation,"r"],["Pl. d'Italie",PLACES.italie,"r"],["Jussieu",PLACES.jussieu,"l"],["Champ-de-Mars",PLACES.champdemars,"l"],["Châtelet",PLACES.chatelet,"l"]];
+const LANDMARKS=[["République",PLACES.republique,"r"],["Bastille",PLACES.bastille,"r"],["Nation",PLACES.nation,"r"],["Pl. d'Italie",PLACES.italie,"r"],["Jussieu",PLACES.jussieu,"l"],["Champ-de-Mars",PLACES.champdemars,"l"],["Châtelet",PLACES.chatelet,"r"],["Pl. de l'Europe",PLACES.europe,"l"],["Pont St-Michel",PLACES.stmichel,"l"]];
 
+/* ---------- interface strings ---------- */
+const UI={
+ en:{kicker:"Strikes · marches · rallies",
+  lede:"Strikes, marches, rallies and blockades in Paris, late September to late October 2026. Compiled on <b>1 October 2026</b> from news outlets, union pages and activist calendars. Routes and times change, so check the linked source before you go.",
+  when:"When",type:"Type",upcoming:"Now & upcoming",soon:"Next 7 days",all:"All",past:"Past",
+  march:"March",rally:"Rally",strike:"Strike",blockade:"Blockade",
+  confirmed:"Confirmed",announced:"Announced",unconfirmed:"Unconfirmed",
+  lgMarch:"March (with route)",lgRally:"Rally",lgStrike:"Strike / picket",lgBlockade:"Blockade",lgUnconf:"Unconfirmed call",lgPast:"Already happened",
+  agenda:"Agenda",shown:n=>`${n} shown`,today:"Today",ongoing:"Ongoing",notOnMap:"Not on map",citywide:"Citywide",
+  route:"Route:",sources:"Sources:",empty:"Nothing matches these filters. Try \"All\" or switch a type back on.",
+  zin:"Zoom in",zout:"Zoom out",zreset:"Reset view",mapLabel:"Map of Paris with protest locations",filters:"Filters",
+  foot1:"Sources include mainstream media and less mainstream ones: Démosphère, Paris-luttes.info, Agenda militant, C'est la grève, union and association sites. Activist listings are often the first and only place a rally is announced.",
+  foot2:"Base map: Paris arrondissements (OpenStreetMap-derived). The Seine and route lines are drawn by hand and approximate. Markers show announced meeting points.",
+  foot3:"The Préfecture de police can ban or reroute any demonstration at short notice."},
+ es:{kicker:"Huelgas · marchas · concentraciones",
+  lede:"Huelgas, marchas, concentraciones y bloqueos en París, de finales de septiembre a finales de octubre de 2026. Recopilado el <b>1 de octubre de 2026</b> a partir de medios, sindicatos y agendas militantes. Los recorridos y horarios cambian: consulta la fuente enlazada antes de ir.",
+  when:"Cuándo",type:"Tipo",upcoming:"Ahora y próximos",soon:"Próximos 7 días",all:"Todos",past:"Pasados",
+  march:"Marcha",rally:"Concentración",strike:"Huelga",blockade:"Bloqueo",
+  confirmed:"Confirmado",announced:"Anunciado",unconfirmed:"Sin confirmar",
+  lgMarch:"Marcha (con recorrido)",lgRally:"Concentración",lgStrike:"Huelga / piquete",lgBlockade:"Bloqueo",lgUnconf:"Convocatoria sin confirmar",lgPast:"Ya celebrado",
+  agenda:"Agenda",shown:n=>`${n} visibles`,today:"Hoy",ongoing:"En curso",notOnMap:"Fuera del mapa",citywide:"Toda la ciudad",
+  route:"Recorrido:",sources:"Fuentes:",empty:"Ningún evento coincide con estos filtros. Prueba \"Todos\" o vuelve a activar un tipo.",
+  zin:"Acercar",zout:"Alejar",zreset:"Restablecer vista",mapLabel:"Mapa de París con los lugares de las protestas",filters:"Filtros",
+  foot1:"Las fuentes incluyen medios generalistas y otros menos conocidos: Démosphère, Paris-luttes.info, Agenda militant, C'est la grève y webs de sindicatos y asociaciones. Muchas concentraciones solo se anuncian en agendas militantes.",
+  foot2:"Mapa base: distritos (arrondissements) de París, a partir de OpenStreetMap. El Sena y los recorridos están dibujados a mano y son aproximados. Los marcadores indican los puntos de encuentro anunciados.",
+  foot3:"La Prefectura de Policía puede prohibir o desviar cualquier manifestación con poca antelación."},
+ fr:{kicker:"Grèves · manifs · rassemblements",
+  lede:"Grèves, manifestations, rassemblements et blocages à Paris, de fin septembre à fin octobre 2026. Compilé le <b>1er octobre 2026</b> à partir de la presse, de sites syndicaux et d'agendas militants. Parcours et horaires peuvent changer : vérifiez la source avant d'y aller.",
+  when:"Quand",type:"Type",upcoming:"En cours et à venir",soon:"7 prochains jours",all:"Tout",past:"Passés",
+  march:"Manif",rally:"Rassemblement",strike:"Grève",blockade:"Blocage",
+  confirmed:"Confirmé",announced:"Annoncé",unconfirmed:"Non confirmé",
+  lgMarch:"Manif (avec parcours)",lgRally:"Rassemblement",lgStrike:"Grève / piquet",lgBlockade:"Blocage",lgUnconf:"Appel non confirmé",lgPast:"Déjà passé",
+  agenda:"Agenda",shown:n=>`${n} affichés`,today:"Aujourd'hui",ongoing:"En cours",notOnMap:"Hors carte",citywide:"Toute la ville",
+  route:"Parcours :",sources:"Sources :",empty:"Aucun événement ne correspond. Essayez « Tout » ou réactivez un type.",
+  zin:"Zoomer",zout:"Dézoomer",zreset:"Réinitialiser la vue",mapLabel:"Carte de Paris avec les lieux de mobilisation",filters:"Filtres",
+  foot1:"Sources : grands médias et sources moins connues (Démosphère, Paris-luttes.info, Agenda militant, C'est la grève, sites syndicaux et associatifs). Beaucoup de rassemblements ne sont annoncés que dans les agendas militants.",
+  foot2:"Fond de carte : arrondissements de Paris (dérivés d'OpenStreetMap). La Seine et les parcours sont tracés à la main et approximatifs. Les marqueurs indiquent les points de rendez-vous annoncés.",
+  foot3:"La Préfecture de police peut interdire ou modifier une manifestation au dernier moment."}
+};
+const LOCALE={en:"en-GB",es:"es-ES",fr:"fr-FR"};
+
+/* ---------- events (text fields: {en, es, fr}) ---------- */
 const EVENTS=[
- {id:"climat",date:"2026-09-26",time:"Afternoon",kind:"rally",status:"confirmed",
-  title:"Climate & social justice rally",where:"Place de la République (11e/3e/10e)",
-  pts:[PLACES.republique],
-  desc:"The national climate march was turned into a static rally at République because of the Pope's visit to Paris that weekend.",
+ {id:"climat",date:"2026-09-26",kind:"rally",status:"confirmed",pts:[PLACES.republique],
+  time:{en:"Afternoon",es:"Por la tarde",fr:"Après-midi"},
+  title:{en:"Climate & social justice rally",es:"Concentración por el clima y la justicia social",fr:"Rassemblement climat et justice sociale"},
+  where:{en:"Place de la République",es:"Place de la République",fr:"Place de la République"},
+  desc:{en:"The national climate march was turned into a static rally because of the Pope's visit to Paris that weekend.",
+        es:"La marcha nacional por el clima se convirtió en una concentración estática por la visita del Papa a París ese fin de semana.",
+        fr:"La marche climat nationale a été transformée en rassemblement statique en raison de la venue du pape à Paris ce week-end-là."},
   src:[["Vert","https://vert.eco/rapports-de-force/a-cause-de-la-venue-du-pape-la-marche-climat-du-26-septembre-remplacee-par-un-rassemblement-statique-a-paris/"]]},
- {id:"pompiers",date:"2026-09-27",end:"2026-10-20",time:"Camp since Sun. morning",kind:"strike",status:"confirmed",
-  title:"Firefighters' strike camp",where:"Champ-de-Mars, foot of the Eiffel Tower (7e)",
-  pts:[PLACES.champdemars],
-  desc:"Eight professional firefighter unions set up a \"colonne de renfort de la colère\" on the Champ-de-Mars, asking for more staff, resources and the civil-security modernisation bill. Their national strike notice runs 8 Sept – 20 Oct, the day of the vote on the first part of the 2027 budget; unions say they won't lift it without results. About 2,682 firefighters a day (9.3%) have been on strike.",
-  src:[["France 24","https://www.france24.com/fr/france/20260927-pompiers-en-gr%C3%A8ve-la-mobilisation-prend-de-l-ampleur-au-pied-de-la-tour-eiffel"],["France 3 Paris IDF","https://france3-regions.franceinfo.fr/paris-ile-de-france/paris/sapeurs-pompiers-en-greve-ils-s-installent-au-pied-de-la-tour-eiffel-pour-defendre-la-securite-civile-3423998.html"],["Sortiraparis (strike notice)","https://www.sortiraparis.com/en/news/in-paris/articles/351328-firefighters-strike-notice-filed-for-september-8-to-october-20-2026"]]},
- {id:"fp29",date:"2026-09-29",time:"14:00",kind:"march",status:"confirmed",
-  title:"Public-sector strike march",where:"République → Nation",
-  pts:[PLACES.republique],
+
+ {id:"pompiers",date:"2026-09-27",end:"2026-10-20",kind:"strike",status:"confirmed",pts:[PLACES.champdemars],
+  time:{en:"Camp since Sun. 27 Sept",es:"Campamento desde el dom. 27 sept.",fr:"Campement depuis le dim. 27 sept."},
+  title:{en:"Firefighters' strike camp",es:"Campamento de bomberos en huelga",fr:"Campement des pompiers en grève"},
+  where:{en:"Champ-de-Mars, foot of the Eiffel Tower (7e)",es:"Champ-de-Mars, al pie de la torre Eiffel (7.º)",fr:"Champ-de-Mars, au pied de la tour Eiffel (7e)"},
+  desc:{en:"Eight professional firefighter unions set up a \"colonne de renfort de la colère\" here, asking for more staff and resources. Their national strike notice runs 8 Sept – 20 Oct, the day of the vote on the first part of the 2027 budget, and they say they won't lift it without results. About 2,682 firefighters a day (9.3%) have been on strike.",
+        es:"Ocho sindicatos de bomberos profesionales instalaron aquí una \"columna de refuerzo de la ira\" para pedir más personal y medios. Su preaviso de huelga nacional va del 8 de septiembre al 20 de octubre, día de la votación de la primera parte del presupuesto 2027, y dicen que no lo levantarán sin resultados. Unos 2.682 bomberos al día (9,3 %) han hecho huelga.",
+        fr:"Huit syndicats de sapeurs-pompiers professionnels y ont lancé une « colonne de renfort de la colère » pour réclamer des effectifs et des moyens. Leur préavis national court du 8 septembre au 20 octobre, jour du vote de la première partie du budget 2027, et ils refusent de le lever sans avancées. Environ 2 682 pompiers par jour (9,3 %) sont en grève."},
+  src:[["France 24","https://www.france24.com/fr/france/20260927-pompiers-en-gr%C3%A8ve-la-mobilisation-prend-de-l-ampleur-au-pied-de-la-tour-eiffel"],["France 3 Paris IDF","https://france3-regions.franceinfo.fr/paris-ile-de-france/paris/sapeurs-pompiers-en-greve-ils-s-installent-au-pied-de-la-tour-eiffel-pour-defendre-la-securite-civile-3423998.html"],["C'est la grève","https://www.cestlagreve.fr/greve/pompiers-septembre-2026/"]]},
+
+ {id:"ratp",date:"2026-09-28",end:"2026-10-31",openEnd:true,kind:"strike",status:"confirmed",citywide:true,
+  time:{en:"From Mon. 28 Sept, 19:00 · no end date",es:"Desde el lun. 28 sept., 19:00 · sin fecha de fin",fr:"Depuis le lun. 28 sept., 19h · sans date de fin"},
+  title:{en:"Open-ended RATP strike notice (CGT-RATP)",es:"Preaviso de huelga indefinida en la RATP (CGT-RATP)",fr:"Préavis de grève illimitée à la RATP (CGT-RATP)"},
+  where:{en:"Metro, RER A & B, buses",es:"Metro, RER A y B, autobuses",fr:"Métro, RER A et B, bus"},
+  desc:{en:"CGT-RATP covers all RATP staff with an unlimited notice, demanding a fuel allowance and wages indexed to inflation. A notice lets staff walk out on any day; it doesn't mean the network stops every day. Traffic was near normal on the metro on 29 Sept. Check RATP traffic info each morning.",
+        es:"La CGT-RATP cubre a toda la plantilla con un preaviso indefinido y exige una ayuda para el carburante y salarios indexados a la inflación. El preaviso permite parar cualquier día, pero no significa que la red se detenga a diario. El 29 de septiembre el metro funcionó casi con normalidad. Consulta el estado del tráfico de la RATP cada mañana.",
+        fr:"La CGT-RATP couvre tout le personnel par un préavis illimité et réclame une prime carburant et l'indexation des salaires sur l'inflation. Un préavis permet de débrayer n'importe quel jour, sans que le réseau s'arrête forcément. Le 29 septembre, le métro roulait presque normalement. Vérifiez l'info trafic RATP chaque matin."},
+  src:[["C'est la grève","https://www.cestlagreve.fr/"],["Yahoo Actualités","https://fr.finance.yahoo.com/actualites/m%C3%A9tro-rer-bus-cgt-ratp-142406895.html"],["Mobility Center","https://mobilitycenter.fr/greve-29-septembre-2026-ratp-preavis-illimite-28-septembre-sncf-fonction-publique/"]]},
+
+ {id:"fp29",date:"2026-09-29",kind:"march",status:"confirmed",pts:[PLACES.republique],
   route:[PLACES.republique,[2.3655,48.8648],[2.3667,48.8622],[2.3680,48.8580],PLACES.bastille,[2.3718,48.8500],[2.3740,48.8462],[2.3800,48.8440],[2.3880,48.8405],[2.3925,48.8420],[2.3950,48.8460],PLACES.nation],
-  routeTxt:"Pl. de la République, bd du Temple, bd des Filles-du-Calvaire, bd Beaumarchais, Pl. de la Bastille, rue de Lyon, av. Daumesnil, Pl. de la Nation.",
-  desc:"Fonction publique inter-union day of strikes: teachers, hospital staff, firefighters and other public servants marching over pay, the frozen point d'indice, working conditions and public-service funding.",
+  time:{en:"14:00",es:"14:00",fr:"14h"},
+  title:{en:"Public-sector strike march",es:"Marcha de huelga del sector público",fr:"Manifestation de la fonction publique"},
+  where:{en:"République → Nation",es:"République → Nation",fr:"République → Nation"},
+  routeTxt:{en:"Pl. de la République, bd du Temple, bd des Filles-du-Calvaire, bd Beaumarchais, Pl. de la Bastille, rue de Lyon, av. Daumesnil, Pl. de la Nation.",
+            es:"Pl. de la République, bd du Temple, bd des Filles-du-Calvaire, bd Beaumarchais, Pl. de la Bastille, rue de Lyon, av. Daumesnil, Pl. de la Nation.",
+            fr:"Pl. de la République, bd du Temple, bd des Filles-du-Calvaire, bd Beaumarchais, Pl. de la Bastille, rue de Lyon, av. Daumesnil, Pl. de la Nation."},
+  desc:{en:"Inter-union day of strikes: teachers, hospital staff, firefighters and other public servants marched over pay, the frozen point d'indice, working conditions and public-service funding.",
+        es:"Jornada de huelga intersindical: docentes, personal sanitario, bomberos y otros funcionarios marcharon por los salarios, la congelación del punto de índice, las condiciones de trabajo y la financiación de los servicios públicos.",
+        fr:"Journée de grève intersyndicale : enseignants, soignants, pompiers et autres agents publics ont défilé pour les salaires, contre le gel du point d'indice, pour les conditions de travail et les moyens des services publics."},
   src:[["Paris Rouge","https://parisrouge.fr/2026/09/28/journee-de-greve-et-de-mobilisation-du-mardi-29-septembre-la-manifestation-parisienne-defilera-entre-republique-et-nation/"],["Affiches Parisiennes","https://mesinfos.fr/75000-paris/greve-du-29-septembre-le-parcours-de-la-manifestation-a-paris-339736.html"],["CGT","https://www.cgt.fr/actualites/france/mobilisation/manifestations-du-29-septembre-2026-les-lieux-et-horaires-pres-de-chez-vous"]]},
- {id:"lycees",date:"2026-09-29",end:"2026-10-06",time:"Mornings, outside the gates",kind:"blockade",status:"confirmed",
-  title:"High-school blockades (blocus des lycées)",where:"Lycées across Paris, incl. Turgot (3e), Lamartine (9e), Arago (12e), Hélène-Boucher & Maurice-Ravel (20e)",
+
+ {id:"lycees",date:"2026-09-29",end:"2026-10-06",kind:"blockade",status:"confirmed",
   pts:[[2.3606,48.8664],[2.3486,48.8780],[2.3939,48.8478],[2.4046,48.8478],[2.4086,48.8476]],
   ptNames:["Lycée Turgot","Lycée Lamartine","Lycée Arago","Lycée Hélène-Boucher","Lycée Maurice-Ravel"],
-  desc:"Student-led blockades over teacher shortages, class sizes, heavy timetables and Parcoursup pressure. At least 16 Paris lycées were disrupted on Thu 1 Oct after a national call by the USL and Union étudiante to block lycées and universities; 356 lycées were blocked nationwide on 30 Sept. Markers show schools named in reports, not a complete list.",
+  time:{en:"Mornings, outside the gates",es:"Por las mañanas, ante las puertas",fr:"Le matin, devant les grilles"},
+  title:{en:"High-school blockades",es:"Bloqueos de institutos",fr:"Blocus des lycées"},
+  where:{en:"Lycées across Paris, incl. Turgot (3e), Lamartine (9e), Arago (12e), Hélène-Boucher & Maurice-Ravel (20e)",
+         es:"Institutos de todo París, entre ellos Turgot (3.º), Lamartine (9.º), Arago (12.º), Hélène-Boucher y Maurice-Ravel (20.º)",
+         fr:"Lycées dans tout Paris, dont Turgot (3e), Lamartine (9e), Arago (12e), Hélène-Boucher et Maurice-Ravel (20e)"},
+  desc:{en:"Student-led blockades over teacher shortages, class sizes, heavy timetables and Parcoursup pressure. At least 16 Paris lycées were disrupted on Thu 1 Oct after a national call by the USL and Union étudiante; 356 lycées were blocked nationwide on 30 Sept. Markers show schools named in reports, not a complete list.",
+        es:"Bloqueos organizados por estudiantes contra la falta de profesorado, las clases masificadas, los horarios cargados y la presión de Parcoursup. Al menos 16 institutos de París se vieron afectados el jueves 1 de octubre tras el llamamiento de la USL y la Union étudiante; el 30 de septiembre hubo 356 institutos bloqueados en Francia. Los marcadores señalan los centros citados en la prensa, no la lista completa.",
+        fr:"Blocages menés par les lycéens contre le manque de profs, les classes surchargées, les emplois du temps trop lourds et la pression de Parcoursup. Au moins 16 lycées parisiens perturbés le jeudi 1er octobre après l'appel de l'USL et de l'Union étudiante ; 356 lycées bloqués en France le 30 septembre. Les marqueurs indiquent les établissements cités dans la presse, pas une liste complète."},
   src:[["franceinfo","https://www.franceinfo.fr/societe/education/le-blocage-des-lycees-se-poursuit-partout-en-france-des-universites-pourraient-rejoindre-le-mouvement_8216944.html"],["VousNousIls","https://www.vousnousils.fr/2026/09/30/blocage-des-lycees-les-syndicats-demandent-la-fin-des-violences-lusl-appelle-a-nouvelles-actions-le-1er-octobre-705175"],["Seven Radio","https://sevenradio.fr/2026/09/30/mobilisation-lyceenne-des-etablissements-bloques-a-travers-la-france/"]]},
- {id:"l214",date:"2026-10-03",time:"Village 12:00 · speeches 14:00",kind:"march",status:"confirmed",
-  title:"March to close the slaughterhouses",where:"Place de la République",
-  pts:[PLACES.republique],
-  desc:"L214's annual march, moved from 11 July because of the heatwave. République becomes a \"Vegan Place\" with stalls from noon; the march leaves after the 14:00 speeches. Route not yet published in the sources found.",
-  src:[["L214","https://www.l214.com/campagnes/marche-fermeture-abattoirs/"],["Savoir Animal","https://savoir-animal.fr/3-octobre-marche-fermeture-abattoirs-mobilisation-nationale-pour-animaux/"]]},
- {id:"fiertes",date:"2026-10-03",time:"Speeches 12:30 · departs 13:00",kind:"march",status:"confirmed",
-  title:"Marche des Fiertés (Paris Pride)",where:"Place d'Italie → Bastille",
-  pts:[PLACES.italie],
-  route:[PLACES.italie,[2.3527,48.8355],[2.3500,48.8392],[2.3462,48.8409],[2.3430,48.8428],[2.3407,48.8455],[2.3425,48.8505],[2.3445,48.8533],[2.3458,48.8552],[2.3468,48.8572],[2.3483,48.8588],[2.3530,48.8571],[2.3580,48.8558],[2.3640,48.8541],PLACES.bastille],
-  routeTxt:"Pl. d'Italie, av. des Gobelins, rue Claude-Bernard, rue Gay-Lussac, bd Saint-Michel, bd du Palais, bd de Sébastopol, rue de Rivoli, rue Saint-Antoine, Pl. de la Bastille. Shortened route.",
-  desc:"Inter-LGBT's Pride, cancelled on 27 June for the heatwave and rescheduled. The route was shortened because so many postponed events landed on the same weekend.",
-  src:[["Inter-LGBT","https://www.inter-lgbt.org/save-the-date-samedi-27-juin-2026-marche-des-fiertes-lgbtqia-de-paris-ile-de-france/"],["queer.paris","https://queer.paris/blog/parcours-marche-des-fiertes-paris-2026"],["Têtu","https://tetu.com/2026/08/20/pride-2026-marche-des-fiertes-paris-juin-reportee-octobre-lgbt/"]]},
- {id:"pesticides",date:"2026-10-03",time:"From 12:00",kind:"rally",status:"confirmed",offmap:true,
-  title:"Stop Pesticides – Arrêtons Syngenta",where:"Saint-Pierre-la-Garenne (Eure), ~90 km from Paris",
-  desc:"National and international convergence on the Syngenta site, called by the Confédération paysanne, Cancer Colère, CSVPO and Les Soulèvements de la Terre. Listed in the Île-de-France \"Bloquons tout\" calendar, with group departures from Paris.",
-  src:[["Solidaires","https://www.solidaires.org/stop-pesticides-le-3-octobre-2026-arretons-syngenta/"],["Paris-luttes.info","https://paris-luttes.info/calendrier-bloquons-tout-ile-de-21093?lang=fr"]]},
- {id:"jeunesse",date:"2026-10-06",time:"Time TBA",kind:"march",status:"announced",offmap:true,
-  title:"National youth demonstration",where:"Paris meeting point not yet announced",
-  desc:"The Union étudiante and the Union syndicale lycéenne call a \"grande manifestation nationale\" of school and university students, following the blockades.",
-  src:[["franceinfo","https://www.franceinfo.fr/societe/education/parcoursup/parcoursup/manifestations-des-lyceens/l-union-etudiante-et-l-union-syndicale-lyceenne-appellent-a-une-grande-manifestation-nationale-le-6-octobre_8216203.html"],["Union étudiante","https://union-etudiante.fr/communique-de-presse/appel-de-lusl-et-ue-a-bloquer-les-lycees-et-facs-ce-jeudi-1er-octobre-et-a-une-grande-manifestation-de-la-jeunesse-le-6-octobre"]]},
- {id:"gj10",date:"2026-10-10",time:"Gathering 14:00 · departs 15:00",kind:"march",status:"announced",
-  title:"Gilets jaunes: audit of public finances",where:"Place Jussieu (5e)",
-  pts:[PLACES.jussieu],
-  desc:"Gilets jaunes demonstration calling for an audit of public finances and a \"Grenelle\" on taxation. Speeches from 14:15. Route not published.",
-  src:[["manifestationgiletsjaunesparis.fr","https://manifestationgiletsjaunesparis.fr/"]]},
- {id:"pal10",date:"2026-10-10",time:"14:00",kind:"march",status:"announced",
-  title:"Global day of action for Palestine",where:"Place de la République",
-  pts:[PLACES.republique],
-  desc:"Paris leg of a worldwide demonstration for Palestine, called by a collective of solidarity associations.",
-  src:[["Patrice Leclerc (relay of the call)","https://www.patrice-leclerc.org/2026/09/26/10-octobre-manifestation-mondiale-pour-la-palestine/"]]},
- {id:"gj17",date:"2026-10-17",time:"Time TBA",kind:"rally",status:"unconfirmed",
-  title:"\"Gilets jaunes\" call against fuel prices",where:"République, or Bastille depending on route",
-  pts:[PLACES.republique,PLACES.bastille],ptNames:["Place de la République","Place de la Bastille"],
-  desc:"Viral TikTok call to freeze pump prices, tax oil superprofits and bring in citizens' referendums. No identified organizer or declared route; some figures of the original movement tell people not to come to Paris. Actions at fuel depots and refineries are also mentioned.",
-  src:[["Le Bonbon","https://www.lebonbon.fr/paris/news/rassemblement-gilets-jaunes-prevu-octobre-2026/"],["Public Sénat","https://www.publicsenat.fr/actualites/societe/appel-a-manifester-le-17-octobre-y-a-t-il-une-realite-derriere-cette-tendance-des-reseaux-sociaux"],["Affiches Parisiennes","https://mesinfos.fr/75000-paris/a-paris-le-mouvement-des-gilets-jaunes-va-t-il-reprendre-le-17-octobre-338773.html"]]},
- {id:"aerien",date:"2026-10-17",end:"2026-10-21",time:"Sat 00:01 → Wed 23:59",kind:"strike",status:"confirmed",offmap:true,
-  title:"Pilots & cabin crew strike",where:"Paris-CDG and Orly airports (all French-law airlines)",
-  desc:"Five-day national strike by UNSA PNC, SNPNC-FO, SNGAF, SNPL and UNAC against the reform of combining work and pension (cumul emploi-retraite). Falls at the start of the Toussaint holidays; airlines haven't announced cancellations yet.",
-  src:[["Air Journal","https://www.air-journal.fr/2026-09-19-reforme-du-cumul-emploi-retraite-les-pilotes-et-personnels-de-cabine-appeles-a-la-greve-du-17-au-21-octobre-5277588.html"],["Le Quotidien des Entreprises","https://www.lequotidiendesentreprises.fr/secteurs/aeronautique/pilotes-et-hotesses-de-lair-en-greve-du-17-au-21-octobre/"]]}
-];
 
-const KINDS={march:"March",rally:"Rally",strike:"Strike",blockade:"Blockade"};
-const STATUS={confirmed:"Confirmed",announced:"Announced",unconfirmed:"Unconfirmed call"};
+ {id:"milei",date:"2026-10-02",kind:"rally",status:"announced",pts:[PLACES.republique],
+  time:{en:"18:00",es:"18:00",fr:"18h"},
+  title:{en:"Rally against Javier Milei's visit (\"Pètons la Facho Week\")",es:"Concentración contra la visita de Javier Milei (\"Pètons la Facho Week\")",fr:"Rassemblement contre la venue de Javier Milei (« Pètons la Facho Week »)"},
+  where:{en:"Place de la République",es:"Place de la République",fr:"Place de la République"},
+  desc:{en:"Rally and street performance against the Argentine president's \"Argentina Week\" investor forum in Paris (30 Sept – 2 Oct). Attac also published a statement saying Milei \"is not welcome in Paris\", citing cuts to public services, restrictions on protest and his revisionism about the 1976–83 dictatorship.",
+        es:"Concentración y performance contra la \"Argentina Week\", el foro de inversores del presidente argentino en París (30 sept. – 2 oct.). Attac también publicó un comunicado afirmando que Milei \"no es bienvenido en París\", por los recortes en servicios públicos, las restricciones al derecho de protesta y su revisionismo sobre la dictadura de 1976-83.",
+        fr:"Rassemblement et performance contre l'« Argentina Week », le forum d'investisseurs du président argentin à Paris (30 sept. – 2 oct.). Attac a aussi publié un communiqué « Javier Milei n'est pas le bienvenu à Paris », dénonçant la destruction des services publics, les atteintes au droit de manifester et son révisionnisme sur la dictature de 1976-83."},
+  src:[["Paris-luttes.info","https://paris-luttes.info/petons-la-facho-week-21206?lang=fr"],["Attac France","https://france.attac.org/actus-et-medias/salle-de-presse/article/javier-milei-n-est-pas-le-bienvenu-a-paris"],["CNews (visit)","https://www.cnews.fr/france/2026-10-01/visite-de-javier-milei-emmanuel-macron-recoit-le-president-argentin-ce-jeudi-pour"]]},
+
+ {id:"l214",date:"2026-10-03",kind:"march",status:"confirmed",pts:[PLACES.republique],
+  time:{en:"Village 12:00 · speeches 14:00",es:"Feria 12:00 · discursos 14:00",fr:"Village 12h · prises de parole 14h"},
+  title:{en:"March to close the slaughterhouses",es:"Marcha por el cierre de los mataderos",fr:"Marche pour la fermeture des abattoirs"},
+  where:{en:"Place de la République",es:"Place de la République",fr:"Place de la République"},
+  desc:{en:"L214's annual march, moved from 11 July because of the heatwave. The square becomes a \"Vegan Place\" with stalls from noon; the march leaves after the 14:00 speeches. Route not published in the sources found.",
+        es:"La marcha anual de L214, aplazada desde el 11 de julio por la ola de calor. La plaza se convierte en una \"Vegan Place\" con puestos desde el mediodía; la marcha sale tras los discursos de las 14:00. Recorrido no publicado en las fuentes consultadas.",
+        fr:"La marche annuelle de L214, reportée du 11 juillet à cause de la canicule. La place devient une « Vegan Place » avec stands dès midi ; le cortège part après les prises de parole de 14h. Parcours non publié dans les sources consultées."},
+  src:[["L214","https://www.l214.com/campagnes/marche-fermeture-abattoirs/"],["Paris-luttes.info","https://paris-luttes.info/marche-pour-la-fermeture-des-21160?lang=fr"],["Savoir Animal","https://savoir-animal.fr/3-octobre-marche-fermeture-abattoirs-mobilisation-nationale-pour-animaux/"]]},
+
+ {id:"fiertes",date:"2026-10-03",kind:"march",status:"confirmed",pts:[PLACES.italie],
+  route:[PLACES.italie,[2.3527,48.8355],[2.3500,48.8392],[2.3462,48.8409],[2.3430,48.8428],[2.3407,48.8455],[2.3425,48.8505],[2.3445,48.8533],[2.3458,48.8552],[2.3468,48.8572],[2.3483,48.8588],[2.3530,48.8571],[2.3580,48.8558],[2.3640,48.8541],PLACES.bastille],
+  time:{en:"Speeches 12:30 · departs 13:00",es:"Discursos 12:30 · salida 13:00",fr:"Prises de parole 12h30 · départ 13h"},
+  title:{en:"Marche des Fiertés (Paris Pride)",es:"Marche des Fiertés (Orgullo de París)",fr:"Marche des Fiertés LGBTQIA+"},
+  where:{en:"Place d'Italie → Bastille",es:"Place d'Italie → Bastille",fr:"Place d'Italie → Bastille"},
+  routeTxt:{en:"Pl. d'Italie, av. des Gobelins, rue Claude-Bernard, rue Gay-Lussac, bd Saint-Michel, bd du Palais, bd de Sébastopol, rue de Rivoli, rue Saint-Antoine, Pl. de la Bastille (shortened route).",
+            es:"Pl. d'Italie, av. des Gobelins, rue Claude-Bernard, rue Gay-Lussac, bd Saint-Michel, bd du Palais, bd de Sébastopol, rue de Rivoli, rue Saint-Antoine, Pl. de la Bastille (recorrido acortado).",
+            fr:"Pl. d'Italie, av. des Gobelins, rue Claude-Bernard, rue Gay-Lussac, bd Saint-Michel, bd du Palais, bd de Sébastopol, rue de Rivoli, rue Saint-Antoine, Pl. de la Bastille (parcours raccourci)."},
+  desc:{en:"Inter-LGBT's Pride, cancelled on 27 June for the heatwave and rescheduled. The route was shortened because so many postponed events landed on the same weekend.",
+        es:"El Orgullo de la Inter-LGBT, cancelado el 27 de junio por la ola de calor y reprogramado. El recorrido se acortó porque muchos actos aplazados coinciden el mismo fin de semana.",
+        fr:"La Marche de l'Inter-LGBT, annulée le 27 juin pour cause de canicule et reprogrammée. Le parcours a été raccourci car de nombreux événements reportés tombent le même week-end."},
+  src:[["Inter-LGBT","https://www.inter-lgbt.org/save-the-date-samedi-27-juin-2026-marche-des-fiertes-lgbtqia-de-paris-ile-de-france/"],["queer.paris","https://queer.paris/blog/parcours-marche-des-fiertes-paris-2026"],["Têtu","https://tetu.com/2026/08/20/pride-2026-marche-des-fiertes-paris-juin-reportee-octobre-lgbt/"]]},
+
+ {id:"syngenta",date:"2026-10-03",kind:"rally",status:"confirmed",offmap:true,
+  time:{en:"From 12:00",es:"Desde las 12:00",fr:"À partir de 12h"},
+  title:{en:"Stop Pesticides – Arrêtons Syngenta",es:"Stop Pesticidas – Paremos a Syngenta",fr:"Stop Pesticides – Arrêtons Syngenta"},
+  where:{en:"Saint-Pierre-la-Garenne (Eure), ~90 km from Paris",es:"Saint-Pierre-la-Garenne (Eure), a ~90 km de París",fr:"Saint-Pierre-la-Garenne (Eure), à ~90 km de Paris"},
+  desc:{en:"National and international convergence on the Syngenta site, called by the Confédération paysanne, Cancer Colère, CSVPO and Les Soulèvements de la Terre. Listed in the Île-de-France \"Bloquons tout\" calendar with group departures from Paris.",
+        es:"Convergencia nacional e internacional ante la planta de Syngenta, convocada por la Confédération paysanne, Cancer Colère, el CSVPO y Les Soulèvements de la Terre. Figura en el calendario \"Bloquons tout\" de Île-de-France, con salidas en grupo desde París.",
+        fr:"Convergence nationale et internationale vers le site Syngenta, à l'appel de la Confédération paysanne, Cancer Colère, du CSVPO et des Soulèvements de la Terre. Inscrite au calendrier « Bloquons tout » Île-de-France, avec départs collectifs depuis Paris."},
+  src:[["Solidaires","https://www.solidaires.org/stop-pesticides-le-3-octobre-2026-arretons-syngenta/"],["Paris-luttes.info","https://paris-luttes.info/stop-pesticides-mobilisation-21215?lang=fr"],["L'Antivol","https://www.lantivol.com/2026/09/stop-pesticides-mobilisation-nationale.html"]]},
+
+ {id:"jeunesse",date:"2026-10-06",kind:"march",status:"announced",offmap:true,
+  time:{en:"Time TBA",es:"Hora por confirmar",fr:"Horaire à venir"},
+  title:{en:"National youth demonstration",es:"Manifestación nacional de la juventud",fr:"Manifestation nationale de la jeunesse"},
+  where:{en:"Paris meeting point not yet announced",es:"Punto de encuentro en París aún sin anunciar",fr:"Lieu de rendez-vous parisien pas encore annoncé"},
+  desc:{en:"The Union étudiante and the Union syndicale lycéenne call a \"grande manifestation nationale\" of school and university students, following the blockades.",
+        es:"La Union étudiante y la Union syndicale lycéenne convocan una \"gran manifestación nacional\" de estudiantes de instituto y universidad, tras los bloqueos.",
+        fr:"L'Union étudiante et l'Union syndicale lycéenne appellent à une « grande manifestation nationale » des lycéens et étudiants, dans la foulée des blocages."},
+  src:[["franceinfo","https://www.franceinfo.fr/societe/education/parcoursup/parcoursup/manifestations-des-lyceens/l-union-etudiante-et-l-union-syndicale-lyceenne-appellent-a-une-grande-manifestation-nationale-le-6-octobre_8216203.html"],["Union étudiante","https://union-etudiante.fr/communique-de-presse/appel-de-lusl-et-ue-a-bloquer-les-lycees-et-facs-ce-jeudi-1er-octobre-et-a-une-grande-manifestation-de-la-jeunesse-le-6-octobre"]]},
+
+ {id:"total",date:"2026-10-08",kind:"strike",status:"confirmed",offmap:true,
+  time:{en:"All day",es:"Todo el día",fr:"Toute la journée"},
+  title:{en:"TotalEnergies strike (CGT)",es:"Huelga en TotalEnergies (CGT)",fr:"Grève chez TotalEnergies (CGT)"},
+  where:{en:"All group sites: refineries, fuel depots, some service stations",es:"Todos los centros del grupo: refinerías, depósitos y algunas gasolineras",fr:"Tous les sites du groupe : raffineries, dépôts, certaines stations-service"},
+  desc:{en:"CGT strike call across TotalEnergies. Fuel supply at some Paris-region stations may be affected. No Paris picket location was published.",
+        es:"Convocatoria de huelga de la CGT en todo TotalEnergies. Puede afectar al suministro de algunas gasolineras de la región de París. No se ha publicado ningún piquete en París.",
+        fr:"Appel à la grève de la CGT sur l'ensemble de TotalEnergies. L'approvisionnement de certaines stations franciliennes peut être touché. Aucun piquet parisien n'a été annoncé."},
+  src:[["C'est la grève","https://www.cestlagreve.fr/greve/total-energies-octobre-2026/"]]},
+
+ {id:"omnibus",date:"2026-10-10",kind:"rally",status:"announced",pts:[PLACES.europe],
+  time:{en:"11:00",es:"11:00",fr:"11h"},
+  title:{en:"Pots-and-pans rally against the EU \"Omnibus\" pesticides law",es:"Cacerolada contra la ley europea \"Omnibus\" de pesticidas",fr:"Rassemblement-casseroles contre l'Omnibus pesticides"},
+  where:{en:"Place de l'Europe – Simone Veil (8e)",es:"Place de l'Europe – Simone Veil (8.º)",fr:"Place de l'Europe – Simone Veil (8e)"},
+  desc:{en:"Part of a national weekend of loud rallies (10–11 Oct) before the European Parliament vote on the Omnibus text, which would extend pesticide approvals and loosen controls. Called by France Nature Environnement, Générations Futures, Greenpeace, unions and about a hundred other groups. Bring a pot to bang at the time of the vote.",
+        es:"Forma parte de un fin de semana nacional de concentraciones ruidosas (10-11 oct.) antes de la votación en el Parlamento Europeo del texto Omnibus, que alargaría las autorizaciones de pesticidas y relajaría los controles. Convocan France Nature Environnement, Générations Futures, Greenpeace, sindicatos y un centenar de organizaciones. Lleva una cacerola para la hora de la votación.",
+        fr:"Dans le cadre d'un week-end national de rassemblements bruyants (10-11 oct.) avant le vote du Parlement européen sur l'Omnibus, qui prolongerait les autorisations de pesticides et allégerait les contrôles. À l'appel de France Nature Environnement, Générations Futures, Greenpeace, de syndicats et d'une centaine d'organisations. Casseroles bienvenues au moment du vote."},
+  src:[["Démosphère Paris","https://paris.demosphere.net/"],["Générations Futures","https://www.generations-futures.fr/actualites/mobilisations-pesticides/"],["FNE","https://fne.asso.fr/agenda/mobilisations-pour-dire-non-a-l-omnibus-pesticides"],["Solidaires","https://www.solidaires.org/contre-lomnibus-pesticides-les-10-et-11-octobre/"]]},
+
+ {id:"gj10",date:"2026-10-10",kind:"march",status:"announced",pts:[PLACES.jussieu],
+  time:{en:"Gathering 14:00 · departs 15:00",es:"Concentración 14:00 · salida 15:00",fr:"Rendez-vous 14h · départ 15h"},
+  title:{en:"Gilets jaunes: audit of public finances",es:"Chalecos amarillos: auditoría de las finanzas públicas",fr:"Gilets jaunes : audit des finances publiques"},
+  where:{en:"Place Jussieu (5e)",es:"Place Jussieu (5.º)",fr:"Place Jussieu (5e)"},
+  desc:{en:"Gilets jaunes demonstration calling for an audit of public finances and a \"Grenelle\" on taxation. Speeches from 14:15. Route not published.",
+        es:"Manifestación de los chalecos amarillos que pide una auditoría de las finanzas públicas y un \"Grenelle\" (mesa de negociación) sobre fiscalidad. Discursos desde las 14:15. Recorrido no publicado.",
+        fr:"Manifestation des Gilets jaunes pour un audit des finances publiques et un Grenelle de la fiscalité. Prises de parole à 14h15. Parcours non publié."},
+  src:[["manifestationgiletsjaunesparis.fr","https://manifestationgiletsjaunesparis.fr/"]]},
+
+ {id:"pal10",date:"2026-10-10",kind:"march",status:"announced",pts:[PLACES.republique],
+  time:{en:"14:00",es:"14:00",fr:"14h"},
+  title:{en:"Global day of action for Palestine",es:"Jornada mundial de movilización por Palestina",fr:"Manifestation mondiale pour la Palestine"},
+  where:{en:"Place de la République",es:"Place de la République",fr:"Place de la République"},
+  desc:{en:"Paris leg of a worldwide demonstration for Palestine, called by a collective of solidarity associations. Also listed on Démosphère.",
+        es:"Etapa parisina de una manifestación mundial por Palestina, convocada por un colectivo de asociaciones de solidaridad. También figura en Démosphère.",
+        fr:"Volet parisien d'une manifestation mondiale pour la Palestine, à l'appel d'un collectif d'associations de solidarité. Également listée sur Démosphère."},
+  src:[["Patrice Leclerc (relay of the call)","https://www.patrice-leclerc.org/2026/09/26/10-octobre-manifestation-mondiale-pour-la-palestine/"],["Démosphère Paris","https://paris.demosphere.net/"]]},
+
+ {id:"gj17",date:"2026-10-17",kind:"rally",status:"unconfirmed",pts:[PLACES.republique,PLACES.bastille],ptNames:["Place de la République","Place de la Bastille"],
+  time:{en:"Time TBA",es:"Hora por confirmar",fr:"Horaire à venir"},
+  title:{en:"\"Gilets jaunes\" call against fuel prices",es:"Convocatoria de \"chalecos amarillos\" contra el precio del carburante",fr:"Appel « Gilets jaunes » contre le prix des carburants"},
+  where:{en:"République, or Bastille depending on route",es:"République, o Bastille según el recorrido",fr:"République, ou Bastille selon le parcours"},
+  desc:{en:"Viral TikTok call to freeze pump prices, tax oil superprofits and bring in citizens' referendums. No identified organizer or declared route; some figures of the original movement tell people not to come to Paris. Actions at fuel depots and refineries are also mentioned.",
+        es:"Llamamiento viral en TikTok para congelar el precio de los surtidores, gravar los superbeneficios petroleros e instaurar referendos de iniciativa ciudadana. No hay organizador identificado ni recorrido declarado; algunas figuras del movimiento original desaconsejan ir a París. También se mencionan acciones en depósitos y refinerías.",
+        fr:"Appel viral sur TikTok pour bloquer les prix à la pompe, taxer les superprofits pétroliers et instaurer le RIC. Aucun organisateur identifié ni parcours déclaré ; des figures du mouvement d'origine déconseillent de venir à Paris. Des actions dans des dépôts et raffineries sont aussi évoquées."},
+  src:[["Le Bonbon","https://www.lebonbon.fr/paris/news/rassemblement-gilets-jaunes-prevu-octobre-2026/"],["Public Sénat","https://www.publicsenat.fr/actualites/societe/appel-a-manifester-le-17-octobre-y-a-t-il-une-realite-derriere-cette-tendance-des-reseaux-sociaux"],["Contre Attaque","https://contre-attaque.net/2026/09/15/blocages-du-17-octobre-le-mouvement-a-deja-commence/"]]},
+
+ {id:"oct1961",date:"2026-10-17",kind:"rally",status:"unconfirmed",pts:[PLACES.stmichel],
+  time:{en:"18:00 (usual time)",es:"18:00 (hora habitual)",fr:"18h (horaire habituel)"},
+  title:{en:"Remembrance of the 17 October 1961 massacre",es:"Homenaje a las víctimas de la masacre del 17 de octubre de 1961",fr:"Commémoration du massacre du 17 octobre 1961"},
+  where:{en:"Pont Saint-Michel",es:"Pont Saint-Michel",fr:"Pont Saint-Michel"},
+  desc:{en:"Every year at 18:00 on 17 October, associations, unions and left parties gather on the bridge where Algerian demonstrators were killed and thrown into the Seine by Maurice Papon's police in 1961. They ask for recognition as a state crime and open archives. The 2026 call wasn't found yet, so this is based on the yearly tradition.",
+        es:"Cada 17 de octubre a las 18:00, asociaciones, sindicatos y partidos de izquierda se reúnen en el puente donde en 1961 la policía de Maurice Papon mató y arrojó al Sena a manifestantes argelinos. Piden que se reconozca como crimen de Estado y la apertura de los archivos. Aún no se ha encontrado la convocatoria de 2026; se basa en la tradición anual.",
+        fr:"Chaque 17 octobre à 18h, associations, syndicats et partis de gauche se rassemblent sur le pont où des manifestants algériens furent tués et jetés dans la Seine par la police de Maurice Papon en 1961. Ils demandent la reconnaissance d'un crime d'État et l'ouverture des archives. L'appel 2026 n'a pas encore été trouvé : l'entrée repose sur le rendez-vous annuel."},
+  src:[["Le Courrier de l'Atlas","https://www.lecourrierdelatlas.com/paris-un-rassemblement-en-memoire-des-victimes-algeriennes-du-17-octobre-1961-sur-le-pont-saint-michel/"],["Wikipedia","https://en.wikipedia.org/wiki/1961_Paris_massacre"]]},
+
+ {id:"aerien",date:"2026-10-17",end:"2026-10-21",kind:"strike",status:"confirmed",offmap:true,
+  time:{en:"Sat 00:01 → Wed 23:59",es:"Sáb. 00:01 → mié. 23:59",fr:"Sam. 0h01 → mer. 23h59"},
+  title:{en:"Pilots & cabin crew strike",es:"Huelga de pilotos y tripulantes de cabina",fr:"Grève des pilotes et personnels navigants"},
+  where:{en:"Paris-CDG and Orly airports (all French-law airlines)",es:"Aeropuertos de París-CDG y Orly (aerolíneas bajo derecho francés)",fr:"Aéroports de Roissy-CDG et Orly (compagnies de droit français)"},
+  desc:{en:"Five-day national strike by UNSA PNC, SNPNC-FO, SNGAF, SNPL and UNAC against the reform of combining work and pension (cumul emploi-retraite). It falls at the start of the Toussaint school holidays; airlines haven't announced cancellations yet.",
+        es:"Huelga nacional de cinco días de UNSA PNC, SNPNC-FO, SNGAF, SNPL y UNAC contra la reforma que regula compatibilizar empleo y pensión (cumul emploi-retraite). Coincide con el inicio de las vacaciones escolares de Todos los Santos; las aerolíneas aún no han anunciado cancelaciones.",
+        fr:"Grève nationale de cinq jours de l'UNSA PNC, du SNPNC-FO, du SNGAF, du SNPL et de l'UNAC contre la réforme du cumul emploi-retraite. Elle tombe au début des vacances de la Toussaint ; les compagnies n'ont pas encore annoncé d'annulations."},
+  src:[["Air Journal","https://www.air-journal.fr/2026-09-19-reforme-du-cumul-emploi-retraite-les-pilotes-et-personnels-de-cabine-appeles-a-la-greve-du-17-au-21-octobre-5277588.html"],["C'est la grève","https://www.cestlagreve.fr/greve/aviation-octobre-2026/"],["PNC Contact","https://pnc-contact.com/2026/09/29/greve-des-navigants-a-la-toussaint-2026"]]}
+];
+const KIND_KEYS=["march","rally","strike","blockade"];
+
+/* ---------- language ---------- */
+function pickLang(){
+  const h=(location.hash||"").replace("#","").toLowerCase();
+  if(UI[h]) return h;
+  try{const s=localStorage.getItem("pdlr-lang"); if(UI[s]) return s;}catch(_){}
+  const n=(navigator.language||"en").slice(0,2).toLowerCase();
+  return UI[n]?n:"en";
+}
+let LANG=pickLang();
+const T=k=>UI[LANG][k];
+const L=o=>o?(o[LANG]||o.en):"";
 
 /* ---------- dates ---------- */
 const pad=n=>String(n).padStart(2,"0");
@@ -256,12 +422,13 @@ const now=new Date(); const TODAY=`${now.getFullYear()}-${pad(now.getMonth()+1)}
 const addDays=(iso,d)=>{const t=new Date(iso+"T12:00:00");t.setDate(t.getDate()+d);return `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;};
 const WEEK=addDays(TODAY,7);
 function phase(e){const end=e.end||e.date; if(end<TODAY) return "past"; if(e.date<=TODAY) return "live"; return e.date<=WEEK?"soon":"later";}
-const fmtDay=iso=>new Date(iso+"T12:00:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
+const fmtDay=iso=>new Date(iso+"T12:00:00").toLocaleDateString(LOCALE[LANG],{weekday:"short",day:"numeric",month:"short"});
 
 /* ---------- filters ---------- */
-const WHEN=[["upcoming","Now & upcoming"],["soon","Next 7 days"],["all","All"],["past","Past"]];
-let state={when:"upcoming",kinds:new Set(Object.keys(KINDS)),sel:null};
-try{const s=JSON.parse(localStorage.getItem("pdlr-filters")||"null"); if(s){state.when=s.when||state.when; if(Array.isArray(s.kinds)&&s.kinds.length) state.kinds=new Set(s.kinds);}}catch(_){}
+const WHEN=["upcoming","soon","all","past"];
+let state={when:"upcoming",kinds:new Set(KIND_KEYS),sel:null};
+try{const s=JSON.parse(localStorage.getItem("pdlr-filters")||"null"); if(s){if(WHEN.includes(s.when)) state.when=s.when; if(Array.isArray(s.kinds)&&s.kinds.length) state.kinds=new Set(s.kinds.filter(k=>KIND_KEYS.includes(k)));}}catch(_){}
+if(!state.kinds.size) state.kinds=new Set(KIND_KEYS);
 function save(){try{localStorage.setItem("pdlr-filters",JSON.stringify({when:state.when,kinds:[...state.kinds]}));}catch(_){}}
 function visible(e){
   if(!state.kinds.has(e.kind)) return false;
@@ -272,8 +439,26 @@ function visible(e){
   return true;
 }
 const fw=document.getElementById("f-when"), fk=document.getElementById("f-kind");
-WHEN.forEach(([k,l])=>{const b=document.createElement("button");b.className="chip";b.id="when-"+k;b.textContent=l;b.onclick=()=>{state.when=k;save();render();};fw.appendChild(b);});
-Object.entries(KINDS).forEach(([k,l])=>{const b=document.createElement("button");b.className="chip";b.id="kind-"+k;b.innerHTML=`<i class="sw ${k}"></i>${l}`;b.onclick=()=>{state.kinds.has(k)?state.kinds.delete(k):state.kinds.add(k); if(!state.kinds.size) state.kinds.add(k); save();render();};fk.appendChild(b);});
+WHEN.forEach(k=>{const b=document.createElement("button");b.className="chip";b.id="when-"+k;b.onclick=()=>{state.when=k;save();render();};fw.appendChild(b);});
+KIND_KEYS.forEach(k=>{const b=document.createElement("button");b.className="chip";b.id="kind-"+k;b.onclick=()=>{state.kinds.has(k)?state.kinds.delete(k):state.kinds.add(k); if(!state.kinds.size) state.kinds.add(k); save();render();};fk.appendChild(b);});
+
+function applyLang(){
+  document.documentElement.lang=LANG;
+  document.querySelectorAll("[data-i18n]").forEach(el=>el.textContent=T(el.dataset.i18n));
+  document.querySelectorAll("[data-i18n-html]").forEach(el=>el.innerHTML=T(el.dataset.i18nHtml));
+  WHEN.forEach(k=>document.getElementById("when-"+k).textContent=T(k));
+  KIND_KEYS.forEach(k=>document.getElementById("kind-"+k).innerHTML=`<i class="sw ${k}"></i>${T(k)}`);
+  ["zin","zout","zreset"].forEach(id=>{const b=document.getElementById(id);b.setAttribute("aria-label",T(id));b.title=T(id);});
+  document.getElementById("map").setAttribute("aria-label",T("mapLabel"));
+  document.querySelector(".controls").setAttribute("aria-label",T("filters"));
+  ["en","es","fr"].forEach(l=>document.getElementById("lang-"+l).setAttribute("aria-pressed",l===LANG));
+}
+["en","es","fr"].forEach(l=>document.getElementById("lang-"+l).onclick=()=>{
+  LANG=l; try{localStorage.setItem("pdlr-lang",l);}catch(_){}
+  try{history.replaceState(null,"","#"+l);}catch(_){}
+  applyLang(); render();
+});
+window.addEventListener("hashchange",()=>{const h=location.hash.replace("#","").toLowerCase(); if(UI[h]&&h!==LANG){LANG=h;applyLang();render();}});
 
 /* ---------- projection ---------- */
 const W=1000,H=610,LON0=2.2259,LAT1=48.9013,KX=Math.cos(48.859*Math.PI/180);
@@ -297,7 +482,7 @@ function shape(sel,kind,r){
   return sel.append("circle").attr("class","shape").attr("r",r);
 }
 
-let K=1, markerNodes=[], routeNodes=[];
+let K=1, markerNodes=[];
 function placeAll(){
   const s=1/K;
   numNodes.forEach(n=>n.attr("transform",`translate(${n.attr("data-x")},${n.attr("data-y")}) scale(${s})`));
@@ -307,17 +492,14 @@ function placeAll(){
 }
 
 function drawMap(list){
-  gRoutes.selectAll("*").remove(); gMarks.selectAll("*").remove(); markerNodes=[]; routeNodes=[];
+  gRoutes.selectAll("*").remove(); gMarks.selectAll("*").remove(); markerNodes=[];
   const mapped=list.filter(e=>e.pts);
-  // routes under markers
   mapped.filter(e=>e.route).forEach(e=>{
     const ph=phase(e);
-    const p=gRoutes.append("path").attr("class","route"+(ph==="past"?" past":"")+(state.sel===e.id?" sel":"")).attr("d",line(e.route)).attr("stroke",color(e.kind));
+    gRoutes.append("path").attr("class","route"+(ph==="past"?" past":"")+(state.sel===e.id?" sel":"")).attr("d",line(e.route)).attr("stroke",color(e.kind));
     const [ex,ey]=P(e.route[e.route.length-1]);
     gRoutes.append("rect").attr("class","endcap").attr("x",ex-4).attr("y",ey-4).attr("width",8).attr("height",8).attr("fill",color(e.kind)).attr("opacity",ph==="past"?.4:1).attr("vector-effect","non-scaling-stroke");
-    routeNodes.push(p);
   });
-  // fan out markers sharing a spot
   const groups=new Map();
   mapped.forEach(e=>e.pts.forEach((pt,i)=>{const key=pt[0].toFixed(3)+","+pt[1].toFixed(3);if(!groups.has(key))groups.set(key,[]);groups.get(key).push({e,pt,i});}));
   groups.forEach(arr=>{
@@ -328,12 +510,11 @@ function drawMap(list){
       const dx=Math.cos(ang)*R, dy=Math.sin(ang)*R;
       const ph=phase(o.e);
       const node=gMarks.append("g").attr("class",`mk ${o.e.status} ${ph==="past"?"past":""} ${ph==="live"?"live":""} ${state.sel===o.e.id?"sel":""}`)
-        .attr("tabindex",0).attr("role","button").attr("aria-label",`${o.e.title}, ${fmtDay(o.e.date)}`);
-      node.append("title").text(`${o.e.title}\n${fmtDay(o.e.date)} · ${o.e.ptNames?o.e.ptNames[o.i]:o.e.where}`);
+        .attr("tabindex",0).attr("role","button").attr("aria-label",`${L(o.e.title)}, ${fmtDay(o.e.date)}`);
+      node.append("title").text(`${L(o.e.title)}\n${fmtDay(o.e.date)} · ${o.e.ptNames?o.e.ptNames[o.i]:L(o.e.where)}`);
       node.append("circle").attr("class","hit").attr("r",13);
       node.append("circle").attr("class","pulse").attr("r",9).attr("stroke",color(o.e.kind));
-      const r=o.e.kind==="blockade"?5.5:7;
-      shape(node,o.e.kind,r).attr("fill",color(o.e.kind));
+      shape(node,o.e.kind,o.e.kind==="blockade"?5.5:7).attr("fill",color(o.e.kind));
       node.on("click",ev=>{ev.stopPropagation();select(o.e.id,true);});
       node.on("keydown",ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();select(o.e.id,true);}});
       markerNodes.push({node,x,y,dx,dy});
@@ -345,23 +526,25 @@ function drawMap(list){
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function drawList(list){
   const box=document.getElementById("items"); box.innerHTML="";
-  document.getElementById("count").textContent=`${list.length} shown`;
-  if(!list.length){box.innerHTML='<div class="empty">Nothing matches these filters. Try "All" or switch a type back on.</div>';return;}
+  document.getElementById("count").textContent=T("shown")(list.length);
+  if(!list.length){box.innerHTML=`<div class="empty">${esc(T("empty"))}</div>`;return;}
   const byDay=new Map(); list.forEach(e=>{if(!byDay.has(e.date))byDay.set(e.date,[]);byDay.get(e.date).push(e);});
   byDay.forEach((evs,day)=>{
     const grp=document.createElement("section"); grp.className="daygroup";
-    const live=evs.some(e=>phase(e)==="live");
-    grp.innerHTML=`<div class="dayhead">${fmtDay(day)}${day===TODAY?'<span class="now">Today</span>':""}</div>`;
+    grp.innerHTML=`<div class="dayhead">${esc(fmtDay(day))}${day===TODAY?`<span class="now">${esc(T("today"))}</span>`:""}</div>`;
     evs.forEach(e=>{
       const ph=phase(e), sel=state.sel===e.id;
       const it=document.createElement("div"); it.className=`item ${ph==="past"?"past":""} ${sel?"sel":""}`; it.tabIndex=0; it.id="ev-"+e.id; it.setAttribute("role","button"); it.setAttribute("aria-expanded",sel);
-      const range=e.end?` → ${fmtDay(e.end)}`:"";
-      const livePill=ph==="live"?'<span class="pill confirmed">Ongoing</span>':"";
+      const range=e.end&&!e.openEnd?` → ${fmtDay(e.end)}`:"";
+      const pills=[`<span class="pill ${e.status}">${esc(T(e.status))}</span>`];
+      if(ph==="live") pills.push(`<span class="pill confirmed">${esc(T("ongoing"))}</span>`);
+      if(e.citywide) pills.push(`<span class="pill offmap">${esc(T("citywide"))}</span>`);
+      else if(e.offmap) pills.push(`<span class="pill offmap">${esc(T("notOnMap"))}</span>`);
       it.innerHTML=`<div class="bar" style="background:${color(e.kind)}"></div><div style="min-width:0">
-        <h3>${esc(e.title)}</h3>
-        <div class="meta"><span class="t">${esc(e.time)}${esc(range)}</span><span>${esc(e.where)}</span></div>
-        <div class="meta"><span class="pill ${e.status}">${STATUS[e.status]}</span>${livePill}${e.offmap?'<span class="pill offmap">Not on map</span>':""}<span>${KINDS[e.kind]}</span></div>
-        ${sel?`<div class="detail"><p>${esc(e.desc)}</p>${e.routeTxt?`<p class="route-txt"><b>Route:</b> ${esc(e.routeTxt)}</p>`:""}<div class="src">Sources: ${e.src.map(([t,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join("")}</div></div>`:""}
+        <h3>${esc(L(e.title))}</h3>
+        <div class="meta"><span class="t">${esc(L(e.time))}${esc(range)}</span><span>${esc(L(e.where))}</span></div>
+        <div class="meta">${pills.join("")}<span>${esc(T(e.kind))}</span></div>
+        ${sel?`<div class="detail"><p>${esc(L(e.desc))}</p>${e.routeTxt?`<p class="route-txt"><b>${esc(T("route"))}</b> ${esc(L(e.routeTxt))}</p>`:""}<div class="src">${esc(T("sources"))} ${e.src.map(([t,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join("")}</div></div>`:""}
       </div>`;
       it.onclick=ev=>{if(ev.target.closest("a"))return; select(sel?null:e.id,false);};
       it.onkeydown=ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();select(sel?null:e.id,false);}};
@@ -372,9 +555,9 @@ function drawList(list){
 }
 
 function render(){
-  WHEN.forEach(([k])=>document.getElementById("when-"+k).setAttribute("aria-pressed",state.when===k));
-  Object.keys(KINDS).forEach(k=>document.getElementById("kind-"+k).setAttribute("aria-pressed",state.kinds.has(k)));
-  const list=EVENTS.filter(visible).sort((a,b)=>a.date.localeCompare(b.date)||(a.time>b.time?1:-1));
+  WHEN.forEach(k=>document.getElementById("when-"+k).setAttribute("aria-pressed",state.when===k));
+  KIND_KEYS.forEach(k=>document.getElementById("kind-"+k).setAttribute("aria-pressed",state.kinds.has(k)));
+  const list=EVENTS.filter(visible).sort((a,b)=>a.date.localeCompare(b.date));
   if(state.when==="past") list.reverse();
   drawMap(list); drawList(list);
 }
@@ -400,5 +583,6 @@ function focusOn(e){
   svg.transition().duration(matchMedia("(prefers-reduced-motion: reduce)").matches?0:450).call(zoom.transform,t);
 }
 
+applyLang();
 render();
 </script>
