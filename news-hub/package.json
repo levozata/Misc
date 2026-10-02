@@ -1,0 +1,15 @@
+{
+  "name": "news-hub",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personalised news hub: aggregates RSS/Atom feeds and event calendars from sources each user picks, colour-coded by sector and topic.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server/server.js",
+    "demo": "DEMO=1 node server/server.js",
+    "test": "node --test test/*.test.js"
+  }
+}

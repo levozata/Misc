@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">Example Tech</title>
+  <link rel="self" href="https://tech.example.com/feed"/>
+  <entry>
+    <title type="html">Open-source browser engine reaches 1.0</title>
+    <link rel="replies" href="https://tech.example.com/browser#comments"/>
+    <link rel="alternate" type="text/html" href="https://tech.example.com/browser"/>
+    <id>tag:tech.example.com,2026:browser</id>
+    <published>2026-10-01T12:00:00Z</published>
+    <updated>2026-10-01T13:00:00Z</updated>
+    <author><name>Sam Writer</name></author>
+    <summary type="html">&lt;p&gt;A milestone for the web.&lt;/p&gt;</summary>
+    <content type="html">&lt;p&gt;Long body&lt;/p&gt;&lt;img src="https://img.example.com/engine.webp"/&gt;</content>
+  </entry>
+</feed>

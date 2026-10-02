@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Example World News</title>
+    <link>https://news.example.com/</link>
+    <atom:link href="https://news.example.com/rss" rel="self"/>
+    <item>
+      <title><![CDATA[Floods force thousands from homes & farms]]></title>
+      <link>https://news.example.com/floods</link>
+      <guid isPermaLink="false">floods-123</guid>
+      <description>&lt;p&gt;Rivers burst their banks &amp;amp; roads closed.&lt;/p&gt;&lt;img src="https://img.example.com/a.jpg"&gt;</description>
+      <pubDate>Thu, 01 Oct 2026 08:30:00 GMT</pubDate>
+      <dc:creator>Jane Reporter</dc:creator>
+      <media:thumbnail url="https://img.example.com/thumb.jpg" width="240"/>
+    </item>
+    <item>
+      <title>Café owners&#8217; protest</title>
+      <link>https://news.example.com/cafe</link>
+      <description><![CDATA[<p>Owners <b>protest</b> new rules.</p>]]></description>
+      <pubDate>Wed, 30 Sep 2026 18:00:00 +0200</pubDate>
+      <enclosure url="https://img.example.com/cafe.png" type="image/png" length="1000"/>
+    </item>
+    <item>
+      <title>No link here</title>
+    </item>
+  </channel>
+</rss>

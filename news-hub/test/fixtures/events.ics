@@ -1,0 +1,27 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Example Venue//EN
+X-WR-CALNAME:City Jazz Club
+BEGIN:VEVENT
+UID:evt-1@example.com
+DTSTART;TZID=Europe/Paris:20261010T203000
+DTEND;TZID=Europe/Paris:20261010T230000
+SUMMARY:Late-night jam session\, all welcome
+LOCATION:Main Hall\, 12 Rue Exemple
+DESCRIPTION:Bring your instrument.\nHouse band from 9pm.
+URL:https://jazz.example.com/events/1
+END:VEVENT
+BEGIN:VEVENT
+UID:evt-2@example.com
+DTSTART;VALUE=DATE:20261012
+SUMMARY:Open day
+DESCRIPTION:A very long description that is folded across
+  two lines in the file.
+END:VEVENT
+BEGIN:VEVENT
+UID:evt-3@example.com
+DTSTART:20261015T180000Z
+SUMMARY:Weekly workshop
+RRULE:FREQ=WEEKLY
+END:VEVENT
+END:VCALENDAR
