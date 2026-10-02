@@ -27,6 +27,7 @@ showing the last stories it loaded.
 | **Feed** | Every article from your sources, newest first. Each card has its sector's colour bar plus coloured topic tags. Stories you've read are dimmed. |
 | **Top stories** | Stories that several of your outlets are covering, grouped together, so you can compare how different sources report the same thing. |
 | **Events** | Upcoming events from iCal calendars, grouped by day. |
+| **Social** | A wall of posts from the accounts you follow on Bluesky, Mastodon, Reddit and YouTube. The front page also has a "Social pulse" box. |
 | **Saved** | Anything you starred, kept even after it drops out of the feeds. |
 
 **Filters:** the sector chips (pick several), the topic chips, and the search box.
@@ -37,14 +38,20 @@ showing the last stories it loaded.
 - add your own source: any RSS/Atom feed or `.ics` calendar (a local theatre,
   museum, club, Meetup group, university…), filed under whichever sector you choose
 - create topics: a name, a colour and some keywords
+- **follow social accounts** by handle: `@npr.org` (Bluesky),
+  `@user@mastodon.social` (Mastodon), `r/books` or `u/name` (Reddit), or a
+  YouTube channel id `UC…`. The app turns each handle into that account's
+  public RSS feed. X, Instagram, TikTok and Facebook don't publish public
+  feeds, so they can't be followed this way.
 
 ## Design
 
 The front page is laid out like a **printed broadsheet** and fills the whole
 browser width:
 
-- **Masthead:** a large serif nameplate, a dateline (volume, issue number,
-  date, how many sources are in your edition) and a colour strip.
+- **Masthead:** one compact row: the date and issue number on the left, the
+  nameplate in the middle, and your source count and last update on the
+  right, above a colour strip.
 - **Above the fold:** the lead story (the one most of your outlets are
   covering) with a drop cap and "also reported by". Two follow-up stories sit
   beneath it, and beside it are a column of secondary stories and a rail with
@@ -54,7 +61,12 @@ browser width:
   and every row is filled edge to edge. Inside a section, stories flow in
   newspaper text columns with column rules between them. On tablets the grid
   drops to 6 columns, and on phones to a single column.
-- **Coverage, Listings and Clippings** use flowing multi-column layouts.
+- **No empty space:** a printed grid row is as tall as its tallest column,
+  which leaves blank space under the shorter ones. After layout, each column's
+  leftover space is filled with extra headlines from that section, then
+  social posts, until nothing more fits. The fill is redone when images or
+  fonts finish loading or the window is resized.
+- **Coverage, Listings, Social and Clippings** use flowing multi-column layouts.
   Listings look like a newspaper's events page.
 
 **Colours** come from Cambly's brand palette: Sunglow `#FFC929` for the

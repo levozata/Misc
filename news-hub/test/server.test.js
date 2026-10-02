@@ -71,13 +71,15 @@ test('API: catalog and demo feed', async () => {
     const res = await fetch(`${api}/api/feed`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ ids: ['bbc-sport', 'espn', 'holidays-us', 'nope'], custom: [{ id: 1 }] }),
+      body: JSON.stringify({ ids: ['bbc-sport', 'espn', 'holidays-us', 'bsky-npr', 'nope'], custom: [{ id: 1 }] }),
     });
     const body = await res.json();
     assert.equal(res.status, 200);
     assert.equal(body.demo, true);
     assert.ok(body.items.some((i) => i.kind === 'article'));
     assert.ok(body.items.some((i) => i.kind === 'event'));
+    assert.ok(body.items.some((i) => i.kind === 'social' && i.sector === 'social'));
+    assert.ok(body.clusters.every((c) => c.itemIds.every((id) => body.items.find((i) => i.id === id).kind === 'article')));
     assert.deepEqual(body.errors, []);
 
     assert.equal((await fetch(`${api}/../server/server.js`)).status, 404);

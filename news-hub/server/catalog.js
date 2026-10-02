@@ -13,6 +13,7 @@ export const SECTORS = [
   { id: 'music',    name: 'Music',          color: '#FFC929' },
   { id: 'sports',   name: 'Sports',         color: '#3FA34D' },
   { id: 'events',   name: 'Events',         color: '#FF9A3C' },
+  { id: 'social',   name: 'Social',         color: '#FF8FAB' },
 ];
 
 // type: 'feed' covers RSS 2.0, RSS 1.0 (RDF) and Atom; 'ical' is an .ics calendar.
@@ -53,6 +54,15 @@ export const SOURCES = [
 
   { id: 'holidays-us', sector: 'events', name: 'US Holidays (Google Calendar)', type: 'ical',
     url: 'https://calendar.google.com/calendar/ical/en.usa%23holiday%40group.v.calendar.google.com/public/basic.ics' },
+
+  // Social media follow-ups: networks that publish public RSS feeds.
+  { id: 'bsky-guardian',    sector: 'social', name: 'The Guardian on Bluesky', url: 'https://bsky.app/profile/theguardian.com/rss' },
+  { id: 'bsky-npr',         sector: 'social', name: 'NPR on Bluesky',          url: 'https://bsky.app/profile/npr.org/rss' },
+  { id: 'bsky-nasa',        sector: 'social', name: 'NASA on Bluesky',         url: 'https://bsky.app/profile/nasa.gov/rss' },
+  { id: 'mastodon-official', sector: 'social', name: 'Mastodon (official)',    url: 'https://mastodon.social/@Mastodon.rss' },
+  { id: 'reddit-worldnews', sector: 'social', name: 'r/worldnews',             url: 'https://www.reddit.com/r/worldnews/.rss' },
+  { id: 'reddit-books',     sector: 'social', name: 'r/books',                 url: 'https://www.reddit.com/r/books/.rss' },
+  { id: 'reddit-art',       sector: 'social', name: 'r/Art',                   url: 'https://www.reddit.com/r/Art/.rss' },
 ].map((s) => ({ type: 'feed', ...s }));
 
 // What a first-time visitor sees before they customise anything.
@@ -60,6 +70,7 @@ export const DEFAULT_SELECTION = [
   'bbc-world', 'guardian-world', 'npr', 'bbc-business', 'cnbc', 'verge', 'ars',
   'nature', 'sciencedaily', 'guardian-culture', 'hyperallergic', 'variety',
   'pitchfork', 'stereogum', 'bbc-sport', 'espn', 'holidays-us',
+  'bsky-guardian', 'bsky-npr', 'reddit-worldnews', 'reddit-books',
 ];
 
 export const SOURCE_BY_ID = new Map(SOURCES.map((s) => [s.id, s]));

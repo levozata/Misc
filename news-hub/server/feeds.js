@@ -85,7 +85,7 @@ export async function fetchSource(source, { trusted = false, allowPrivate = fals
   return entries.slice(0, MAX_ITEMS_PER_SOURCE).map((e) => ({
     ...e,
     id: hash(`${source.id}|${e.guid || e.link || e.title}`),
-    kind: parsed.kind === 'ical' ? 'event' : 'article',
+    kind: parsed.kind === 'ical' ? 'event' : source.sector === 'social' ? 'social' : 'article',
     sourceId: source.id,
     sourceName: source.name || parsed.title || new URL(source.url).hostname,
     sector: source.sector,

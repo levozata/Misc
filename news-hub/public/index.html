@@ -16,13 +16,18 @@
 </head>
 <body>
   <header class="masthead">
-    <div class="dateline">
-      <span id="edition-no"></span>
+    <div class="mast-side">
       <span id="today"></span>
-      <span id="edition-sources"></span>
+      <span id="edition-no"></span>
     </div>
-    <h1 class="nameplate">The Mosaic</h1>
-    <p class="motto">All the news you chose to follow — gathered from the outlets you trust</p>
+    <div class="mast-center">
+      <h1 class="nameplate">The Mosaic</h1>
+      <p class="motto">All the news you chose to follow</p>
+    </div>
+    <div class="mast-side right">
+      <span id="edition-sources"></span>
+      <span id="edition-updated"></span>
+    </div>
   </header>
 
   <div class="bar">
@@ -30,6 +35,7 @@
       <button type="button" data-view="feed" class="tab">Front page</button>
       <button type="button" data-view="stories" class="tab">Coverage</button>
       <button type="button" data-view="events" class="tab">Listings</button>
+      <button type="button" data-view="social" class="tab">Social</button>
       <button type="button" data-view="saved" class="tab">Clippings</button>
     </nav>
     <label class="search">
@@ -70,6 +76,24 @@
           <button type="submit" class="pill-btn">Add</button>
         </form>
         <ul id="custom-list" class="plain-list"></ul>
+      </section>
+
+      <section>
+        <h3>Follow on social media</h3>
+        <p class="hint">Follow outlets, journalists, venues or communities. Works with networks that publish public feeds:
+          Bluesky (<code>@npr.org</code>), Mastodon (<code>@user@mastodon.social</code>), Reddit (<code>r/books</code> or <code>u/name</code>)
+          and YouTube (channel id <code>UC…</code>). X, Instagram, TikTok and Facebook don’t offer public feeds.</p>
+        <form id="follow-form" class="custom-form">
+          <select name="platform" aria-label="Network">
+            <option value="bluesky">Bluesky</option>
+            <option value="mastodon">Mastodon</option>
+            <option value="reddit">Reddit</option>
+            <option value="youtube">YouTube</option>
+          </select>
+          <input name="handle" placeholder="Handle, e.g. @theguardian.com" required>
+          <button type="submit" class="pill-btn">Follow</button>
+        </form>
+        <p id="follow-error" class="form-error" role="alert"></p>
       </section>
 
       <section>

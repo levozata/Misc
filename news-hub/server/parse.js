@@ -110,8 +110,10 @@ export function parseXmlFeed(xml) {
     const guid = firstText(inner, ['guid', 'id']);
     // Prefer the shorter description/summary for the teaser, full content as fallback.
     const teaser = [...rawBodies].reverse().find(Boolean) || '';
+    // Social posts (e.g. Bluesky) have no <title>; the post text stands in.
+    const title = stripHtml(firstText(inner, ['title']), 300) || stripHtml(teaser, 160);
     return {
-      title: stripHtml(firstText(inner, ['title']), 300),
+      title,
       link: isHttpUrl(link) ? link : (isHttpUrl(guid) ? guid : ''),
       guid: guid || link,
       summary: stripHtml(teaser),

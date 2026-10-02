@@ -79,11 +79,13 @@ async function handleFeed(req, res) {
     .sort((a, b) => Date.parse(b.published || 0) - Date.parse(a.published || 0));
   const events = items.filter((i) => i.kind === 'event')
     .sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
+  const social = items.filter((i) => i.kind === 'social')
+    .sort((a, b) => Date.parse(b.published || 0) - Date.parse(a.published || 0));
 
   sendJson(res, 200, {
     fetchedAt: new Date().toISOString(),
     demo: DEMO,
-    items: [...articles, ...events],
+    items: [...articles, ...events, ...social],
     clusters: clusterItems(articles),
     errors,
   });

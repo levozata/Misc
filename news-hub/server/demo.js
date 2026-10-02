@@ -54,6 +54,15 @@ const STORIES = {
     'Berlin marathon sees new world record',
     'Tennis prodigy, 17, reaches first grand slam final',
   ],
+  social: [
+    'Our reporters are on the ground at the climate summit — follow the thread for live updates 🧵',
+    'Tonight: we answer your questions about the parliament recount. Drop them below 👇',
+    'New photos just in from the telescope team. Water vapour, 120 light years away. 🔭',
+    'What are you reading this autumn? Booker shortlist thread — tell us your favourite debut.',
+    'The Berlin marathon record in one chart 📈',
+    'Museums returning looted art: a quick explainer, in five posts.',
+    'Behind the scenes at the jazz club that fans saved from closure 🎷',
+  ],
   events: [
     'Open-air cinema: classic noir double bill',
     'Late opening at the modern art museum',
@@ -99,8 +108,10 @@ export function demoItems(source) {
     title,
     link: home,
     guid: `${source.id}-${i}`,
-    summary: `Demo story from ${source.name}. In the real app this is the teaser text from the publisher's feed — tap through to read the full article on their site.`,
-    image: rand() > 0.4 ? `${IMAGES[0]}${encodeURIComponent(title.slice(0, 20))}${IMAGES[1]}` : null,
+    summary: source.sector === 'social'
+      ? ''
+      : `Demo story from ${source.name}. In the real app this is the teaser text from the publisher's feed — tap through to read the full article on their site.`,
+    image: rand() > (source.sector === 'social' ? 0.75 : 0.4) ? `${IMAGES[0]}${encodeURIComponent(title.slice(0, 20))}${IMAGES[1]}` : null,
     published: new Date(now - Math.floor(rand() * 30) * 3600e3 - i * 600e3).toISOString(),
     author: '',
   }));

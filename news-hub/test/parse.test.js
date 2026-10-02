@@ -66,6 +66,14 @@ test('entity decoding and HTML stripping', () => {
   assert.ok(long.length <= 30 && long.endsWith('…'));
 });
 
+test('social posts without a <title> use the post text as the headline', () => {
+  const feed = parseAny(fixture('bluesky.xml'));
+  assert.equal(feed.items.length, 1);
+  assert.equal(feed.items[0].title, 'Our reporters are live at the summit & posting updates all day.');
+  assert.equal(feed.items[0].link, 'https://bsky.app/profile/example.com/post/3abc');
+  assert.equal(feed.items[0].published, '2026-10-01T09:15:00.000Z');
+});
+
 test('javascript: links are not accepted', () => {
   const feed = parseAny('<rss><channel><item><title>x</title><link>javascript:alert(1)</link></item></channel></rss>');
   assert.equal(feed.items.length, 0);
