@@ -108,6 +108,14 @@ news-hub/
   cluster when they share at least two of those words and their overlap
   (Jaccard similarity) is at least 0.25.
 
+### Deploying (Vercel)
+
+The repo is ready for Vercel with no build step. `vercel.json` serves
+`public/` as the static site, and `api/catalog.js` and `api/feed.js` run as
+serverless functions. They share their handlers with the local server
+through `server/api.js`. Set the project's root directory to `news-hub`.
+Live at <https://mosaic-news-kappa.vercel.app>.
+
 ### Configuration
 
 | Env var | Default | Meaning |
