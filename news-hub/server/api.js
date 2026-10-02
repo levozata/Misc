@@ -2,8 +2,9 @@
 // functions in /api, so both deployments behave identically.
 
 import { SECTORS, SOURCES, SOURCE_BY_ID, DEFAULT_SELECTION } from './catalog.js';
-import { fetchSource } from './feeds.js';
+import { fetchSource, fetchShareImage } from './feeds.js';
 import { clusterItems } from './cluster.js';
+import { demoShareImage } from './demo.js';
 
 const DEMO = process.env.DEMO === '1';
 const ALLOW_PRIVATE = process.env.ALLOW_PRIVATE_URLS === '1';
@@ -81,6 +82,23 @@ export async function handleFeed(req, res) {
     items: [...articles, ...events, ...social],
     clusters: clusterItems(articles),
     errors,
+  });
+}
+
+// GET /api/share-image?url=<article> → { image, width } of the article's
+// og:image, so the front page can show a sharp picture in its big slots.
+export async function handleShareImage(req, res) {
+  const url = new URL(req.url, 'http://localhost').searchParams.get('url') || '';
+  if (!/^https?:\/\//i.test(url) || url.length > 2000) return sendJson(res, 400, { error: 'Invalid url' });
+  let result = null;
+  if (DEMO) result = demoShareImage(url);
+  else {
+    try { result = await fetchShareImage(url, { allowPrivate: ALLOW_PRIVATE }); } catch { result = null; }
+  }
+  // Cacheable by the browser and Vercel's CDN; share images rarely change.
+  send(res, 200, JSON.stringify(result || {}), {
+    'content-type': 'application/json; charset=utf-8',
+    'cache-control': 'public, max-age=3600, s-maxage=21600, stale-while-revalidate=86400',
   });
 }
 

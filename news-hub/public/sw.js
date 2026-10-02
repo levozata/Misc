@@ -1,6 +1,6 @@
 // App-shell service worker: makes the hub installable and lets it open
 // offline. Feed data is cached by the page itself (last response).
-const CACHE = 'mosaic-shell-v3';
+const CACHE = 'mosaic-shell-v4';
 const SHELL = ['./', 'index.html', 'styles.css', 'app.js', 'follow.js', 'icon.svg', 'manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {

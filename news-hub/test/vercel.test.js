@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import catalogFn from '../api/catalog.js';
 import feedFn from '../api/feed.js';
+import shareFn from '../api/share-image.js';
 
 function mockRes() {
   return {
@@ -28,4 +29,10 @@ test('Vercel /api/feed function accepts a pre-parsed body and checks the method'
   const bad = mockRes();
   await feedFn({ method: 'GET' }, bad);
   assert.equal(bad.status, 405);
+});
+
+test('Vercel /api/share-image function validates its input', async () => {
+  const res = mockRes();
+  await shareFn({ method: 'GET', url: '/api/share-image?url=file:///etc/passwd' }, res);
+  assert.equal(res.status, 400);
 });

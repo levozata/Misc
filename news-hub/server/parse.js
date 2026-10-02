@@ -71,20 +71,33 @@ function toIso(value) {
   return Number.isNaN(t) ? null : new Date(t).toISOString();
 }
 
+// Collects every image a feed entry offers and keeps the widest. Width is
+// taken from the feed when stated; otherwise a guess by element type
+// (thumbnails are small, media:content is usually a full rendition).
 function findImage(block, htmlBodies) {
+  const candidates = [];
   for (const name of ['media:content', 'media:thumbnail', 'enclosure']) {
     for (const { attrs } of elements(block, name)) {
       const type = attrs.type || '';
       const looksImage = name === 'media:thumbnail' || attrs.medium === 'image' || type.startsWith('image/')
         || (!type && /\.(jpe?g|png|gif|webp|avif)(\?|$)/i.test(attrs.url || ''));
-      if (looksImage && isHttpUrl(attrs.url)) return attrs.url;
+      if (!looksImage || !isHttpUrl(attrs.url)) continue;
+      const width = Number(attrs.width) || null;
+      candidates.push({ url: attrs.url, width, guess: width ?? (name === 'media:thumbnail' ? 150 : 600) });
     }
   }
   for (const html of htmlBodies) {
-    const m = html.match(/<img[^>]+src\s*=\s*["']([^"']+)["']/i);
-    if (m && isHttpUrl(decodeEntities(m[1]))) return decodeEntities(m[1]);
+    for (const m of html.matchAll(/<img\b[^>]*>/gi)) {
+      const src = m[0].match(/\ssrc\s*=\s*["']([^"']+)["']/i)?.[1];
+      if (!src || !isHttpUrl(decodeEntities(src))) continue;
+      const width = Number(m[0].match(/\swidth\s*=\s*["']?(\d+)/i)?.[1]) || null;
+      if (width && width < 100) continue; // tracking pixels, icons
+      candidates.push({ url: decodeEntities(src), width, guess: width ?? 400 });
+    }
   }
-  return null;
+  if (!candidates.length) return { image: null, imageWidth: null };
+  const best = candidates.reduce((a, b) => (b.guess > a.guess ? b : a));
+  return { image: best.url, imageWidth: best.width };
 }
 
 function atomLink(block) {
@@ -117,7 +130,7 @@ export function parseXmlFeed(xml) {
       link: isHttpUrl(link) ? link : (isHttpUrl(guid) ? guid : ''),
       guid: guid || link,
       summary: stripHtml(teaser),
-      image: findImage(inner, rawBodies),
+      ...findImage(inner, rawBodies),
       published: toIso(firstText(inner, ['pubDate', 'dc:date', 'published', 'updated', 'a10:updated'])),
       author: stripHtml(firstText(inner, ['dc:creator', 'author']), 80),
     };

@@ -15,7 +15,8 @@ test('RSS 2.0: titles, links, teasers, images, dates', () => {
   assert.equal(a.title, 'Floods force thousands from homes & farms');
   assert.equal(a.link, 'https://news.example.com/floods');
   assert.equal(a.summary, 'Rivers burst their banks & roads closed.');
-  assert.equal(a.image, 'https://img.example.com/thumb.jpg');
+  // The 240px thumbnail loses to the body's inline image (no stated size, usually full-size).
+  assert.equal(a.image, 'https://img.example.com/a.jpg');
   assert.equal(a.published, '2026-10-01T08:30:00.000Z');
   assert.equal(a.author, 'Jane Reporter');
 

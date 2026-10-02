@@ -8,6 +8,7 @@ import { platformOf, followUrl } from './follow.js';
 
 const STORE_KEY = 'mosaic:state:v1';
 const LAST_KEY = 'mosaic:last:v1';
+const SHARE_KEY = 'mosaic:share-images:v1';
 const REFRESH_MS = 10 * 60 * 1000;
 
 const DEFAULT_TOPICS = [
@@ -241,6 +242,105 @@ function storyLink(item, ...children) {
   }, ...children);
 }
 
+// ------------------------------------------------------------------ photos
+
+// Article link -> { image, width } (or {} when the page has none), kept
+// across visits so big slots don't re-ask the server for the same article.
+const shareImages = loadJson(SHARE_KEY) || {};
+const sharePending = new Map();
+
+function shareImageFor(item) {
+  const key = item.link;
+  if (!safeHref(key)) return Promise.resolve(null);
+  if (key in shareImages) return Promise.resolve(shareImages[key]);
+  if (!sharePending.has(key)) {
+    sharePending.set(key, fetch(`/api/share-image?url=${encodeURIComponent(key)}`)
+      .then((r) => (r.ok ? r.json() : {}))
+      .catch(() => ({}))
+      .then((found) => {
+        shareImages[key] = found;
+        const keys = Object.keys(shareImages);
+        if (keys.length > 400) delete shareImages[keys[0]];
+        saveJson(SHARE_KEY, shareImages);
+        return found;
+      }));
+  }
+  return sharePending.get(key);
+}
+
+/**
+ * A story picture that tries hard to look sharp:
+ * - loads the server's upgraded (larger) URL, falling back to the original;
+ * - in featured slots, swaps in the article's share image when the feed's
+ *   picture is missing or would be upscaled;
+ * - if it's still too small, shows it as an inset at its natural size
+ *   instead of stretching it into a blurry banner.
+ */
+function photo(item, { featured = false, eager = false } = {}) {
+  if (!item.image && !featured) return null;
+  const img = el('img', {
+    class: 'figure', alt: '', decoding: 'async', referrerpolicy: 'no-referrer',
+    loading: eager ? 'eager' : 'lazy', fetchpriority: eager ? 'high' : null,
+  });
+  const link = storyLink(item, img);
+  link.classList.add('figure-link');
+  link.setAttribute('tabindex', '-1');
+  link.setAttribute('aria-hidden', 'true');
+  let triedOriginal = false;
+  let triedShare = false;
+
+  const tryShare = async () => {
+    if (!featured || triedShare) return false;
+    triedShare = true;
+    const found = await shareImageFor(item);
+    if (!found?.image || found.image === img.getAttribute('src')) return false;
+    if (found.width && img.naturalWidth && found.width <= img.naturalWidth) return false;
+    img.src = found.image;
+    return true;
+  };
+
+  img.addEventListener('error', async () => {
+    if (item.imageOriginal && !triedOriginal && img.getAttribute('src') !== item.imageOriginal) {
+      triedOriginal = true;
+      img.src = item.imageOriginal;
+      return;
+    }
+    if (await tryShare()) return;
+    link.remove();
+    scheduleFill();
+  });
+
+  img.addEventListener('load', async () => {
+    const cssWidth = img.clientWidth || link.clientWidth;
+    const wanted = cssWidth * Math.min(window.devicePixelRatio || 1, 2);
+    if (img.naturalWidth < wanted * 0.75 && await tryShare()) return; // reloads
+    if (img.naturalWidth < cssWidth * 0.6) {
+      link.classList.add('inset');
+      img.style.maxWidth = `${img.naturalWidth}px`;
+    }
+    img.classList.add('loaded');
+    scheduleFill();
+  });
+
+  if (item.image) {
+    img.src = item.image;
+  } else {
+    link.hidden = true;
+    tryShare().then((ok) => { if (ok) link.hidden = false; else link.remove(); });
+  }
+  return link;
+}
+
+// The pictured story with the largest known image (feeds that state no
+// width count as medium), or null.
+function bestPictured(items) {
+  let best = null;
+  for (const i of items) {
+    if (i.image && (!best || (i.imageWidth ?? 600) > (best.imageWidth ?? 600))) best = i;
+  }
+  return best;
+}
+
 function saveButton(item) {
   const saved = Boolean(state.saved[item.id]);
   return el('button', {
@@ -265,10 +365,7 @@ function story(item, size = 'minor', { showImage = true, showKicker = true, extr
         el('p', { class: 'byline' }, item.sourceName, item.published ? ` · ${timeAgo(item.published)}` : '')));
   }
   return el('article', { class: cls, style: colorVars(sectorColor(item.sector)) },
-    showImage && item.image && storyLink(item, el('img', {
-      class: 'figure', src: item.image, alt: '', loading: size === 'lead' ? 'eager' : 'lazy',
-      referrerpolicy: 'no-referrer', onerror: (e) => e.target.closest('a')?.remove(),
-    })),
+    showImage && photo(item, { featured: size === 'lead' || size === 'major', eager: size === 'lead' }),
     showKicker && el('div', { class: 'kicker' }, el('span', { class: 'mark' }), sectorName(item.sector)),
     el(size === 'lead' ? 'h2' : 'h3', { class: 'headline' }, storyLink(item, item.title)),
     el('p', { class: 'byline' },
@@ -309,10 +406,7 @@ function postCard(item, { compact = false } = {}) {
         el('span', {}, p.name, item.published ? ` · ${timeAgo(item.published)}` : '')),
       compact ? null : saveButton(item)),
     el('p', { class: 'post-text' }, storyLink(item, item.title)),
-    !compact && item.image ? storyLink(item, el('img', {
-      class: 'figure', src: item.image, alt: '', loading: 'lazy', referrerpolicy: 'no-referrer',
-      onerror: (e) => e.target.closest('a')?.remove(),
-    })) : null);
+    compact ? null : photo(item));
 }
 
 function renderSocial() {
@@ -422,7 +516,7 @@ function renderSection({ sector, items, span }, cols, clusterOf) {
   const also = (i) => alsoReported(clusterOf.get(i.id), i);
   const color = sectorColor(sector);
   const wide = cols > 1 && span / cols >= 0.6;
-  const lead = items.find((i) => i.image) || items[0];
+  const lead = bestPictured(items) || items[0];
   const rest = items.filter((i) => i !== lead);
   return el('section', {
     class: `paper-section${wide ? ' wide' : ''}`,
@@ -467,8 +561,8 @@ function renderFront() {
   const unused = () => articles.filter((i) => !used.has(i.id));
 
   const leadCluster = clusters[0];
-  const lead = take(leadCluster?.items.find((i) => i.image) || leadCluster?.items[0]
-    || articles.find((i) => i.image) || articles[0]);
+  const lead = take((leadCluster && (bestPictured(leadCluster.items) || leadCluster.items[0]))
+    || bestPictured(articles.slice(0, 12)) || articles[0]);
 
   // Secondary column: biggest remaining stories, preferring a mix of sections.
   const secondary = [];
@@ -561,17 +655,14 @@ function renderStories() {
     return empty('No story is being covered by several of your sources right now. Add more outlets in the same section to see coverage compared side by side.');
   }
   return el('div', { class: 'coverage' }, clusters.map((c) => {
-    const lead = c.items.find((i) => i.image) || c.items[0];
+    const lead = bestPictured(c.items) || c.items[0];
     const sectors = [...new Set(c.items.map((i) => i.sector))];
     const n = new Set(c.items.map((i) => i.sourceId)).size;
     return el('section', { class: 'coverage-block', style: colorVars(sectorColor(lead.sector)) },
       el('div', { class: 'kicker' },
         sectors.map((s) => el('span', { class: 'mark', style: colorVars(sectorColor(s)) })),
         `${n} sources`, c.label.length ? el('span', { class: 'label' }, ` · ${c.label.join(' · ')}`) : null),
-      lead.image ? storyLink(lead, el('img', {
-        class: 'figure', src: lead.image, alt: '', loading: 'lazy', referrerpolicy: 'no-referrer',
-        onerror: (e) => e.target.closest('a')?.remove(),
-      })) : null,
+      photo(lead, { featured: true }),
       el('h2', { class: 'headline' }, storyLink(lead, lead.title)),
       el('ol', { class: 'versions' }, c.items.map((i) => el('li', { class: state.read[i.id] ? 'read' : '' },
         el('span', { class: 'by' }, i.sourceName),

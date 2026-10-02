@@ -66,6 +66,15 @@ browser width:
   leftover space is filled with extra headlines from that section, then
   social posts, until nothing more fits. The fill is redone when images or
   fonts finish loading or the window is resized.
+- **Sharp pictures:** feeds often carry only small thumbnails. The parser
+  keeps the widest image a feed entry offers, and `server/images.js`
+  rewrites known thumbnail links to larger versions (BBC, WordPress-based
+  sites, links with `?w=` sizing). Signed links are left alone, and the
+  browser falls back to the original if an upgrade fails. When a picture in
+  a big slot would still be stretched, the app fetches the article's share
+  image (`og:image`, usually 1200px) through `/api/share-image`, which is
+  cached by the browser and Vercel's CDN. A picture that is still too small
+  is shown as an inset at its natural size instead of being blown up.
 - **Coverage, Listings, Social and Clippings** use flowing multi-column layouts.
   Listings look like a newspaper's events page.
 

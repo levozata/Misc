@@ -72,7 +72,7 @@ const STORIES = {
   ],
 };
 
-const IMAGES = ['https://picsum.photos/seed/', '/640/360'];
+const IMAGES = ['https://picsum.photos/seed/'];
 
 function seeded(str) {
   let h = 2166136261;
@@ -111,9 +111,17 @@ export function demoItems(source) {
     summary: source.sector === 'social'
       ? ''
       : `Demo story from ${source.name}. In the real app this is the teaser text from the publisher's feed — tap through to read the full article on their site.`,
-    image: rand() > (source.sector === 'social' ? 0.75 : 0.4) ? `${IMAGES[0]}${encodeURIComponent(title.slice(0, 20))}${IMAGES[1]}` : null,
+    // A mix of small thumbnails and full-size photos, like real feeds.
+    image: rand() > (source.sector === 'social' ? 0.75 : 0.4)
+      ? `${IMAGES[0]}${encodeURIComponent(title.slice(0, 20))}/${rand() > 0.5 ? '1200/675' : '240/135'}`
+      : null,
     published: new Date(now - Math.floor(rand() * 30) * 3600e3 - i * 600e3).toISOString(),
     author: '',
   }));
   return { kind: 'feed', title: source.name, items };
+}
+
+// Demo stand-in for an article's share image: a full-size photo.
+export function demoShareImage(url) {
+  return { image: `${IMAGES[0]}${encodeURIComponent(url.slice(-20))}/1200/675`, width: 1200 };
 }

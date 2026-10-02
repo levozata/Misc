@@ -2,7 +2,7 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { send, sendJson, handleCatalog, handleFeed } from './api.js';
+import { send, sendJson, handleCatalog, handleFeed, handleShareImage } from './api.js';
 
 const PORT = Number(process.env.PORT) || 8080;
 const DEMO = process.env.DEMO === '1';
@@ -36,6 +36,7 @@ export const server = createServer(async (req, res) => {
       return handleCatalog(req, res);
     }
     if (pathname === '/api/feed' && req.method === 'POST') return await handleFeed(req, res);
+    if (pathname === '/api/share-image' && req.method === 'GET') return await handleShareImage(req, res);
     if (pathname.startsWith('/api/')) return sendJson(res, 404, { error: 'Not found' });
     if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'Method not allowed');
     return await serveStatic(req, res, pathname);
