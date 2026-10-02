@@ -91,14 +91,23 @@ export async function handleShareImage(req, res) {
   const url = new URL(req.url, 'http://localhost').searchParams.get('url') || '';
   if (!/^https?:\/\//i.test(url) || url.length > 2000) return sendJson(res, 400, { error: 'Invalid url' });
   let result = null;
+  let error = null;
   if (DEMO) result = demoShareImage(url);
   else {
-    try { result = await fetchShareImage(url, { allowPrivate: ALLOW_PRIVATE }); } catch { result = null; }
+    try {
+      result = await fetchShareImage(url, { allowPrivate: ALLOW_PRIVATE });
+    } catch (err) {
+      error = String(err?.message || err);
+      console.warn(`share-image failed for ${url}: ${error}`);
+    }
   }
   // Cacheable by the browser and Vercel's CDN; share images rarely change.
-  send(res, 200, JSON.stringify(result || {}), {
+  // Failures are cached briefly so a transient error isn't remembered.
+  send(res, 200, JSON.stringify(error ? { error } : (result || {})), {
     'content-type': 'application/json; charset=utf-8',
-    'cache-control': 'public, max-age=3600, s-maxage=21600, stale-while-revalidate=86400',
+    'cache-control': error
+      ? 'public, max-age=60, s-maxage=300'
+      : 'public, max-age=3600, s-maxage=21600, stale-while-revalidate=86400',
   });
 }
 

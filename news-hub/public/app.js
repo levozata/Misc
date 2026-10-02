@@ -258,6 +258,8 @@ function shareImageFor(item) {
       .then((r) => (r.ok ? r.json() : {}))
       .catch(() => ({}))
       .then((found) => {
+        sharePending.delete(key);
+        if (found.error) return null; // transient: try again next visit
         shareImages[key] = found;
         const keys = Object.keys(shareImages);
         if (keys.length > 400) delete shareImages[keys[0]];
