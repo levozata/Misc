@@ -14,6 +14,8 @@ const STORIES = {
     'Central bank holds interest rates steady amid slowing inflation',
     'Chipmaker shares jump after record quarterly earnings',
     'Port strike threatens holiday shipping deliveries',
+    'Holiday shipping deliveries at risk as port strike spreads',
+    'Start-up funding rebounds for third straight quarter',
   ],
   tech: [
     'Open-source browser engine reaches 1.0 release',
@@ -25,6 +27,8 @@ const STORIES = {
     'Telescope spots water vapour on distant exoplanet',
     'Ancient forest discovered beneath Antarctic ice sheet',
     'Exoplanet water vapour detection confirmed by second telescope',
+    'Gene therapy restores hearing in clinical trial',
+    'Coral reefs show surprising recovery after heatwave',
   ],
   culture: [
     'Major retrospective of Hilma af Klint opens in Paris',
@@ -35,16 +39,20 @@ const STORIES = {
   film: [
     'Festival jury awards top prize to quiet family drama',
     'Streaming service renews sci-fi series for final season',
+    'Documentary about a village choir becomes surprise box-office hit',
+    'Family drama wins festival top prize',
   ],
   music: [
     'Jazz pianist announces surprise album and world tour',
     'Legendary venue saved from closure by fan campaign',
     'Fan campaign saves legendary music venue from closure',
+    'Orchestra commissions symphony written by its youngest member',
   ],
   sports: [
     'Underdogs clinch league title on final day of season',
     'Marathon world record falls in Berlin',
     'Berlin marathon sees new world record',
+    'Tennis prodigy, 17, reaches first grand slam final',
   ],
   events: [
     'Open-air cinema: classic noir double bill',

@@ -38,6 +38,36 @@ showing the last stories it loaded.
   museum, club, Meetup group, university…), filed under whichever sector you choose
 - create topics: a name, a colour and some keywords
 
+## Design
+
+The front page is laid out like a **printed broadsheet** and fills the whole
+browser width:
+
+- **Masthead:** a large serif nameplate, a dateline (volume, issue number,
+  date, how many sources are in your edition) and a colour strip.
+- **Above the fold:** the lead story (the one most of your outlets are
+  covering) with a drop cap and "also reported by". Two follow-up stories sit
+  beneath it, and beside it are a column of secondary stories and a rail with
+  an **In brief** box and **What's on** listings.
+- **Sections:** each sector gets a coloured section band. The sections are
+  packed into an asymmetric 12-column grid: big and small sections alternate,
+  and every row is filled edge to edge. Inside a section, stories flow in
+  newspaper text columns with column rules between them. On tablets the grid
+  drops to 6 columns, and on phones to a single column.
+- **Coverage, Listings and Clippings** use flowing multi-column layouts.
+  Listings look like a newspaper's events page.
+
+**Colours** come from Cambly's brand palette: Sunglow `#FFC929` for the
+primary buttons and highlights, Persimmon `#FE614E`, Cornflower `#4D95EA` and
+Banana Mania `#FBE8A3` (the In brief box). Navy, teal, grape, berry, leaf and
+tangerine fill out the nine sector colours. All of this sits on warm newsprint
+(`#FFFBF0`) with near-black ink, and there is a dark "night edition" too.
+Text on a coloured band switches automatically between ink and white, so it
+stays readable whatever colour a user picks.
+
+**Type:** Playfair Display (headlines), Source Serif 4 (body text) and DM Sans
+(labels and buttons), loaded from Google Fonts with system fallbacks.
+
 ## How it's built
 
 ```

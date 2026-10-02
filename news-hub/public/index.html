@@ -3,37 +3,45 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Mosaic News Hub</title>
-  <meta name="description" content="Your personal news hub: headlines, culture and events from the sources you choose, colour-coded by sector and topic.">
-  <meta name="theme-color" content="#111827">
+  <title>The Mosaic</title>
+  <meta name="description" content="Your personal broadsheet: headlines, culture and events from the sources you choose, colour-coded by sector and topic.">
+  <meta name="theme-color" content="#FFC929">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <img src="icon.svg" alt="" width="28" height="28">
-      <span>Mosaic</span>
+  <header class="masthead">
+    <div class="dateline">
+      <span id="edition-no"></span>
+      <span id="today"></span>
+      <span id="edition-sources"></span>
     </div>
-    <label class="search">
-      <span class="visually-hidden">Search headlines</span>
-      <input id="search" type="search" placeholder="Search headlines…" autocomplete="off">
-    </label>
-    <button id="refresh" class="icon-btn" type="button" title="Refresh" aria-label="Refresh">⟳</button>
-    <button id="open-settings" class="icon-btn" type="button" title="Sources, colours & topics" aria-label="Settings">⚙</button>
+    <h1 class="nameplate">The Mosaic</h1>
+    <p class="motto">All the news you chose to follow — gathered from the outlets you trust</p>
   </header>
 
-  <nav class="tabs" aria-label="Views">
-    <button type="button" data-view="feed" class="tab">Feed</button>
-    <button type="button" data-view="stories" class="tab">Top stories</button>
-    <button type="button" data-view="events" class="tab">Events</button>
-    <button type="button" data-view="saved" class="tab">Saved</button>
-  </nav>
+  <div class="bar">
+    <nav class="tabs" aria-label="Views">
+      <button type="button" data-view="feed" class="tab">Front page</button>
+      <button type="button" data-view="stories" class="tab">Coverage</button>
+      <button type="button" data-view="events" class="tab">Listings</button>
+      <button type="button" data-view="saved" class="tab">Clippings</button>
+    </nav>
+    <label class="search">
+      <span class="visually-hidden">Search headlines</span>
+      <input id="search" type="search" placeholder="Search the paper…" autocomplete="off">
+    </label>
+    <button id="refresh" class="icon-btn" type="button" title="Refresh" aria-label="Refresh">⟳</button>
+    <button id="open-settings" class="pill-btn" type="button">Customise</button>
+  </div>
 
-  <div class="filters">
-    <div id="sector-chips" class="chips" aria-label="Filter by sector"></div>
+  <div class="index">
+    <div id="sector-chips" class="chips" aria-label="Filter by section"></div>
     <div id="topic-chips" class="chips" aria-label="Filter by topic"></div>
   </div>
 
@@ -42,13 +50,13 @@
 
   <dialog id="settings" class="settings">
     <form method="dialog" class="settings-head">
-      <h2>Customise your hub</h2>
+      <h2>Customise your edition</h2>
       <button class="icon-btn" value="close" aria-label="Close">✕</button>
     </form>
     <div class="settings-body">
       <section>
-        <h3>Sources by sector</h3>
-        <p class="hint">Tick the outlets you want. Click a colour swatch to recolour a whole sector.</p>
+        <h3>Sources by section</h3>
+        <p class="hint">Tick the outlets you want. Click a colour swatch to recolour a whole section.</p>
         <div id="source-list"></div>
       </section>
 
@@ -58,20 +66,20 @@
         <form id="custom-form" class="custom-form">
           <input name="name" placeholder="Name (e.g. City Jazz Club)" maxlength="80" required>
           <input name="url" type="url" placeholder="https://example.com/feed.xml" required>
-          <select name="sector" aria-label="Sector"></select>
-          <button type="submit" class="btn">Add</button>
+          <select name="sector" aria-label="Section"></select>
+          <button type="submit" class="pill-btn">Add</button>
         </form>
         <ul id="custom-list" class="plain-list"></ul>
       </section>
 
       <section>
         <h3>Topics</h3>
-        <p class="hint">Topics tag stories across all sectors by keyword, in their own colour.</p>
+        <p class="hint">Topics tag stories across all sections by keyword, in their own colour.</p>
         <form id="topic-form" class="custom-form">
           <input name="name" placeholder="Topic (e.g. Climate)" maxlength="40" required>
           <input name="keywords" placeholder="Keywords, comma separated" required>
-          <input name="color" type="color" value="#10b981" aria-label="Topic colour">
-          <button type="submit" class="btn">Add</button>
+          <input name="color" type="color" value="#FE614E" aria-label="Topic colour">
+          <button type="submit" class="pill-btn">Add</button>
         </form>
         <ul id="topic-list" class="plain-list"></ul>
       </section>

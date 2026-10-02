@@ -1,12 +1,12 @@
 {
-  "name": "Mosaic News Hub",
+  "name": "The Mosaic",
   "short_name": "Mosaic",
   "description": "Headlines, culture and events from the sources you choose.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#111827",
-  "theme_color": "#111827",
+  "background_color": "#FFFBF0",
+  "theme_color": "#FFC929",
   "icons": [
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]

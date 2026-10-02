@@ -1,14 +1,17 @@
-// Mosaic news hub — client. All personalisation lives in this browser
-// (localStorage); the server only fetches and normalises feeds.
+// The Mosaic — client. All personalisation lives in this browser
+// (localStorage); the server only fetches and normalises feeds. The front
+// page is laid out like a printed broadsheet: a lead story above the fold,
+// a column of secondary stories, an "In brief" rail, then sector sections
+// packed into an asymmetric grid that always fills the full page width.
 
 const STORE_KEY = 'mosaic:state:v1';
 const LAST_KEY = 'mosaic:last:v1';
 const REFRESH_MS = 10 * 60 * 1000;
 
 const DEFAULT_TOPICS = [
-  { id: 't-climate', name: 'Climate', color: '#10b981', keywords: ['climate', 'emissions', 'methane', 'flood', 'floods', 'wildfire', 'heatwave', 'drought'] },
-  { id: 't-elections', name: 'Elections', color: '#3b82f6', keywords: ['election', 'elections', 'vote', 'parliament', 'ballot', 'coalition', 'referendum'] },
-  { id: 't-ai', name: 'AI', color: '#a855f7', keywords: ['ai', 'artificial intelligence', 'chatbot', 'machine learning', 'llm'] },
+  { id: 't-climate', name: 'Climate', color: '#1FA39B', keywords: ['climate', 'emissions', 'methane', 'flood', 'floods', 'wildfire', 'heatwave', 'drought', 'coral'] },
+  { id: 't-elections', name: 'Elections', color: '#4D95EA', keywords: ['election', 'elections', 'vote', 'parliament', 'ballot', 'coalition', 'referendum'] },
+  { id: 't-ai', name: 'AI', color: '#8E6BD8', keywords: ['ai', 'artificial intelligence', 'chatbot', 'machine learning', 'llm'] },
 ];
 
 // ------------------------------------------------------------------ state
@@ -59,8 +62,18 @@ function el(tag, attrs = {}, ...children) {
 
 const safeHref = (u) => (/^https?:\/\//i.test(u || '') ? u : null);
 const sectorById = (id) => catalog.sectors.find((s) => s.id === id);
+const sectorName = (id) => sectorById(id)?.name || id;
 const sectorColor = (id) => state.colors[id] || sectorById(id)?.color || '#6b7280';
 const uid = () => Math.random().toString(36).slice(2, 10);
+
+// Pick ink or white text for a coloured band, whichever contrasts more.
+function inkOn(hex) {
+  const n = parseInt(String(hex).replace('#', ''), 16);
+  const lin = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+  const L = 0.2126 * lin((n >> 16) & 255) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
+  return 1.05 / (L + 0.05) >= (L + 0.05) / 0.062 ? '#ffffff' : '#1b1a17';
+}
+const colorVars = (hex) => `--c:${hex};--on-c:${inkOn(hex)}`;
 
 const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
 function timeAgo(iso) {
@@ -85,6 +98,9 @@ function topicsFor(item) {
     return topicMatchers.get(key)?.test(text);
   });
 }
+
+// Grid columns the front page is laid out on; mirrors the CSS breakpoints.
+const gridCols = () => (window.innerWidth >= 1100 ? 12 : window.innerWidth >= 700 ? 6 : 1);
 
 // ------------------------------------------------------------------ data
 
@@ -128,7 +144,7 @@ function sourceName(id) {
 
 function statusText() {
   const parts = [];
-  if (data.demo) parts.push('Demo mode — sample headlines.');
+  if (data.demo) parts.push('Demo edition — sample headlines.');
   if (data.errors?.length) {
     parts.push(`${data.errors.length} source${data.errors.length > 1 ? 's' : ''} couldn't be loaded: `
       + data.errors.map((e) => `${sourceName(e.sourceId)} (${e.error})`).join(', '));
@@ -143,7 +159,23 @@ function setStatus(text, isError = false) {
   s.hidden = !text;
 }
 
-// ------------------------------------------------------------------ render
+// ------------------------------------------------------------------ masthead
+
+function renderMasthead() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((now - start) / 86400e3);
+  $('#edition-no').textContent = `Vol. ${now.getFullYear() - 2025} · No. ${dayOfYear}`;
+  $('#today').textContent = now.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const n = (state.selected?.length || 0) + state.custom.length;
+  $('#edition-sources').textContent = `Your edition · ${n} source${n === 1 ? '' : 's'}`;
+}
+
+// ------------------------------------------------------------------ filters
+
+function filtersActive() {
+  return ui.sectorFilter.size > 0 || ui.topicFilter || ui.search.trim();
+}
 
 function visibleItems(kind) {
   const q = ui.search.trim().toLowerCase();
@@ -157,28 +189,35 @@ function visibleItems(kind) {
 }
 
 function renderChips() {
-  const present = new Set(data.items.map((i) => i.sector));
-  const sectors = catalog.sectors.filter((s) => present.has(s.id));
+  const counts = new Map();
+  for (const i of data.items) counts.set(i.sector, (counts.get(i.sector) || 0) + 1);
+  const sectors = catalog.sectors.filter((s) => counts.has(s.id));
   $('#sector-chips').replaceChildren(
+    el('span', { class: 'index-label' }, 'Inside'),
     el('button', {
       type: 'button', class: 'chip', 'aria-pressed': String(!ui.sectorFilter.size),
       onclick: () => { ui.sectorFilter.clear(); render(); },
-    }, 'All sectors'),
+    }, 'All'),
     ...sectors.map((s) => el('button', {
-      type: 'button', class: 'chip', style: `--c:${sectorColor(s.id)}`,
+      type: 'button', class: 'chip', style: colorVars(sectorColor(s.id)),
       'aria-pressed': String(ui.sectorFilter.has(s.id)),
       onclick: () => {
         ui.sectorFilter.has(s.id) ? ui.sectorFilter.delete(s.id) : ui.sectorFilter.add(s.id);
         render();
       },
-    }, el('span', { class: 'dot' }), s.name)),
+    }, el('span', { class: 'mark' }), s.name, el('span', { class: 'count' }, counts.get(s.id)))),
   );
-  $('#topic-chips').replaceChildren(...state.topics.map((t) => el('button', {
-    type: 'button', class: 'chip topic', style: `--c:${t.color}`,
-    'aria-pressed': String(ui.topicFilter === t.id),
-    onclick: () => { ui.topicFilter = ui.topicFilter === t.id ? null : t.id; render(); },
-  }, '#', t.name)));
+  $('#topic-chips').replaceChildren(
+    el('span', { class: 'index-label' }, 'Topics'),
+    ...state.topics.map((t) => el('button', {
+      type: 'button', class: 'chip topic', style: colorVars(t.color),
+      'aria-pressed': String(ui.topicFilter === t.id),
+      onclick: () => { ui.topicFilter = ui.topicFilter === t.id ? null : t.id; render(); },
+    }, '#', t.name)),
+  );
 }
+
+// ------------------------------------------------------------------ stories
 
 function markRead(item) {
   state.read[item.id] = Date.now();
@@ -192,76 +231,248 @@ function toggleSaved(item) {
   render();
 }
 
-function card(item) {
-  const href = safeHref(item.link);
-  const topics = topicsFor(item);
-  const saved = Boolean(state.saved[item.id]);
-  return el('article', {
-    class: `card${state.read[item.id] ? ' read' : ''}`,
-    style: `--c:${sectorColor(item.sector)}`,
-  },
-  el('a', {
-    class: 'card-link', href, target: '_blank', rel: 'noopener noreferrer',
+function storyLink(item, ...children) {
+  return el('a', {
+    href: safeHref(item.link), target: '_blank', rel: 'noopener noreferrer',
     onclick: () => { markRead(item); setTimeout(render, 0); },
-  },
-  item.image && el('img', {
-    class: 'thumb', src: item.image, alt: '', loading: 'lazy', referrerpolicy: 'no-referrer',
-    onerror: (e) => e.target.remove(),
-  }),
-  el('div', { class: 'meta' },
-    el('span', { class: 'dot' }),
-    el('span', { class: 'source' }, item.sourceName),
-    item.published && el('time', { datetime: item.published }, ` · ${timeAgo(item.published)}`)),
-  el('h3', {}, item.title),
-  item.summary && el('p', { class: 'summary' }, item.summary)),
-  el('div', { class: 'card-foot' },
-    el('div', { class: 'tags' }, topics.map((t) => el('span', { class: 'tag', style: `--c:${t.color}` }, t.name))),
-    el('button', {
-      type: 'button', class: `save${saved ? ' on' : ''}`, 'aria-pressed': String(saved),
-      title: saved ? 'Remove from saved' : 'Save for later', onclick: () => toggleSaved(item),
-    }, saved ? '★' : '☆')));
+  }, ...children);
+}
+
+function saveButton(item) {
+  const saved = Boolean(state.saved[item.id]);
+  return el('button', {
+    type: 'button', class: `save${saved ? ' on' : ''}`, 'aria-pressed': String(saved),
+    title: saved ? 'Remove clipping' : 'Clip for later', 'aria-label': saved ? 'Remove clipping' : 'Clip for later',
+    onclick: () => toggleSaved(item),
+  }, saved ? '★' : '☆');
+}
+
+/**
+ * One article in newspaper style. size: lead | major | minor | brief.
+ * extra: optional nodes appended (e.g. "also reported by").
+ */
+function story(item, size = 'minor', { showImage = true, showKicker = true, extra = null } = {}) {
+  const topics = topicsFor(item);
+  const cls = `story story-${size}${state.read[item.id] ? ' read' : ''}`;
+  if (size === 'brief') {
+    return el('article', { class: cls, style: colorVars(sectorColor(item.sector)) },
+      el('span', { class: 'mark' }),
+      el('div', {},
+        el('h4', { class: 'headline' }, storyLink(item, item.title)),
+        el('p', { class: 'byline' }, item.sourceName, item.published ? ` · ${timeAgo(item.published)}` : '')));
+  }
+  return el('article', { class: cls, style: colorVars(sectorColor(item.sector)) },
+    showImage && item.image && storyLink(item, el('img', {
+      class: 'figure', src: item.image, alt: '', loading: size === 'lead' ? 'eager' : 'lazy',
+      referrerpolicy: 'no-referrer', onerror: (e) => e.target.closest('a')?.remove(),
+    })),
+    showKicker && el('div', { class: 'kicker' }, el('span', { class: 'mark' }), sectorName(item.sector)),
+    el(size === 'lead' ? 'h2' : 'h3', { class: 'headline' }, storyLink(item, item.title)),
+    el('p', { class: 'byline' },
+      el('span', {}, 'By ', el('strong', {}, item.sourceName), item.published ? ` · ${timeAgo(item.published)}` : ''),
+      saveButton(item)),
+    item.summary && el('p', { class: 'dek' }, item.summary),
+    extra,
+    topics.length ? el('div', { class: 'tags' }, topics.map((t) => el('span', { class: 'tag', style: colorVars(t.color) }, t.name))) : null);
 }
 
 function empty(text, action) {
   return el('div', { class: 'empty' }, el('p', {}, text), action);
 }
 
-function renderFeed() {
-  const items = visibleItems('article');
-  if (!items.length) {
-    return empty(data.items.length ? 'Nothing matches these filters.' : 'No stories yet.',
-      el('button', { type: 'button', class: 'btn', onclick: openSettings }, 'Choose sources'));
-  }
-  return el('div', { class: 'grid' }, items.map(card));
-}
-
-function renderStories() {
-  const byId = new Map(visibleItems('article').map((i) => [i.id, i]));
-  const clusters = (data.clusters || [])
+function clustersWith(items) {
+  const byId = new Map(items.map((i) => [i.id, i]));
+  return (data.clusters || [])
     .map((c) => ({ ...c, items: c.itemIds.map((id) => byId.get(id)).filter(Boolean) }))
     .filter((c) => new Set(c.items.map((i) => i.sourceId)).size >= 2);
-  if (!clusters.length) {
-    return empty('No story is being covered by several of your sources right now. Add more outlets in the same sector to see stories cluster together.');
+}
+
+function alsoReported(cluster, lead) {
+  if (!cluster) return null;
+  const others = [...new Set(cluster.items.filter((i) => i.sourceId !== lead.sourceId).map((i) => i.sourceName))];
+  if (!others.length) return null;
+  return el('p', { class: 'also' }, el('span', {}, 'Also reported by '), others.join(', '));
+}
+
+// ------------------------------------------------------------------ front page
+
+// Assigns each section a column span so every row fills the full width,
+// alternating big and small blocks for an asymmetric, printed-page rhythm.
+function packSections(sections, cols) {
+  if (cols === 1) return sections.map((s) => ({ ...s, span: 1 }));
+  const bySize = [...sections].sort((a, b) => b.items.length - a.items.length);
+  const order = [];
+  while (bySize.length) {
+    order.push(bySize.shift());
+    if (bySize.length) order.push(bySize.pop());
   }
-  return el('div', { class: 'stories' }, clusters.map((c) => {
-    const lead = c.items[0];
+  const want = (s) => (cols === 12
+    ? (s.items.length >= 6 ? 8 : s.items.length >= 3 ? 5 : 4)
+    : (s.items.length >= 4 ? 6 : 3));
+  const out = [];
+  let rem = cols;
+  for (const s of order) {
+    let span = Math.min(want(s), rem);
+    if (span < 3) { // leftover too narrow for a section: widen the previous one
+      out[out.length - 1].span += rem;
+      rem = cols;
+      span = Math.min(want(s), rem);
+    }
+    out.push({ ...s, span });
+    rem -= span;
+    if (rem === 0) rem = cols;
+  }
+  if (rem !== cols && out.length) out[out.length - 1].span += rem;
+  return out;
+}
+
+function renderSection({ sector, items, span }, cols, clusterOf) {
+  const also = (i) => alsoReported(clusterOf.get(i.id), i);
+  const color = sectorColor(sector);
+  const wide = cols > 1 && span / cols >= 0.6;
+  const lead = items.find((i) => i.image) || items[0];
+  const rest = items.filter((i) => i !== lead);
+  return el('section', {
+    class: `paper-section${wide ? ' wide' : ''}`,
+    style: `${colorVars(color)};grid-column:span ${span}`,
+  },
+  el('header', { class: 'section-band' },
+    el('h2', {}, sectorName(sector)),
+    el('button', {
+      type: 'button', class: 'band-link',
+      onclick: () => { ui.sectorFilter = new Set([sector]); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); },
+    }, `${items.length} ${items.length === 1 ? 'story' : 'stories'} →`)),
+  el('div', { class: 'section-body' },
+    story(lead, 'major', { showKicker: false, extra: also(lead) }),
+    rest.length ? el('div', { class: 'newsprint' }, rest.map((i) => story(i, 'minor', {
+      showImage: false, showKicker: false, extra: also(i),
+    }))) : null));
+}
+
+function renderFront() {
+  const articles = visibleItems('article');
+  if (!articles.length) {
+    return empty(data.items.length ? 'Nothing in today’s paper matches these filters.' : 'The presses are warming up — no stories yet.',
+      el('button', { type: 'button', class: 'pill-btn', onclick: openSettings }, 'Choose sources'));
+  }
+  if (filtersActive()) return renderResults(articles);
+
+  const cols = gridCols();
+  const used = new Set();
+  const clusters = clustersWith(articles);
+  const clusterOf = new Map();
+  for (const c of clusters) for (const i of c.items) clusterOf.set(i.id, c);
+  // Taking a story also retires the rest of its cluster, so the front page
+  // doesn't print the same news twice.
+  const take = (item) => {
+    used.add(item.id);
+    clusterOf.get(item.id)?.items.forEach((i) => used.add(i.id));
+    return item;
+  };
+  const unused = () => articles.filter((i) => !used.has(i.id));
+
+  const leadCluster = clusters[0];
+  const lead = take(leadCluster?.items.find((i) => i.image) || leadCluster?.items[0]
+    || articles.find((i) => i.image) || articles[0]);
+
+  // Secondary column: biggest remaining stories, preferring a mix of sections.
+  const secondary = [];
+  const seenSectors = new Set([lead.sector]);
+  for (const c of clusters.slice(1)) {
+    if (secondary.length >= 3) break;
+    const head = c.items.find((i) => !used.has(i.id));
+    if (head && !seenSectors.has(head.sector)) { secondary.push(take(head)); seenSectors.add(head.sector); }
+  }
+  for (const i of unused()) {
+    if (secondary.length >= 3) break;
+    if (!seenSectors.has(i.sector)) { secondary.push(take(i)); seenSectors.add(i.sector); }
+  }
+
+  // Two follow-up stories fill the space under the lead, as on a printed page.
+  const followers = unused().filter((i) => i.sector !== lead.sector).slice(0, 2).map(take);
+  const briefs = unused().slice(0, 7).map(take);
+  const events = visibleItems('event').slice(0, 5);
+
+  const fold = el('div', { class: 'fold' },
+    el('div', { class: 'fold-lead' },
+      story(lead, 'lead', { extra: alsoReported(clusterOf.get(lead.id), lead) }),
+      followers.length ? el('div', { class: 'lead-follow' }, followers.map((i) => story(i, 'minor', {
+        showImage: false, extra: alsoReported(clusterOf.get(i.id), i),
+      }))) : null),
+    el('div', { class: 'fold-secondary' }, secondary.map((i) => story(i, 'major', {
+      showImage: false, extra: alsoReported(clusterOf.get(i.id), i),
+    }))),
+    el('aside', { class: 'fold-rail' },
+      briefs.length ? el('div', { class: 'brief-box' },
+        el('h3', { class: 'rail-title' }, 'In brief'),
+        briefs.map((i) => story(i, 'brief'))) : null,
+      events.length ? el('div', { class: 'whats-on' },
+        el('h3', { class: 'rail-title' }, 'What’s on'),
+        events.map((e) => eventLine(e)),
+        el('button', { type: 'button', class: 'band-link', onclick: () => setView('events') }, 'All listings →')) : null));
+
+  // One entry per story: other outlets' versions become "also reported by".
+  const bySector = new Map();
+  for (const i of articles) {
+    if (used.has(i.id)) continue;
+    take(i);
+    if (!bySector.has(i.sector)) bySector.set(i.sector, []);
+    bySector.get(i.sector).push(i);
+  }
+  const sections = packSections(
+    [...bySector].map(([sector, items]) => ({ sector, items: items.slice(0, 9) })), cols);
+
+  return el('div', { class: 'front' },
+    fold,
+    sections.length ? el('div', { class: 'sections', style: `--cols:${cols}` },
+      sections.map((s) => renderSection(s, cols, clusterOf))) : null);
+}
+
+function renderResults(articles) {
+  const label = [
+    ...[...ui.sectorFilter].map(sectorName),
+    ui.topicFilter && `#${state.topics.find((t) => t.id === ui.topicFilter)?.name}`,
+    ui.search.trim() && `“${ui.search.trim()}”`,
+  ].filter(Boolean).join(' · ');
+  return el('div', { class: 'results' },
+    el('header', { class: 'results-head' },
+      el('h2', {}, label || 'Results'),
+      el('span', {}, `${articles.length} ${articles.length === 1 ? 'story' : 'stories'}`),
+      el('button', {
+        type: 'button', class: 'band-link',
+        onclick: () => { ui.sectorFilter.clear(); ui.topicFilter = null; ui.search = ''; $('#search').value = ''; render(); },
+      }, 'Back to the front page')),
+    el('div', { class: 'newsprint wide-columns' }, articles.map((i, n) => story(i, n === 0 ? 'major' : 'minor'))));
+}
+
+// ------------------------------------------------------------------ coverage
+
+function renderStories() {
+  const clusters = clustersWith(visibleItems('article'));
+  if (!clusters.length) {
+    return empty('No story is being covered by several of your sources right now. Add more outlets in the same section to see coverage compared side by side.');
+  }
+  return el('div', { class: 'coverage' }, clusters.map((c) => {
+    const lead = c.items.find((i) => i.image) || c.items[0];
     const sectors = [...new Set(c.items.map((i) => i.sector))];
-    return el('section', { class: 'story', style: `--c:${sectorColor(lead.sector)}` },
-      el('header', {},
-        el('div', { class: 'story-sectors' }, sectors.map((s) => el('span', { class: 'dot', style: `--c:${sectorColor(s)}` }))),
-        el('span', { class: 'story-count' }, `${new Set(c.items.map((i) => i.sourceId)).size} sources`),
-        c.label.length ? el('span', { class: 'story-label' }, c.label.join(' · ')) : null),
-      el('h3', {}, lead.title),
-      el('ul', {}, c.items.map((i) => el('li', {},
-        el('a', {
-          href: safeHref(i.link), target: '_blank', rel: 'noopener noreferrer',
-          class: state.read[i.id] ? 'read' : '', onclick: () => markRead(i),
-        },
-        el('span', { class: 'source', style: `--c:${sectorColor(i.sector)}` }, i.sourceName),
-        ' ', i.title),
+    const n = new Set(c.items.map((i) => i.sourceId)).size;
+    return el('section', { class: 'coverage-block', style: colorVars(sectorColor(lead.sector)) },
+      el('div', { class: 'kicker' },
+        sectors.map((s) => el('span', { class: 'mark', style: colorVars(sectorColor(s)) })),
+        `${n} sources`, c.label.length ? el('span', { class: 'label' }, ` · ${c.label.join(' · ')}`) : null),
+      lead.image ? storyLink(lead, el('img', {
+        class: 'figure', src: lead.image, alt: '', loading: 'lazy', referrerpolicy: 'no-referrer',
+        onerror: (e) => e.target.closest('a')?.remove(),
+      })) : null,
+      el('h2', { class: 'headline' }, storyLink(lead, lead.title)),
+      el('ol', { class: 'versions' }, c.items.map((i) => el('li', { class: state.read[i.id] ? 'read' : '' },
+        el('span', { class: 'by' }, i.sourceName),
+        storyLink(i, i.title),
         i.published ? el('time', { datetime: i.published }, timeAgo(i.published)) : null))));
   }));
 }
+
+// ------------------------------------------------------------------ listings
 
 const dayKey = (d) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 function dayLabel(d) {
@@ -274,12 +485,25 @@ function dayLabel(d) {
 
 // Date-only values ("2026-10-05") must be read as local dates, not UTC midnight.
 const parseStart = (e) => (e.allDay ? new Date(`${e.start}T00:00:00`) : new Date(e.start));
+const eventTime = (e) => (e.allDay ? 'All day'
+  : parseStart(e).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }));
+
+function eventLine(e, withDay = true) {
+  const d = parseStart(e);
+  return el('a', {
+    class: 'listing', href: safeHref(e.link), target: '_blank', rel: 'noopener noreferrer',
+    style: colorVars(sectorColor(e.sector)),
+  },
+  el('span', { class: 'listing-when' }, withDay ? `${dayLabel(d)}, ${eventTime(e)}` : eventTime(e)),
+  el('span', { class: 'listing-title' }, e.title),
+  el('span', { class: 'listing-meta' }, [e.location, e.sourceName].filter(Boolean).join(' · ')));
+}
 
 function renderEvents() {
   const events = visibleItems('event');
   if (!events.length) {
-    return empty('No upcoming events. Add an iCal (.ics) calendar from a venue, museum or Meetup group in settings.',
-      el('button', { type: 'button', class: 'btn', onclick: openSettings }, 'Add a calendar'));
+    return empty('No upcoming events. Add an iCal (.ics) calendar from a venue, museum or Meetup group in Customise.',
+      el('button', { type: 'button', class: 'pill-btn', onclick: openSettings }, 'Add a calendar'));
   }
   const groups = new Map();
   for (const e of events) {
@@ -288,32 +512,37 @@ function renderEvents() {
     if (!groups.has(k)) groups.set(k, { date: d, items: [] });
     groups.get(k).items.push(e);
   }
-  return el('div', { class: 'events' }, [...groups.values()].map((g) => el('section', { class: 'day' },
-    el('h3', { class: 'day-label' }, dayLabel(g.date)),
-    g.items.map((e) => {
-      const d = parseStart(e);
-      return el('a', {
-        class: 'event', href: safeHref(e.link), target: '_blank', rel: 'noopener noreferrer',
-        style: `--c:${sectorColor(e.sector)}`,
-      },
-      el('div', { class: 'event-time' }, e.allDay ? 'All day' : d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })),
-      el('div', {},
-        el('div', { class: 'event-title' }, e.title),
-        el('div', { class: 'event-meta' }, [e.location, e.sourceName].filter(Boolean).join(' · '))));
-    }))));
+  return el('div', { class: 'listings' },
+    el('header', { class: 'results-head' }, el('h2', {}, 'What’s on'), el('span', {}, `${events.length} listings`)),
+    el('div', { class: 'listings-columns' }, [...groups.values()].map((g) => el('section', { class: 'listing-day' },
+      el('h3', {}, dayLabel(g.date)),
+      g.items.map((e) => eventLine(e, false))))));
 }
 
 function renderSaved() {
-  const items = Object.values(state.saved).sort((a, b) => Date.parse(b.published || b.start || 0) - Date.parse(a.published || a.start || 0));
-  if (!items.length) return empty('Tap ☆ on any story to keep it here.');
-  return el('div', { class: 'grid' }, items.map(card));
+  const items = Object.values(state.saved)
+    .sort((a, b) => Date.parse(b.published || b.start || 0) - Date.parse(a.published || a.start || 0));
+  if (!items.length) return empty('Tap ☆ on any story to clip it and keep it here.');
+  return el('div', { class: 'results' },
+    el('header', { class: 'results-head' }, el('h2', {}, 'Clippings'), el('span', {}, `${items.length} saved`)),
+    el('div', { class: 'newsprint wide-columns' }, items.map((i) => story(i, 'minor'))));
+}
+
+// ------------------------------------------------------------------ render
+
+function setView(view) {
+  state.view = view;
+  persist();
+  render();
+  window.scrollTo({ top: 0 });
 }
 
 function render() {
   document.querySelectorAll('.tab').forEach((t) => t.setAttribute('aria-current', String(t.dataset.view === state.view)));
+  renderMasthead();
   renderChips();
-  const views = { feed: renderFeed, stories: renderStories, events: renderEvents, saved: renderSaved };
-  $('#content').replaceChildren((views[state.view] || renderFeed)());
+  const views = { feed: renderFront, stories: renderStories, events: renderEvents, saved: renderSaved };
+  $('#content').replaceChildren((views[state.view] || renderFront)());
 }
 
 // ------------------------------------------------------------------ settings
@@ -323,12 +552,14 @@ function openSettings() {
   $('#settings').showModal();
 }
 
+let settingsDirty = false;
+
 function renderSettings() {
   const list = $('#source-list');
   list.replaceChildren(...catalog.sectors.map((sector) => {
     const sources = catalog.sources.filter((s) => s.sector === sector.id);
     const customs = state.custom.filter((s) => s.sector === sector.id);
-    return el('fieldset', { class: 'sector', style: `--c:${sectorColor(sector.id)}` },
+    return el('fieldset', { class: 'sector', style: colorVars(sectorColor(sector.id)) },
       el('legend', {},
         el('input', {
           type: 'color', value: sectorColor(sector.id), 'aria-label': `${sector.name} colour`,
@@ -338,7 +569,7 @@ function renderSettings() {
         state.colors[sector.id] && el('button', {
           type: 'button', class: 'link-btn',
           onclick: () => { delete state.colors[sector.id]; persist(); renderSettings(); render(); },
-        }, 'reset colour')),
+        }, 'reset')),
       sources.map((s) => el('label', { class: 'source-option' },
         el('input', {
           type: 'checkbox', checked: state.selected.includes(s.id),
@@ -357,7 +588,7 @@ function renderSettings() {
   sel.replaceChildren(...catalog.sectors.map((s) => el('option', { value: s.id }, s.name)));
 
   $('#custom-list').replaceChildren(...state.custom.map((s) => el('li', {},
-    el('span', { class: 'dot', style: `--c:${sectorColor(s.sector)}` }),
+    el('span', { class: 'mark', style: colorVars(sectorColor(s.sector)) }),
     el('span', { class: 'grow' }, `${s.name} `, el('small', {}, s.url)),
     el('button', {
       type: 'button', class: 'link-btn',
@@ -379,8 +610,6 @@ function renderSettings() {
       },
     }, 'remove'))));
 }
-
-let settingsDirty = false;
 
 $('#custom-form').addEventListener('submit', (e) => {
   e.preventDefault();
@@ -412,14 +641,17 @@ $('#settings').addEventListener('close', () => {
 
 // ------------------------------------------------------------------ wiring
 
-document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => {
-  state.view = t.dataset.view;
-  persist();
-  render();
-}));
+document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => setView(t.dataset.view)));
 $('#search').addEventListener('input', (e) => { ui.search = e.target.value; render(); });
 $('#refresh').addEventListener('click', refresh);
 $('#open-settings').addEventListener('click', openSettings);
+
+// The section grid is packed for a column count, so re-pack when it changes.
+let lastCols = gridCols();
+window.addEventListener('resize', () => {
+  const cols = gridCols();
+  if (cols !== lastCols) { lastCols = cols; render(); }
+});
 
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && Date.now() - Date.parse(data.fetchedAt || 0) > REFRESH_MS) refresh();

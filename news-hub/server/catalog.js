@@ -1,17 +1,18 @@
 // The built-in source catalog. Users pick from these and can add their own
 // RSS / Atom / iCal URLs on top. Each sector has a default colour that the
-// user can override in the app.
+// user can override in the app. Defaults are built around the Cambly palette
+// (Sunglow #FFC929, Persimmon #FE614E, Cornflower #4D95EA) plus companions.
 
 export const SECTORS = [
-  { id: 'world',    name: 'World News',     color: '#2563eb' },
-  { id: 'business', name: 'Business',       color: '#0f766e' },
-  { id: 'tech',     name: 'Technology',     color: '#7c3aed' },
-  { id: 'science',  name: 'Science',        color: '#0891b2' },
-  { id: 'culture',  name: 'Culture & Arts', color: '#db2777' },
-  { id: 'film',     name: 'Film & TV',      color: '#ea580c' },
-  { id: 'music',    name: 'Music',          color: '#ca8a04' },
-  { id: 'sports',   name: 'Sports',         color: '#16a34a' },
-  { id: 'events',   name: 'Events',         color: '#dc2626' },
+  { id: 'world',    name: 'World News',     color: '#4D95EA' },
+  { id: 'business', name: 'Business',       color: '#23395B' },
+  { id: 'tech',     name: 'Technology',     color: '#8E6BD8' },
+  { id: 'science',  name: 'Science',        color: '#1FA39B' },
+  { id: 'culture',  name: 'Culture & Arts', color: '#FE614E' },
+  { id: 'film',     name: 'Film & TV',      color: '#D6457A' },
+  { id: 'music',    name: 'Music',          color: '#FFC929' },
+  { id: 'sports',   name: 'Sports',         color: '#3FA34D' },
+  { id: 'events',   name: 'Events',         color: '#FF9A3C' },
 ];
 
 // type: 'feed' covers RSS 2.0, RSS 1.0 (RDF) and Atom; 'ical' is an .ics calendar.
@@ -56,8 +57,9 @@ export const SOURCES = [
 
 // What a first-time visitor sees before they customise anything.
 export const DEFAULT_SELECTION = [
-  'bbc-world', 'guardian-world', 'verge', 'ars', 'nature',
-  'guardian-culture', 'hyperallergic', 'pitchfork', 'bbc-sport', 'holidays-us',
+  'bbc-world', 'guardian-world', 'npr', 'bbc-business', 'cnbc', 'verge', 'ars',
+  'nature', 'sciencedaily', 'guardian-culture', 'hyperallergic', 'variety',
+  'pitchfork', 'stereogum', 'bbc-sport', 'espn', 'holidays-us',
 ];
 
 export const SOURCE_BY_ID = new Map(SOURCES.map((s) => [s.id, s]));
