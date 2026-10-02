@@ -743,22 +743,53 @@ const P=([lon,lat])=>[OX+(lon-LON0)*KX*S, OY+(LAT1-lat)*S];
 const line=pts=>"M"+pts.map(p=>P(p).map(v=>v.toFixed(1)).join(",")).join("L");
 
 const svg=d3.select("#map"), svgEl=document.getElementById("map"), g=svg.append("g");
-const gBase=g.append("g"), gRoads=g.append("g"), gRoutes=g.append("g"), gLabels=g.append("g"), gMarks=g.append("g");
+const gBase=g.append("g"), gRoads=g.append("g"), gWater=g.append("g"), gBridges=g.append("g"), gRoutes=g.append("g"), gLabels=g.append("g"), gMarks=g.append("g");
 ARR.forEach(a=>a.r.forEach(r=>gBase.append("path").attr("class","arr").attr("d",line(r)+"Z")));
 const seineSplit=SEINE.indexOf(null);
-const seine=gBase.append("path").attr("class","seine").attr("d",line(SEINE.slice(0,seineSplit))+line(SEINE.slice(seineSplit+1)));
+const smooth=d3.line().x(p=>P(p)[0]).y(p=>P(p)[1]).curve(d3.curveCatmullRom.alpha(0.5));
+const SEINE_E=SEINE.slice(0,seineSplit), SEINE_W=SEINE.slice(seineSplit+1);
+const seine=gWater.append("path").attr("class","seine").attr("d",smooth(SEINE_E)+smooth(SEINE_W));
 /* The two arms of the Seine around Île de la Cité and Île Saint-Louis, then the islands drawn as land on top. */
 const SEINE_N=[[2.3375,48.8583],[2.3412,48.8584],[2.3440,48.8582],[2.3468,48.8575],[2.3490,48.8567],[2.3512,48.8557],[2.3532,48.8546],[2.3556,48.8543],[2.3580,48.8538],[2.3603,48.8527],[2.3618,48.8512],[2.3640,48.8492],[2.3660,48.8463]];
 const SEINE_S=[[2.3375,48.8583],[2.3400,48.8566],[2.3420,48.8553],[2.3445,48.8538],[2.3462,48.8529],[2.3485,48.8517],[2.3510,48.8508],[2.3540,48.8512],[2.3560,48.8508],[2.3580,48.8502],[2.3600,48.8496],[2.3622,48.8490],[2.3640,48.8480],[2.3660,48.8463]];
 const ISLANDS=[
   [[2.3390,48.8574],[2.3412,48.8580],[2.3440,48.8575],[2.3468,48.8569],[2.3490,48.8560],[2.3512,48.8549],[2.3527,48.8535],[2.3534,48.8522],[2.3522,48.8516],[2.3505,48.8514],[2.3485,48.8522],[2.3466,48.8530],[2.3446,48.8541],[2.3425,48.8556],[2.3405,48.8566]],
   [[2.3537,48.8530],[2.3556,48.8538],[2.3580,48.8531],[2.3600,48.8521],[2.3613,48.8507],[2.3598,48.8503],[2.3575,48.8509],[2.3553,48.8517],[2.3540,48.8524]]];
-const seineArms=[SEINE_N,SEINE_S].map(a=>gBase.append("path").attr("class","seine").attr("d",line(a)));
-ISLANDS.forEach(r=>gBase.append("path").attr("class","arr isle").attr("d",line(r)+"Z"));
+const seineArms=[SEINE_N,SEINE_S].map(a=>gWater.append("path").attr("class","seine").attr("d",smooth(a)));
+ISLANDS.forEach(r=>gWater.append("path").attr("class","arr isle").attr("d",line(r)+"Z"));
 const flat=a=>{const o=[];for(let i=0;i<a.length;i+=2)o.push([a[i],a[i+1]]);return o;};
-const roadD=ROADS.map(list=>list.map(a=>line(flat(a))).join(""));
-const roadCase=[0,1,2].map(i=>gRoads.append("path").attr("class","road case").attr("d",roadD[i]));
-const roadFill=[2,1,0].map(i=>gRoads.append("path").attr("class","road r"+i).attr("d",roadD[i]));
+/* Roads come from straight IGN segments and don't follow the hand-drawn river exactly, so the water is drawn
+   over them and only real crossings (bridges) and island streets are drawn again on top of the water. */
+const RIVERS=[SEINE_E,SEINE_W,SEINE_N,SEINE_S].map(a=>a.map(P));
+function cross(a,b,c,d){const o=(p,q,r)=>(q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]);
+  return o(a,b,c)*o(a,b,d)<0 && o(c,d,a)*o(c,d,b)<0;}
+function angle(a,b,c,d){const u=[b[0]-a[0],b[1]-a[1]],v=[d[0]-c[0],d[1]-c[1]];
+  const cs=Math.abs(u[0]*v[0]+u[1]*v[1])/(Math.hypot(...u)*Math.hypot(...v)||1);return Math.acos(Math.min(1,cs))*180/Math.PI;}
+/* Returns the bridge decks for a road segment: for each real crossing, the piece of the road that spans the
+   water from bank to bank (so a bridge never stops mid-river, whatever the road data's node positions). */
+function bridgeDecks(a,b){
+  const L=Math.hypot(b[0]-a[0],b[1]-a[1]); if(L>40) return [];     /* longer than ~700 m: a quay edge, not a bridge */
+  const ux=(b[0]-a[0])/L, uy=(b[1]-a[1])/L, out=[];
+  RIVERS.forEach((r,k)=>{const half=k<2?4.6:2.8;
+    for(let i=0;i<r.length-1;i++){const c=r[i],d=r[i+1]; if(!cross(a,b,c,d)) continue;
+      const th=angle(a,b,c,d); if(th<35) continue;
+      const den=(b[0]-a[0])*(d[1]-c[1])-(b[1]-a[1])*(d[0]-c[0]); const t=((c[0]-a[0])*(d[1]-c[1])-(c[1]-a[1])*(d[0]-c[0]))/den;
+      const ix=a[0]+t*(b[0]-a[0]), iy=a[1]+t*(b[1]-a[1]), h=(half+1.6)/Math.sin(th*Math.PI/180);
+      out.push([[ix-ux*h,iy-uy*h],[ix+ux*h,iy+uy*h]]);}});
+  return out;}
+const ISLE_P=ISLANDS.map(r=>r.map(P));
+function inIsle(pt){return ISLE_P.some(poly=>{let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const[xi,yi]=poly[i],[xj,yj]=poly[j];
+  if((yi>pt[1])!==(yj>pt[1]) && pt[0]<(xj-xi)*(pt[1]-yi)/(yj-yi)+xi) c=!c;}return c;});}
+const roadD=[], bridgeD=[];
+ROADS.forEach((list,ci)=>{let all="",br="";list.forEach(a=>{const pts=flat(a).map(P);
+  for(let i=0;i<pts.length-1;i++){const seg=`M${pts[i][0].toFixed(1)},${pts[i][1].toFixed(1)}L${pts[i+1][0].toFixed(1)},${pts[i+1][1].toFixed(1)}`;
+    all+=seg;
+    if(inIsle(pts[i])&&inIsle(pts[i+1])) br+=seg;
+    else bridgeDecks(pts[i],pts[i+1]).forEach(([p,q])=>{br+=`M${p[0].toFixed(1)},${p[1].toFixed(1)}L${q[0].toFixed(1)},${q[1].toFixed(1)}`;});}});
+  roadD[ci]=all; bridgeD[ci]=br;});
+function roadLayer(gg,D){return {cs:[0,1,2].map(i=>gg.append("path").attr("class","road case").attr("d",D[i])),
+  fl:[2,1,0].map(i=>gg.append("path").attr("class","road r"+i).attr("d",D[i]))};}
+const roadLayers=[roadLayer(gRoads,roadD),roadLayer(gBridges,bridgeD)];
 function centroid(r){let A=0,cx=0,cy=0;const pts=r.map(P);for(let i=0;i<pts.length-1;i++){const[x0,y0]=pts[i],[x1,y1]=pts[i+1],f=x0*y1-x1*y0;A+=f;cx+=(x0+x1)*f;cy+=(y0+y1)*f;}A/=2;return[cx/(6*A),cy/(6*A)];}
 const numNodes=ARR.map(a=>{const big=a.r.reduce((m,r)=>r.length>m.length?r:m,a.r[0]);const[x,y]=centroid(big);return gLabels.append("text").attr("class","arrnum").attr("data-x",x).attr("data-y",y).text(a.n+(a.n===1?"er":"e"));});
 const lmNodes=LANDMARKS.concat(LANDMARKS2.map(l=>[...l,1])).map(([name,pt,side,minor])=>{const[x,y]=P(pt);const gg=gLabels.append("g").attr("class",minor?"lm2":null).attr("data-x",x).attr("data-y",y);gg.append("circle").attr("class","lmdot").attr("r",1.6);gg.append("text").attr("class","lm").attr("x",side==="r"?5:-5).attr("y",-5).attr("text-anchor",side==="r"?"start":"end").text(name);return gg;});
@@ -785,7 +816,7 @@ function placeAll(){
   seine.attr("stroke-width",Math.max(8,4/(K*PPU)));
   seineArms.forEach(a=>a.attr("stroke-width",Math.max(4.6,2.5/(K*PPU))));
   const q=Math.sqrt(K);
-  [[2,1.1],[1,1.8],[0,2.6]].forEach(([i,w],j)=>{roadFill[j].attr("stroke-width",w*q);roadCase[i].attr("stroke-width",w*q+1.4);});
+  roadLayers.forEach(L=>[[2,1.1],[1,1.8],[0,2.6]].forEach(([i,w],j)=>{L.fl[j].attr("stroke-width",w*q);L.cs[i].attr("stroke-width",w*q+1.4);}));
   svgEl.classList.toggle("z-lm",K>=1.8);
 }
 
