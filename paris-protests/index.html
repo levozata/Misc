@@ -283,7 +283,7 @@ const LANDMARKS2=[["Tour Eiffel",[2.2945,48.8584],"r"],["Louvre",[2.3376,48.8606
 const LANDMARKS=[["République",PLACES.republique,"r"],["Bastille",PLACES.bastille,"r"],["Nation",PLACES.nation,"r"],["Pl. d'Italie",PLACES.italie,"r"],["Jussieu",PLACES.jussieu,"l"],["Champ-de-Mars",PLACES.champdemars,"l"],["Châtelet",PLACES.chatelet,"r"],["Pl. de l'Europe",PLACES.europe,"l"],["Pont St-Michel",PLACES.stmichel,"l"],["Concorde",PLACES.concorde,"l"],["Porte de Versailles",PLACES.portedeversailles,"r"]];
 
 /* ---------- last data update (YYYY-MM-DD); bump on every refresh ---------- */
-const UPDATED="2026-10-08";
+const UPDATED="2026-10-09";
 
 /* ---------- interface strings ---------- */
 const UI={
@@ -371,15 +371,6 @@ const LOCALE={fr:"fr-FR",en:"en-GB",es:"es-ES",zh:"zh-CN",pt:"pt-BR",de:"de-DE"}
 
 /* ---------- events (text fields: {en, es, fr}) ---------- */
 const EVENTS=[
- {id:"climat",date:"2026-09-26",kind:"rally",status:"confirmed",pts:[PLACES.republique],
-  time:{en:"Afternoon",es:"Por la tarde",fr:"Après-midi",zh:"下午",pt:"À tarde",de:"Nachmittags"},
-  title:{en:"Climate & social justice rally",es:"Concentración por el clima y la justicia social",fr:"Rassemblement climat et justice sociale",zh:"气候与社会正义集会",pt:"Concentração pelo clima e pela justiça social",de:"Kundgebung für Klima und soziale Gerechtigkeit"},
-  where:{en:"Place de la République",es:"Place de la République",fr:"Place de la République",zh:"Place de la République（共和国广场）",pt:"Place de la République",de:"Place de la République"},
-  desc:{en:"The national climate march was turned into a static rally because of the Pope's visit to Paris that weekend.",
-        es:"La marcha nacional por el clima se convirtió en una concentración estática por la visita del Papa a París ese fin de semana.",
-        fr:"La marche climat nationale a été transformée en rassemblement statique en raison de la venue du pape à Paris ce week-end-là.",zh:"由于教皇当周末访问巴黎，全国气候游行改为原地集会。",pt:"A marcha nacional pelo clima foi transformada numa concentração estática por causa da visita do Papa a Paris nesse fim de semana.",de:"Der landesweite Klimamarsch wurde wegen des Papstbesuchs an diesem Wochenende in eine stationäre Kundgebung umgewandelt."},
-  src:[["Vert","https://vert.eco/rapports-de-force/a-cause-de-la-venue-du-pape-la-marche-climat-du-26-septembre-remplacee-par-un-rassemblement-statique-a-paris/"]]},
-
  {id:"pompiers",date:"2026-09-27",end:"2026-10-20",kind:"strike",status:"confirmed",pts:[PLACES.champdemars],
   time:{en:"Camp since Sun. 27 Sept",es:"Campamento desde el dom. 27 sept.",fr:"Campement depuis le dim. 27 sept.",zh:"自9月27日（周日）起扎营",pt:"Acampamento desde dom. 27 set.",de:"Camp seit So. 27. Sept."},
   title:{en:"Firefighters' strike camp",es:"Campamento de bomberos en huelga",fr:"Campement des pompiers en grève",zh:"消防员罢工营地",pt:"Acampamento dos bombeiros em greve",de:"Streikcamp der Feuerwehrleute"},
@@ -526,18 +517,6 @@ const EVENTS=[
         es:"Huelga nacional de cinco días de UNSA PNC, SNPNC-FO, SNGAF, SNPL y UNAC contra la reforma que regula compatibilizar empleo y pensión (cumul emploi-retraite). Coincide con el inicio de las vacaciones escolares de Todos los Santos; las aerolíneas aún no han anunciado cancelaciones.",
         fr:"Grève nationale de cinq jours de l'UNSA PNC, du SNPNC-FO, du SNGAF, du SNPL et de l'UNAC contre la réforme du cumul emploi-retraite. Elle tombe au début des vacances de la Toussaint ; les compagnies n'ont pas encore annoncé d'annulations.",zh:"UNSA PNC、SNPNC-FO、SNGAF、SNPL 和 UNAC 发起为期五天的全国罢工，反对“边工作边领养老金”（cumul emploi-retraite）改革。罢工正值诸圣节学校假期开始；航空公司尚未宣布取消航班。",pt:"Greve nacional de cinco dias da UNSA PNC, SNPNC-FO, SNGAF, SNPL e UNAC contra a reforma da acumulação de emprego e reforma (cumul emploi-retraite). Coincide com o início das férias escolares do Dia de Todos os Santos; as companhias ainda não anunciaram cancelamentos.",de:"Fünftägiger landesweiter Streik von UNSA PNC, SNPNC-FO, SNGAF, SNPL und UNAC gegen die Reform zum Hinzuverdienst neben der Rente (cumul emploi-retraite). Er fällt auf den Beginn der Herbstferien (Toussaint); Airlines haben noch keine Annullierungen angekündigt."},
   src:[["Air Journal","https://www.air-journal.fr/2026-09-19-reforme-du-cumul-emploi-retraite-les-pilotes-et-personnels-de-cabine-appeles-a-la-greve-du-17-au-21-octobre-5277588.html"],["C'est la grève","https://www.cestlagreve.fr/greve/aviation-octobre-2026/"],["PNC Contact","https://pnc-contact.com/2026/09/29/greve-des-navigants-a-la-toussaint-2026"]]},
-
-{id:"pape",openEnd:true,date:"2026-09-25",end:"2026-09-26",kind:"disruption",status:"confirmed",pts:[PLACES.notredame,PLACES.champs],ptNames:["Notre-Dame","Champs-Élysées"],
-  time:{en:"Fri 25 – Sat 26 Sept",es:"Vie. 25 – sáb. 26 sept.",fr:"Ven. 25 – sam. 26 sept.",zh:"9月25日（周五）– 26日（周六）",pt:"Sex. 25 – sáb. 26 set.",de:"Fr. 25. – Sa. 26. Sept."},
-  title:{en:"Pope Leo XIV's visit to Paris",es:"Visita del papa León XIV a París",fr:"Visite du pape Léon XIV à Paris",zh:"教皇良十四世访问巴黎",pt:"Visita do Papa Leão XIV a Paris",de:"Besuch von Papst Leo XIV. in Paris"},
-  where:{en:"Notre-Dame, Élysée, Stade de France, Champs-Élysées",es:"Notre-Dame, Elíseo, Stade de France, Campos Elíseos",fr:"Notre-Dame, Élysée, Stade de France, Champs-Élysées",zh:"巴黎圣母院、爱丽舍宫、法兰西体育场、香榭丽舍大街",pt:"Notre-Dame, Eliseu, Stade de France, Campos Elísios",de:"Notre-Dame, Élysée, Stade de France, Champs-Élysées"},
-  desc:{en:"First papal trip to France since 1997: popemobile through the 6e and vespers at Notre-Dame on Friday, a vigil at the Stade de France, and an open-air mass on the Champs-Élysées on Saturday at 15:00.",
-        es:"Primer viaje papal a Francia desde 1997: papamóvil por el 6.º distrito y vísperas en Notre-Dame el viernes, vigilia en el Stade de France y misa al aire libre en los Campos Elíseos el sábado a las 15:00.",
-        fr:"Premier voyage d'un pape en France depuis 1997 : papamobile dans le 6e et vêpres à Notre-Dame vendredi, veillée au Stade de France, messe en plein air sur les Champs-Élysées samedi à 15h.",zh:"自1997年以来教皇首次访问法国：周五乘教皇座驾穿过第6区并在巴黎圣母院主持晚祷，在法兰西体育场举行守夜，周六15:00在香榭丽舍大街举行露天弥撒。",pt:"Primeira viagem papal a França desde 1997: papamóvel pelo 6.º e vésperas em Notre-Dame na sexta, vigília no Stade de France e missa ao ar livre nos Campos Elísios no sábado às 15:00.",de:"Erste Papstreise nach Frankreich seit 1997: Papamobil durch das 6. Arrondissement und Vesper in Notre-Dame am Freitag, Vigil im Stade de France und Freiluftmesse auf den Champs-Élysées am Samstag um 15:00."},
-  impact:{en:"About 10 metro stations closed, 14,000–16,500 police and gendarmes deployed, screened security perimeters, dozens of streets closed and parking banned in the 8e from 15 Sept.",
-          es:"Unas 10 estaciones de metro cerradas, entre 14.000 y 16.500 policías y gendarmes, perímetros con registros, decenas de calles cortadas y prohibición de aparcar en el 8.º desde el 15 de septiembre.",
-          fr:"Une dizaine de stations de métro fermées, 14 000 à 16 500 policiers et gendarmes, périmètres avec fouilles, des dizaines de rues fermées et stationnement interdit dans le 8e dès le 15 septembre.",zh:"约10个地铁站关闭，部署14,000–16,500名警察和宪兵，设安检区域，数十条街道封闭，9月15日起第8区禁止停车。",pt:"Cerca de 10 estações de metro fechadas, 14.000 a 16.500 polícias e gendarmes, perímetros com revista, dezenas de ruas cortadas e estacionamento proibido no 8.º desde 15 set.",de:"Rund 10 Metrostationen geschlossen, 14.000–16.500 Polizisten und Gendarmen im Einsatz, Sicherheitszonen mit Kontrollen, Dutzende Straßen gesperrt und Parkverbot im 8. ab 15. Sept."},
-  src:[["Diocèse de Paris","https://dioceseparis.fr/le-pape-leon-xiv-en-france-du-25.html"],["franceinfo","https://www.franceinfo.fr/monde/vatican/pape-leon-xiv/stations-fermees-fouilles-policiers-et-gendarmes-les-chiffres-du-dispositif-de-securite-parisien-qui-encadrera-la-visite-du-pape_8207681.html"],["Mairie du 8e","https://mairie08.paris.fr/pages/visite-du-pape-a-paris-toutes-les-informations-pratiques-dans-le-8e-arrondissement-36207"]]},
 
  {id:"concorde",openEnd:true,date:"2026-09-16",end:"2026-10-11",kind:"disruption",status:"confirmed",pts:[PLACES.concorde],
   time:{en:"Until Sun. 11 Oct",es:"Hasta el dom. 11 oct.",fr:"Jusqu'au dim. 11 oct.",zh:"至10月11日（周日）",pt:"Até dom. 11 out.",de:"Bis So. 11. Okt."},
