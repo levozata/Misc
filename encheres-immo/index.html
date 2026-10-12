@@ -8,7 +8,6 @@
 <style>html{color-scheme:light dark}body{margin:0}[hidden]{display:none!important}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 <title>Enchères Immo France</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* Layout: Dilara back-office — white top bar with pill tabs, warm paper ground, white 16px-radius panels, teal-slate accent, status pills */
 :root{
@@ -286,8 +285,166 @@ mark{background:var(--warn-bg);color:inherit;border-radius:3px;padding:0 1px}
 @media (max-width:760px){.prow{grid-template-columns:60px minmax(0,1fr)}.rbadge{width:60px;height:52px;font-size:14px}}
 </style>
 
+<link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Auction house theme: lavender-paper ground, ink-violet accent, navy actions, hairline square cards, high-contrast serif display */
+:root{
+  --bg:#F5F4FA; --surface:#FFFFFF; --surface-2:#EDEBF4; --line:#E2DFEC; --line-strong:#CFCBE0;
+  --ink:#1E1546; --muted:#5F5A7E; --faint:#7A7596;
+  --accent:#5A3FDC; --accent-2:#6E55E8; --accent-soft:#ECE8FD; --on-accent:#FFFFFF;
+  --navy:#1E1546; --on-navy:#FFFFFF; --lilac:#B9A9F7;
+  --ok:#2F7A55; --ok-bg:#E1F1E8; --warn:#8A5A12; --warn-bg:#F7ECD9; --bad:#A33A3A; --bad-bg:#F8E4E4;
+  --land:#ECEAF3; --land-line:#D6D2E4;
+  --c-appartement:#5A3FDC; --c-maison:#C07A2C; --c-immeuble:#1E1546; --c-commerce:#2F8A7A; --c-terrain:#8E9A3A; --c-parking:#B3456A; --c-autre:#8C87A8; --c-parts:#8C87A8;
+  --font:"Jost",system-ui,-apple-system,"Segoe UI",sans-serif; --serif:"Gilda Display","Didot","Bodoni 72",Georgia,serif;
+  --r-lg:0px; --r-md:0px; --r-sm:0px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#110E22; --surface:#19152F; --surface-2:#221D3D; --line:#2D2750; --line-strong:#3B345F;
+  --ink:#EEEBFA; --muted:#AAA4CC; --faint:#8F89B3;
+  --accent:#A08CFF; --accent-2:#8C76FA; --accent-soft:#2A2350; --on-accent:#120E26;
+  --navy:#A08CFF; --on-navy:#120E26; --lilac:#6F5BD6;
+  --ok:#8FD3AE; --ok-bg:#183326; --warn:#E8C27E; --warn-bg:#3A2D17; --bad:#F0A0A0; --bad-bg:#3D1F25;
+  --land:#1F1A38; --land-line:#3A3360;
+  --c-appartement:#A08CFF; --c-maison:#E7AE68; --c-immeuble:#D9D3F5; --c-commerce:#6CCDBA; --c-terrain:#C4CF74; --c-parking:#EE8FB0; --c-autre:#A9A4C7; --c-parts:#A9A4C7;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#110E22; --surface:#19152F; --surface-2:#221D3D; --line:#2D2750; --line-strong:#3B345F;
+  --ink:#EEEBFA; --muted:#AAA4CC; --faint:#8F89B3;
+  --accent:#A08CFF; --accent-2:#8C76FA; --accent-soft:#2A2350; --on-accent:#120E26;
+  --navy:#A08CFF; --on-navy:#120E26; --lilac:#6F5BD6;
+  --ok:#8FD3AE; --ok-bg:#183326; --warn:#E8C27E; --warn-bg:#3A2D17; --bad:#F0A0A0; --bad-bg:#3D1F25;
+  --land:#1F1A38; --land-line:#3A3360;
+  --c-appartement:#A08CFF; --c-maison:#E7AE68; --c-immeuble:#D9D3F5; --c-commerce:#6CCDBA; --c-terrain:#C4CF74; --c-parking:#EE8FB0; --c-autre:#A9A4C7; --c-parts:#A9A4C7;
+  color-scheme:dark}
+body{font-size:14.5px;letter-spacing:.005em}
+/* header */
+.bar{background:var(--bg);border-bottom:1px solid transparent;padding-block:18px;padding-inline:clamp(16px,4vw,56px);gap:24px}
+.brand{gap:12px;color:var(--accent)}
+.brand b{font-family:var(--serif);font-weight:400;font-size:22px;color:var(--ink);letter-spacing:.01em}
+.brand b span{color:var(--accent)}
+.logo{color:var(--accent)}
+.tabs{background:transparent;padding:0;gap:6px;border-radius:0}
+.tabs button{height:38px;padding:0 12px;border-radius:0;font-size:13.5px;font-weight:500;color:var(--muted);position:relative;background:transparent}
+.tabs button[aria-selected="true"]{background:transparent;color:var(--ink);box-shadow:none;font-weight:600}
+.tabs button[aria-selected="true"]::after{content:"";position:absolute;left:12px;right:12px;bottom:4px;height:2px;background:var(--accent)}
+.lang{background:transparent;border:1px solid var(--line-strong);border-radius:999px;padding:3px}
+.lang button{border-radius:999px;height:28px}
+.lang button[aria-pressed="true"]{background:var(--navy);color:var(--on-navy);box-shadow:none}
+.tag{background:transparent;border:1px solid var(--line-strong);border-radius:999px;font-size:11.5px;letter-spacing:.04em}
+main{padding-inline:clamp(16px,4vw,56px);max-width:1520px}
+/* type */
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(34px,4.6vw,56px);line-height:1.06;letter-spacing:-.01em;color:var(--ink)}
+h2{font-family:var(--serif);font-weight:400;font-size:24px;letter-spacing:0;display:flex;align-items:center;gap:12px}
+.panel h2::before,.dayh h2::before,.sec h3::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--lilac);flex-shrink:0}
+h3{font-family:var(--serif);font-weight:400;font-size:19px}
+.sec h3{display:flex;align-items:center;gap:10px}
+.eyebrow{font-size:11px;letter-spacing:.14em;color:var(--accent);font-weight:600}
+.lede{font-size:15.5px;line-height:1.7;color:var(--muted)}
+.head{margin-bottom:28px;padding-top:8px}
+/* cards */
+.panel{border-radius:0;border:1px solid var(--line);box-shadow:none}
+.stats{gap:0;border:1px solid var(--line);background:var(--surface);margin-bottom:28px}
+.stats .panel{border:0;border-right:1px solid var(--line);background:transparent}
+.stats .panel:last-child{border-right:0}
+.stats .panel:first-child{background:var(--accent);color:var(--on-accent);border-bottom-left-radius:56px}
+.stats .panel:first-child .k,.stats .panel:first-child .s{color:var(--on-accent);opacity:.85}
+.stat .k{font-size:10.5px;letter-spacing:.14em;color:var(--accent)}
+.stat .v{font-family:var(--serif);font-weight:400;font-size:34px;letter-spacing:0}
+.stat .s{font-size:12.5px}
+/* inputs & buttons */
+.inp,.sel{border-radius:0;border-color:var(--line-strong);height:42px;background:var(--surface)}
+.btn{border-radius:0;background:var(--navy);color:var(--on-navy);height:42px;font-weight:600;letter-spacing:.02em}
+.btn:hover{background:var(--accent);color:var(--on-accent)}
+.btn.ghost{background:transparent;border:1px solid var(--line-strong);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--accent);color:var(--accent);background:transparent}
+.btn.sm{height:34px}
+.chip{border-radius:999px;background:transparent}
+.chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:var(--on-navy)}
+.qhelp,.kbd{border-radius:0}
+.sugg{border-radius:0}
+.sugg .opt{border-radius:0}
+.fchip{border-radius:999px;background:var(--accent-soft)}
+.badge{background:var(--accent)}
+/* list rows */
+.row{border-radius:0;border-color:var(--line);padding:14px 16px;gap:16px}
+.row:hover{border-color:var(--accent)}
+.row.sel{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.thumb{border-radius:0;width:96px;height:72px}
+.row{grid-template-columns:96px minmax(0,1fr) auto}
+.row .t{font-family:var(--serif);font-weight:400;font-size:18px;letter-spacing:0}
+.price .mp{font-family:var(--serif);font-weight:400;font-size:19px}
+.price .lbl{text-transform:uppercase;letter-spacing:.12em;font-size:10px;color:var(--accent);font-weight:600}
+.pill{border-radius:999px;font-weight:600;font-size:11px;letter-spacing:.02em}
+.prow{grid-template-columns:76px minmax(0,1fr) auto}
+.rbadge{border-radius:0 0 0 22px;width:76px}
+.rbadge .num{font-family:var(--serif);font-weight:400;font-size:19px}
+/* map */
+.mapwrap{border-radius:0}
+#map,#pmap{background:var(--surface)}
+.maptools{border-bottom:1px solid var(--line)}
+/* drawer */
+.drawer{background:var(--bg);border-left:1px solid var(--line)}
+.dhead{background:var(--bg);border-bottom:1px solid var(--line);padding:20px 24px}
+.dhead h2{font-size:28px;line-height:1.15}
+.dhead h2::before{display:none}
+.dhead .x{border-radius:50%;background:var(--surface)}
+.dbody{padding:20px 24px 48px}
+.gallery button{border-radius:0}
+.closing{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 14px;background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-top:10px}
+.closing svg{flex-shrink:0}
+.person{border-radius:0;background:var(--surface);border:1px solid var(--line)}
+.person .av{background:var(--accent-soft);color:var(--accent)}
+.callout{border-radius:0}
+.callout.info{background:var(--accent-soft);color:var(--ink);border-left:3px solid var(--accent)}
+.tips .ic{border-radius:50%}
+.nophoto{border-radius:0}
+.band .iq{border-radius:0;background:var(--accent-soft);border-color:var(--accent)}
+.band .tick{background:var(--navy)}
+.bars .iq{border-radius:0;background:var(--accent-soft);border-color:var(--accent)}
+.bars .md{background:var(--navy)}
+.bars .tr{border-radius:0}
+.mbar{background:var(--accent);border-radius:0}
+.steps .n{font-family:var(--serif);font-weight:400;font-size:18px;background:var(--accent);color:var(--on-accent)}
+.timeline .d{color:var(--accent)}
+.ctable th{font-size:10.5px;letter-spacing:.12em;color:var(--accent)}
+.lightbox img{border-radius:0}
+.lightbox button{border-radius:0;background:var(--navy);color:var(--on-navy)}
+.qhelpbox{border-radius:0;background:var(--surface);border:1px solid var(--line)}
+.dayh h2{font-size:22px}
+.toolbar{border-radius:0}
+.src{color:var(--faint)}
+/* auriol hero touches */
+#auriol .head h1{max-width:16ch}
+#auriol .stats .panel:first-child{border-bottom-left-radius:56px}
+/* footer */
+.foot{margin-top:24px;padding-inline:clamp(16px,4vw,56px);padding-block:40px 0;max-width:1520px;margin-inline:auto}
+.fcols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;padding-bottom:40px}
+.fcols h4{margin:0 0 14px;font-family:var(--serif);font-weight:400;font-size:18px;display:flex;align-items:center;gap:8px}
+.fcols ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.fcols a{color:var(--muted);text-decoration:none;font-size:14px}
+.fcols a:hover{color:var(--accent)}
+.fbox{border:1px solid var(--line-strong);padding:18px 22px}
+.dotb{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--lilac)}
+.fbar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:var(--surface-2);border-top-left-radius:56px;padding:22px clamp(20px,4vw,48px);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+.fbar .sep{width:1px;height:22px;background:var(--line-strong)}
+.fbar .grow{flex:1}
+.fbar .serif{font-family:var(--serif);font-weight:400;font-size:17px;letter-spacing:0;text-transform:none;display:inline-flex;align-items:center;gap:10px}
+@media (max-width:1100px){.fcols{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stats .panel{border-right:0;border-bottom:1px solid var(--line)}
+  .row{grid-template-columns:72px minmax(0,1fr)}.thumb{width:72px;height:58px}
+  .prow{grid-template-columns:64px minmax(0,1fr)}.rbadge{width:64px}
+  .brand b{font-size:19px}
+  .fcols{grid-template-columns:1fr}
+  .fbar .sep{display:none}
+  .bar{position:static;gap:12px}
+}
+</style>
+
 <header class="bar">
-  <div class="brand"><div class="mark" aria-hidden="true">E</div><b>Enchères Immo · France</b></div>
+  <div class="brand"><svg class="logo" width="26" height="20" viewBox="0 0 26 20" fill="none" aria-hidden="true"><path d="M2 15.5h22v2.5H2z" fill="currentColor"/><path d="M4.5 14.5c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5" stroke="currentColor" stroke-width="2.2"/><circle cx="13" cy="3.6" r="1.9" fill="currentColor"/></svg><b>Enchères <span>Immo</span></b></div>
   <nav class="tabs" role="tablist" data-i18n-aria="nav.aria">
     <button role="tab" id="tab-ilanlar" aria-selected="true" data-tab="ilanlar" data-i18n="nav.list"></button>
     <button role="tab" id="tab-takvim" aria-selected="false" data-tab="takvim" data-i18n="nav.cal"></button>
@@ -499,6 +656,18 @@ mark{background:var(--warn-bg);color:inherit;border-radius:3px;padding:0 1px}
 
   <p class="src" id="src"></p>
 </main>
+<footer class="foot">
+  <div class="fcols">
+    <div class="fbox"><h4><span class="dotb"></span><span data-i18n="ft.sections"></span></h4>
+      <ul><li><a href="#" data-go="ilanlar" data-i18n="nav.list"></a></li><li><a href="#" data-go="takvim" data-i18n="nav.cal"></a></li><li><a href="#" data-go="past" data-i18n="nav.past"></a></li><li><a href="#" data-go="model" data-i18n="nav.model"></a></li><li><a href="#" data-go="strateji" data-i18n="nav.strat"></a></li></ul></div>
+    <div><h4><span class="dotb"></span><span data-i18n="ft.sources"></span></h4>
+      <ul><li><a href="https://www.licitor.com/" target="_blank" rel="noopener">Licitor</a></li><li><a href="https://www.licitor.com/historique-des-adjudications.html" target="_blank" rel="noopener" data-i18n="ft.hist"></a></li><li><a href="https://cadastre.data.gouv.fr/" target="_blank" rel="noopener">Cadastre</a></li><li><a href="https://www.pappers.fr/" target="_blank" rel="noopener">Pappers</a></li></ul></div>
+    <div><h4><span class="dotb"></span><span data-i18n="ft.lang"></span></h4>
+      <ul><li><a href="#" data-setlang="fr">Français</a></li><li><a href="#" data-setlang="en">English</a></li><li><a href="#" data-setlang="tr">Türkçe</a></li></ul></div>
+    <div><h4><span class="dotb"></span><span data-i18n="ft.about"></span></h4><p class="note" data-i18n="ft.aboutTxt"></p></div>
+  </div>
+  <div class="fbar"><span data-i18n="ft.snap"></span><span class="sep"></span><span data-i18n="ft.notlegal"></span><span class="grow"></span><span class="serif">Enchères Immo <i class="dotb"></i> 2026</span></div>
+</footer>
 
 <div class="tip" id="tip" hidden></div>
 <div class="scrim" id="scrim" hidden></div>
@@ -891,6 +1060,9 @@ Object.assign(I18N.en,{
  'cp.title':'Comparable past sales','cp.none':'No comparable past sales nearby.','cp.sum':(n,r,m)=>`The ${n} nearest comparable sales: median ratio ×${r}${m?`, median ${m}/m²`:''}. Click a row.`,
  'm.toPast':'Open past sales →','m.toPastSub':'Every sale behind the model, with map and filters, in its own tab.'
 });
+Object.assign(I18N.tr,{'cl.in':(d,w)=>d===0?`Bugün kapanıyor · ${w}`:`Kapanışa ${d} gün · ${w}`,'ft.sections':'Bölümler','ft.sources':'Kaynaklar','ft.hist':'Adjudication geçmişi','ft.lang':'Dil','ft.about':'Hakkında','ft.aboutTxt':'Licitor verisinden derlenen kişisel araştırma aracı. Karar desteği içindir; teklif öncesi rakamları avukatınıza teyit ettirin.','ft.snap':'Veri: 12 Ekim 2026','ft.notlegal':'Hukuki tavsiye değildir'});
+Object.assign(I18N.fr,{'cl.in':(d,w)=>d===0?`Clôture aujourd'hui · ${w}`:`Clôture dans ${d} j · ${w}`,'ft.sections':'Rubriques','ft.sources':'Sources','ft.hist':'Historique des adjudications','ft.lang':'Langue','ft.about':'À propos','ft.aboutTxt':'Outil de recherche personnel construit à partir des données Licitor. Aide à la décision : faites valider les chiffres par votre avocat avant d’enchérir.','ft.snap':'Données : 12 octobre 2026','ft.notlegal':'Pas un conseil juridique'});
+Object.assign(I18N.en,{'cl.in':(d,w)=>d===0?`Closing today · ${w}`:`Closing in ${d} days · ${w}`,'ft.sections':'Sections','ft.sources':'Sources','ft.hist':'Adjudication history','ft.lang':'Language','ft.about':'About','ft.aboutTxt':'A personal research tool built from Licitor data. Decision support only: have your lawyer confirm the figures before bidding.','ft.snap':'Data: 12 October 2026','ft.notlegal':'Not legal advice'});
 
 (function(){
 "use strict";
@@ -1109,6 +1281,8 @@ function bind(){
   $('#lightbox').addEventListener('click',e=>{if(e.target.id==='lightbox')$('#lightbox').hidden=true;});
   document.querySelectorAll('[data-zoom]').forEach(b=>b.addEventListener('click',()=>zoomPreset(b.dataset.zoom)));
   ['gBid','gPre','gDm','gLaw'].forEach(i=>$('#'+i).addEventListener('input',strategy));
+  document.querySelectorAll('[data-go]').forEach(l=>l.addEventListener('click',e=>{e.preventDefault();showTab(l.dataset.go);}));
+  document.querySelectorAll('[data-setlang]').forEach(l=>l.addEventListener('click',e=>{e.preventDefault();setLang(l.dataset.setlang);}));
   bindCalendar();bindPast();$('#toPast').addEventListener('click',()=>showTab('past'));
 }
 function saveSort(){try{localStorage.setItem('ench_sort',JSON.stringify({sort:st.sort,dir:st.dir}));}catch(e){}}
@@ -1277,6 +1451,7 @@ function zoomZone(z){if(M1)M1.fit(L.filter(x=>x.zone===z),.1);}
 
 
 /* detail */
+function closingChip(iso){if(!iso)return '';const d=daysTo(iso);if(d<0)return '';const w=fmtDate(iso,{day:'numeric',month:'short'})+' · '+iso.slice(11,16);return `<span class="closing"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg>${esc(t('cl.in',d,w))}</span>`;}
 function strategyTips(x){const tt=T().t,out=[];
   if(x.cat==='parts')out.push(['bad','!',tt.parts]);
   if(x.marketValue){const r=x.mp/x.marketValue;out.push([r<.35?'warn':'info',r<.35?'!':'i',tt.mv(eur(x.marketValue),Math.round(r*100),r<.35)]);}
@@ -1313,7 +1488,7 @@ function openDetail(id,keepScroll){
   const dr=$('#drawer');dr.setAttribute('aria-label',x.title);
   dr.innerHTML=`
    <div class="dhead"><div style="min-width:0"><p class="eyebrow">${esc(CATS()[x.cat])} · ${t('d.listing')} ${x.id}${x.ref?' · '+esc(x.ref):''}</p><h2>${esc(x.title)}${x.surface?' · '+sq(x.surface):''}</h2>
-     <p class="note" style="margin:2px 0 0">${esc(x.street||'')}${x.street?', ':''}${esc(x.city)}${x.depName?' · '+esc(x.depName):''}</p><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">${pills(x)}</div></div>
+     <p class="note" style="margin:2px 0 0">${esc(x.street||'')}${x.street?', ':''}${esc(x.city)}${x.depName?' · '+esc(x.depName):''}</p><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">${pills(x)}</div>${closingChip(x.date)}</div>
      <button class="x" type="button" aria-label="${t('ui.close')}" id="dClose"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
    <div class="dbody">
      ${x.photos.length?`<div class="gallery">${x.photos.map((p,i)=>`<button type="button" data-ph="${p}" aria-label="${t('d.photo')} ${i+1}"><img src="${p}" alt="${t('d.photo')} ${i+1}" loading="lazy"></button>`).join('')}</div><p class="note" style="margin:-6px 0 0">${t('d.photoNote')}</p>`
@@ -1564,7 +1739,7 @@ function auriol(){
   const x=L.find(y=>y.id===110264);if(!x){$('#auriol').innerHTML='<div class="panel empty">—</div>';return;}
   const A=T().au,p=x.pred;
   $('#auriol').innerHTML=`
-   <div class="head"><div><p class="eyebrow">${A.eyebrow}</p><h1>${A.h1}</h1><p class="lede">${A.lede}</p></div><button class="btn" type="button" id="aOpen">${A.open}</button></div>
+   <div class="head"><div><p class="eyebrow">${A.eyebrow}</p><h1>${A.h1}</h1><p class="lede">${A.lede}</p>${closingChip(x.date)}</div><button class="btn" type="button" id="aOpen">${A.open}</button></div>
    <div class="stats">
      <div class="panel stat"><p class="k">Mise à prix</p><p class="v num">${eur(10000)}</p><p class="s">${A.k1s}</p></div>
      <div class="panel stat"><p class="k">${A.k2}</p><p class="v num">${keur(p.p25)}–${keur(p.p75)}</p><p class="s">${A.k2s(eur(p.p50))}</p></div>
