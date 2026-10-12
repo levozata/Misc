@@ -1,0 +1,1431 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Fransa'daki yaklaşan adli gayrimenkul ihaleleri: harita, takvim, arama, fiyat modeli, masraf hesabı.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%234A7C8E'/%3E%3Ctext x='16' y='21' font-family='Arial' font-weight='700' font-size='15' fill='white' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E">
+<style>html{color-scheme:light dark}body{margin:0}[hidden]{display:none!important}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<title>Enchères Immo France</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: Dilara back-office — white top bar with pill tabs, warm paper ground, white 16px-radius panels, teal-slate accent, status pills */
+:root{
+  --bg:#F7F5F2; --surface:#FFFFFF; --surface-2:#F0EDE8; --line:#E4DFD7; --line-strong:#D9D4CC;
+  --ink:#2C3E35; --muted:#56655D; --faint:#6B7B72;
+  --accent:#3B6372; --accent-2:#4A7C8E; --accent-soft:#EBF2F5; --on-accent:#FFFFFF;
+  --ok:#3F7550; --ok-bg:#DFEBE3; --warn:#7A5C1F; --warn-bg:#F5EDE0; --bad:#8A3B2E; --bad-bg:#F6E3E0;
+  --land:#ECE8E1; --land-line:#D9D4CC;
+  --c-appartement:#3B6372; --c-maison:#A86F1F; --c-immeuble:#6B5B95; --c-commerce:#3F7550; --c-terrain:#7F8F3A; --c-parking:#8A3B2E; --c-autre:#6B7B72; --c-parts:#6B7B72;
+  --font:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r-lg:16px; --r-md:12px; --r-sm:9px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141917; --surface:#1C2320; --surface-2:#232C28; --line:#2E3934; --line-strong:#3A4640;
+  --ink:#E4EAE6; --muted:#A3B1A9; --faint:#8C9A92;
+  --accent:#86B7C8; --accent-2:#6FA3B6; --accent-soft:#22343B; --on-accent:#0F1A1E;
+  --ok:#8FCAA2; --ok-bg:#1E3427; --warn:#E2C07E; --warn-bg:#382E1C; --bad:#EBA394; --bad-bg:#3A221D;
+  --land:#212925; --land-line:#34403A;
+  --c-appartement:#86B7C8; --c-maison:#E2B062; --c-immeuble:#B3A4DD; --c-commerce:#8FCAA2; --c-terrain:#C3CF7E; --c-parking:#EBA394; --c-autre:#A3B1A9; --c-parts:#A3B1A9;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141917; --surface:#1C2320; --surface-2:#232C28; --line:#2E3934; --line-strong:#3A4640;
+  --ink:#E4EAE6; --muted:#A3B1A9; --faint:#8C9A92;
+  --accent:#86B7C8; --accent-2:#6FA3B6; --accent-soft:#22343B; --on-accent:#0F1A1E;
+  --ok:#8FCAA2; --ok-bg:#1E3427; --warn:#E2C07E; --warn-bg:#382E1C; --bad:#EBA394; --bad-bg:#3A221D;
+  --land:#212925; --land-line:#34403A;
+  --c-appartement:#86B7C8; --c-maison:#E2B062; --c-immeuble:#B3A4DD; --c-commerce:#8FCAA2; --c-terrain:#C3CF7E; --c-parking:#EBA394; --c-autre:#A3B1A9; --c-parts:#A3B1A9;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+a{color:var(--accent)} a:hover{color:var(--accent-2)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--surface);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:16px;padding-block:12px;padding-inline:24px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.mark{width:32px;height:32px;border-radius:50%;background:var(--accent-2);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.brand b{font-weight:600;font-size:16px;white-space:nowrap}
+.tabs{display:flex;gap:4px;padding:4px;background:var(--surface-2);border-radius:var(--r-md);overflow-x:auto;max-width:100%}
+.tabs button{height:36px;padding:0 14px;border:0;border-radius:var(--r-sm);font-size:13px;font-weight:500;cursor:pointer;background:transparent;color:var(--muted);white-space:nowrap}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.bar .spacer{flex:1}
+.tag{font-size:12px;color:var(--muted);background:var(--surface-2);padding:6px 10px;border-radius:999px;white-space:nowrap}
+
+main{padding-block:28px 64px;padding-inline:24px;max-width:1480px;margin:0 auto}
+.eyebrow{margin:0 0 4px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+h1{margin:0;font-size:28px;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
+h2{margin:0;font-size:18px;font-weight:600;text-wrap:balance}
+h3{margin:0;font-size:15px;font-weight:600}
+.lede{margin:6px 0 0;color:var(--muted);font-size:15px;max-width:75ch}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px 22px;min-width:0}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:20px}
+.stat p{margin:0}
+.stat .k{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.stat .v{font-size:26px;font-weight:700;letter-spacing:-.01em}
+.stat .s{font-size:13px;color:var(--muted);margin-top:2px}
+
+/* filters */
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:12px;font-weight:600;color:var(--muted)}
+.inp,.sel{height:40px;border:1px solid var(--line-strong);background:var(--surface);border-radius:var(--r-sm);padding:0 12px;min-width:0}
+.inp:focus,.sel:focus{border-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{height:34px;padding:0 12px;border:1px solid var(--line-strong);background:var(--surface);border-radius:999px;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.chip .dot{width:8px;height:8px;border-radius:50%}
+.btn{height:40px;padding:0 16px;border:0;background:var(--accent);color:var(--on-accent);border-radius:var(--r-sm);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn:hover{background:var(--accent-2);color:var(--on-accent)}
+.btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line-strong)}
+.btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn.sm{height:34px;padding:0 12px;font-size:12px}
+
+/* map + list */
+.split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+.mapwrap{position:sticky;top:96px;padding:0;overflow:hidden}
+.maptools{display:flex;gap:6px;padding:12px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap;align-items:center}
+.maptools .hint{font-size:12px;color:var(--faint);margin-left:auto}
+#map{display:block;width:100%;height:min(68vh,640px);background:var(--surface);touch-action:none;cursor:grab}
+#map .dep{fill:var(--land);stroke:var(--land-line);stroke-width:.8;vector-effect:non-scaling-stroke}
+#map .dep:hover{fill:var(--surface-2)}
+#map circle.pt{stroke:var(--surface);cursor:pointer}
+#map circle.pt.sel{stroke:var(--ink);stroke-width:2.5}
+.legend{display:flex;flex-wrap:wrap;gap:10px 14px;padding:10px 14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.tip{position:fixed;pointer-events:none;z-index:60;background:var(--ink);color:var(--bg);font-size:12px;padding:6px 9px;border-radius:8px;max-width:260px}
+
+.listhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.listhead .count{font-size:13px;color:var(--muted)}
+.list{display:flex;flex-direction:column;gap:10px}
+.row{display:grid;grid-template-columns:84px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;cursor:pointer;text-align:left;width:100%}
+.row:hover{border-color:var(--accent-2)}
+.row.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.thumb{width:84px;height:64px;border-radius:10px;background:var(--surface-2);object-fit:cover;display:flex;align-items:center;justify-content:center;color:var(--faint);overflow:hidden}
+.thumb svg{width:26px;height:26px}
+.row .t{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .m{font-size:12.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .pills{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.price{text-align:right}
+.price .mp{font-weight:700;font-size:15px}
+.price .lbl{font-size:11px;color:var(--faint)}
+.price .est{font-size:12px;color:var(--accent);margin-top:2px}
+.pill{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap;border:1px solid transparent;display:inline-flex;align-items:center;gap:5px}
+.pill.neutral{background:var(--surface-2);color:var(--muted);border-color:var(--line)}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.warn{background:var(--warn-bg);color:var(--warn)}
+.pill.bad{background:var(--bad-bg);color:var(--bad)}
+.pill.info{background:var(--accent-soft);color:var(--accent)}
+.more{margin-top:12px;width:100%}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(20,25,23,.38);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(640px,100%);background:var(--bg);z-index:50;overflow-y:auto;border-left:1px solid var(--line);
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.dhead{position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;gap:12px;align-items:flex-start;z-index:2}
+.dhead .x{margin-left:auto;flex-shrink:0;width:40px;height:40px;border-radius:10px;border:1px solid var(--line-strong);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.dbody{padding:18px 20px 40px;display:flex;flex-direction:column;gap:14px}
+.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.gallery button{padding:0;border:0;background:var(--surface-2);border-radius:12px;overflow:hidden;cursor:zoom-in;aspect-ratio:4/3}
+.gallery img{width:100%;height:100%;object-fit:cover;display:block}
+.gallery button:first-child{grid-column:1 / -1;aspect-ratio:16/9}
+.nophoto{display:flex;gap:12px;align-items:center;padding:14px 16px;border:1px dashed var(--line-strong);border-radius:12px;color:var(--muted);font-size:13px}
+.kv{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 14px;font-size:13.5px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.sec h3{margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.sec .sub{font-size:12.5px;color:var(--muted);margin:-4px 0 10px}
+.desc{white-space:pre-line;font-size:13.5px;color:var(--ink)}
+.lot + .lot{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.lot b{font-weight:600}
+.band{position:relative;height:46px;margin:6px 0 4px}
+.band .track{position:absolute;left:0;right:0;top:20px;height:6px;border-radius:3px;background:var(--surface-2)}
+.band .iq{position:absolute;top:16px;height:14px;border-radius:7px;background:var(--accent-soft);border:1px solid var(--accent-2)}
+.band .tick{position:absolute;top:10px;width:2px;height:26px;background:var(--accent)}
+.band .mk{position:absolute;top:12px;width:12px;height:12px;border-radius:50%;transform:translateX(-6px);border:2px solid var(--surface)}
+.band .lab{position:absolute;top:-2px;font-size:11px;color:var(--muted);transform:translateX(-50%);white-space:nowrap}
+.band .lab2{position:absolute;top:36px;font-size:11px;color:var(--muted);transform:translateX(-50%);white-space:nowrap}
+.fees{width:100%;border-collapse:collapse;font-size:13.5px}
+.fees td{padding:7px 0;border-bottom:1px solid var(--line)}
+.fees td:last-child{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fees tr.tot td{font-weight:700;border-bottom:0;padding-top:10px}
+.fees .why{display:block;font-size:11.5px;color:var(--faint)}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.tips{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.tips li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;font-size:13.5px}
+.tips .ic{width:24px;height:24px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.tips .ic.ok{background:var(--ok-bg);color:var(--ok)} .tips .ic.warn{background:var(--warn-bg);color:var(--warn)} .tips .ic.bad{background:var(--bad-bg);color:var(--bad)} .tips .ic.info{background:var(--accent-soft);color:var(--accent)}
+.people{display:flex;flex-direction:column;gap:10px}
+.person{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;padding:12px 14px;background:var(--surface-2);border-radius:12px}
+.person .av{width:36px;height:36px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.person .role{font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.person .nm{font-weight:600}
+.person .ct{font-size:12.5px;color:var(--muted);white-space:pre-line;overflow-wrap:anywhere}
+.copy{border:0;background:transparent;color:var(--accent);cursor:pointer;font-size:12px;font-weight:600;padding:0 4px}
+.docs{display:flex;gap:8px;flex-wrap:wrap}
+.lightbox{position:fixed;inset:0;z-index:70;background:rgba(10,12,11,.88);display:flex;align-items:center;justify-content:center;padding:24px}
+.lightbox img{max-width:100%;max-height:100%;border-radius:10px}
+.lightbox button{position:absolute;top:calc(16px + env(safe-area-inset-top,0px));right:16px;height:40px;padding:0 14px;border-radius:10px;border:0;background:#fff;color:#1c2320;font-weight:600;cursor:pointer}
+
+/* calendar */
+.day{margin-bottom:18px}
+.dayh{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}
+.dayh h2{font-size:16px}
+.dayh span{color:var(--muted);font-size:13px}
+.ctable{width:100%;border-collapse:collapse;font-size:13.5px}
+.ctable th{text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line)}
+.ctable td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+.ctable tr:last-child td{border-bottom:0}
+.ctable tr.click{cursor:pointer} .ctable tr.click:hover td{background:var(--surface-2)}
+.tw{overflow-x:auto}
+.twocol{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;align-items:start}
+
+/* model */
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+#scatter{width:100%;height:auto;display:block}
+.axis text{fill:var(--muted);font-size:11px;font-family:var(--font)}
+.axis line,.axis path{stroke:var(--line-strong)}
+.gridl line{stroke:var(--line)}
+.note{font-size:12.5px;color:var(--muted)}
+.bars{display:flex;flex-direction:column;gap:8px}
+.bars .b{display:grid;grid-template-columns:150px minmax(0,1fr) 120px;gap:10px;align-items:center;font-size:13px}
+.bars .tr{position:relative;height:14px;background:var(--surface-2);border-radius:7px}
+.bars .iq{position:absolute;top:0;bottom:0;background:var(--accent-soft);border:1px solid var(--accent-2);border-radius:7px}
+.bars .md{position:absolute;top:-3px;bottom:-3px;width:3px;background:var(--accent);border-radius:2px}
+
+/* steps */
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}
+.steps li{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px;padding-bottom:16px;position:relative}
+.steps li:before{content:"";position:absolute;left:17px;top:34px;bottom:0;width:2px;background:var(--line)}
+.steps li:last-child:before{display:none}
+.steps .n{width:36px;height:36px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;display:flex;align-items:center;justify-content:center}
+.steps p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.timeline{list-style:none;margin:0;padding:0}
+.timeline li{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.timeline li:last-child{border-bottom:0}
+.timeline .d{font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums}
+.timeline li.future .d{color:var(--warn)}
+.callout{padding:14px 16px;border-radius:12px;background:var(--warn-bg);color:var(--warn);font-size:13.5px}
+.callout.info{background:var(--accent-soft);color:var(--accent)}
+.callout b{font-weight:700}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.src{font-size:12px;color:var(--faint);margin-top:24px;max-width:90ch}
+.range{width:100%}
+
+@media (max-width:1100px){.split{grid-template-columns:1fr}.mapwrap{position:static}#map{height:52vh}.twocol{grid-template-columns:1fr}}
+@media (max-width:760px){
+  .bar{padding-inline:16px} main{padding-inline:16px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid2{grid-template-columns:1fr}
+  .row{grid-template-columns:64px minmax(0,1fr)}
+  .row .price{grid-column:2;text-align:left;display:flex;gap:10px;align-items:baseline}
+  .thumb{width:64px;height:52px}
+  .kv{grid-template-columns:1fr} .kv dt{margin-top:6px}
+  .bars .b{grid-template-columns:1fr;gap:4px}
+  .brand b{font-size:15px}
+  .tag{display:none}
+}
+@media (prefers-reduced-motion:no-preference){.drawer{animation:slide .18s ease-out}@keyframes slide{from{transform:translateX(24px);opacity:.6}to{transform:none;opacity:1}}}
+</style>
+</head>
+<body>
+
+<style>
+.lang{display:flex;gap:2px;padding:3px;background:var(--surface-2);border-radius:10px}
+.lang button{height:30px;min-width:38px;padding:0 8px;border:0;border-radius:7px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+@media (max-width:760px){.bar{gap:10px}.lang{order:2}}
+.sbox{position:relative}
+.sbox .inp{width:100%;padding-left:36px;padding-right:72px}
+.sico{position:absolute;left:12px;top:12px;color:var(--faint);pointer-events:none}
+.kbd{position:absolute;right:42px;top:9px;font:600 11px/20px var(--font);padding:0 6px;border:1px solid var(--line-strong);border-radius:6px;color:var(--faint);background:var(--surface-2)}
+.qhelp{position:absolute;right:6px;top:6px;width:28px;height:28px;border-radius:7px;border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);font-weight:700;cursor:pointer}
+.sugg{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:35;background:var(--surface);border:1px solid var(--line-strong);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.14);max-height:420px;overflow-y:auto;padding:6px}
+.sugg .grp{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:8px 10px 4px}
+.sugg .opt{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13.5px}
+.sugg .opt[aria-selected="true"],.sugg .opt:hover{background:var(--accent-soft)}
+.sugg .opt .ot{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sugg .opt .oc{font-size:12px;color:var(--faint);white-space:nowrap}
+.sugg .empty2{padding:10px;color:var(--muted);font-size:13px}
+.qhelpbox{margin-top:8px;padding:12px 14px;border-radius:12px;background:var(--surface-2);font-size:13px;color:var(--muted)}
+.qhelpbox code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--ink);cursor:pointer}
+.qhelpbox ul{margin:6px 0 0;padding-left:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:4px 18px}
+mark{background:var(--warn-bg);color:inherit;border-radius:3px;padding:0 1px}
+.badge{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--accent);color:var(--on-accent);font-size:11px;display:inline-flex;align-items:center;justify-content:center}
+.adv{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px 14px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.adv .wide{grid-column:1 / -1}
+.adv .sel,.adv .inp{width:100%}
+.pair{display:flex;align-items:center;gap:6px}.pair .inp{flex:1;min-width:0;width:auto}.pair span{color:var(--faint)}
+.active{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px}
+.fchip{height:30px;padding:0 6px 0 12px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:4px;border:0;cursor:pointer}
+.fchip span.x{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center}
+.fchip:hover span.x{background:var(--surface)}
+.clear{border:0;background:transparent;color:var(--muted);font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:underline;height:30px}
+.toolbar{margin-bottom:16px}
+.ctable.sortable th button,.ctable th.sh{all:unset;cursor:pointer;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;display:inline-flex;gap:4px;align-items:center}
+.ctable th button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.ctable th .ar{color:var(--accent)}
+.ctable .r{text-align:right}
+.ctable th.r button{justify-content:flex-end}
+.score{font-size:11px;color:var(--faint)}
+</style>
+
+<header class="bar">
+  <div class="brand"><div class="mark" aria-hidden="true">E</div><b>Enchères Immo · France</b></div>
+  <nav class="tabs" role="tablist" data-i18n-aria="nav.aria">
+    <button role="tab" id="tab-ilanlar" aria-selected="true" data-tab="ilanlar" data-i18n="nav.list"></button>
+    <button role="tab" id="tab-takvim" aria-selected="false" data-tab="takvim" data-i18n="nav.cal"></button>
+    <button role="tab" id="tab-model" aria-selected="false" data-tab="model" data-i18n="nav.model"></button>
+    <button role="tab" id="tab-strateji" aria-selected="false" data-tab="strateji" data-i18n="nav.strat"></button>
+    <button role="tab" id="tab-auriol" aria-selected="false" data-tab="auriol">70 bd Vincent Auriol</button>
+  </nav>
+  <div class="spacer"></div>
+  <div class="lang" role="group" aria-label="Language / Langue / Dil">
+    <button type="button" data-lang="fr" aria-pressed="false" lang="fr">FR</button>
+    <button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button>
+    <button type="button" data-lang="tr" aria-pressed="false" lang="tr">TR</button>
+  </div>
+  <span class="tag" data-i18n="tag.src"></span>
+</header>
+
+<main>
+  <section id="v-ilanlar" role="tabpanel" aria-labelledby="tab-ilanlar">
+    <div class="head"><div>
+      <p class="eyebrow" data-i18n="l.eyebrow"></p>
+      <h1 data-i18n="l.h1"></h1>
+      <p class="lede" data-i18n="l.lede"></p>
+    </div></div>
+    <div class="stats" id="kpis"></div>
+    <div class="panel" style="margin-bottom:12px">
+      <div class="filters">
+        <div class="field searchf" style="flex:1 1 320px">
+          <label for="q" data-i18n="f.search"></label>
+          <div class="sbox">
+            <svg class="sico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input class="inp" id="q" type="search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="sugg" aria-autocomplete="list" data-i18n-ph="f.searchPh">
+            <kbd class="kbd" aria-hidden="true">/</kbd>
+            <button type="button" class="qhelp" id="qhelpBtn" aria-expanded="false" aria-controls="qhelp" data-i18n-aria="q.helpBtn">?</button>
+            <div class="sugg" id="sugg" role="listbox" hidden></div>
+          </div>
+          <div class="qhelpbox" id="qhelp" hidden></div>
+        </div>
+        <div class="field"><label for="fsort" data-i18n="f.sort"></label>
+          <div style="display:flex;gap:6px"><select class="sel" id="fsort"></select>
+          <button type="button" class="btn ghost" id="fdir" style="width:44px;padding:0;justify-content:center" data-i18n-aria="s.dir"><span id="fdirIc">↑</span></button></div></div>
+        <div class="field"><label>&nbsp;</label><button type="button" class="btn ghost" id="advBtn" aria-expanded="false" aria-controls="adv"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span data-i18n="f.more"></span><span class="badge num" id="advN" hidden></span></button></div>
+      </div>
+      <div class="filters" style="margin-bottom:0">
+        <div class="chips" id="fcat" role="group" data-i18n-aria="f.type"></div>
+        <div class="chips" role="group" data-i18n-aria="f.other">
+          <button class="chip" id="fphoto" aria-pressed="false" data-i18n="f.photo"></button>
+          <button class="chip" id="flibre" aria-pressed="false" data-i18n="f.libre"></button>
+          <button class="chip" id="fweek" aria-pressed="false" data-i18n="f.week"></button>
+          <button class="chip" id="fvisit" aria-pressed="false" data-i18n="f.visit"></button>
+        </div>
+      </div>
+      <div class="adv" id="adv" hidden>
+        <div class="field"><label for="fzone" data-i18n="f.zone"></label><select class="sel" id="fzone"></select></div>
+        <div class="field"><label for="fdep" data-i18n="f.dep"></label><select class="sel" id="fdep"></select></div>
+        <div class="field"><label for="fcourt" data-i18n="f.court"></label><select class="sel" id="fcourt"></select></div>
+        <div class="field"><label for="flaw" data-i18n="f.lawyer"></label><select class="sel" id="flaw"></select></div>
+        <div class="field"><label data-i18n="f.price"></label><div class="pair"><input class="inp num" id="fmpMin" type="number" min="0" step="5000" data-i18n-ph="f.min"><span>–</span><input class="inp num" id="fmpMax" type="number" min="0" step="5000" data-i18n-ph="f.max2"></div></div>
+        <div class="field"><label data-i18n="f.surf"></label><div class="pair"><input class="inp num" id="fsMin" type="number" min="0" step="5" data-i18n-ph="f.min"><span>–</span><input class="inp num" id="fsMax" type="number" min="0" step="5" data-i18n-ph="f.max2"></div></div>
+        <div class="field"><label data-i18n="f.dates"></label><div class="pair"><input class="inp num" id="fdFrom" type="date" min="2026-10-12" max="2026-12-31"><span>–</span><input class="inp num" id="fdTo" type="date" min="2026-10-12" max="2026-12-31"></div></div>
+        <div class="field"><label for="focc" data-i18n="f.occ"></label><select class="sel" id="focc"></select></div>
+        <div class="field"><label for="fdisc" data-i18n="f.disc"></label><select class="sel" id="fdisc"></select></div>
+        <div class="field wide"><label data-i18n="f.saleType"></label><div class="chips" id="fflags"></div></div>
+        <div class="field wide"><label data-i18n="f.docsLbl"></label><div class="chips" id="fdocs"></div></div>
+      </div>
+    </div>
+    <div class="active" id="active" hidden></div>
+    <div class="split">
+      <div class="panel mapwrap">
+        <div class="maptools">
+          <button class="btn ghost sm" data-zoom="fr">France</button>
+          <button class="btn ghost sm" data-zoom="idf">Île-de-France</button>
+          <button class="btn ghost sm" data-zoom="paris">Paris</button>
+          <button class="btn ghost sm" data-zoom="se" data-i18n="map.se"></button>
+          <span class="hint" data-i18n="map.hint"></span>
+        </div>
+        <svg id="map" role="img" data-i18n-aria="map.aria"></svg>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div>
+        <div class="listhead"><span class="count num" id="count"></span></div>
+        <div class="list" id="list"></div>
+        <button class="btn ghost more" id="more" hidden data-i18n="l.more"></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="v-takvim" role="tabpanel" aria-labelledby="tab-takvim" hidden>
+    <div class="head"><div><p class="eyebrow" data-i18n="c.eyebrow"></p><h1 data-i18n="c.h1"></h1>
+      <p class="lede" data-i18n="c.lede"></p></div></div>
+    <div class="panel toolbar">
+      <div class="filters" style="margin:0">
+        <div class="field" style="flex:1 1 240px"><label for="cq" data-i18n="f.search"></label><input class="inp" id="cq" type="search" autocomplete="off" data-i18n-ph="f.searchPh"></div>
+        <div class="field"><label for="cgroup" data-i18n="c.group"></label><select class="sel" id="cgroup"></select></div>
+        <div class="field"><label for="csort" data-i18n="c.sortIn"></label><div style="display:flex;gap:6px"><select class="sel" id="csort"></select><button type="button" class="btn ghost" id="cdir" style="width:44px;padding:0;justify-content:center" data-i18n-aria="s.dir"><span id="cdirIc">↑</span></button></div></div>
+        <div class="field"><label>&nbsp;</label><button type="button" class="chip" id="cshare" aria-pressed="true" style="height:40px" data-i18n="c.share"></button></div>
+      </div>
+      <p class="note" id="cinfo" style="margin:10px 0 0"></p>
+    </div>
+    <div class="twocol">
+      <div id="calMain"></div>
+      <div class="panel"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap"><h2 data-i18n="c.visits"></h2>
+        <select class="sel" id="vsort" style="height:34px" data-i18n-aria="f.sort"></select></div><div id="visits"></div></div>
+    </div>
+  </section>
+
+  <section id="v-model" role="tabpanel" aria-labelledby="tab-model" hidden>
+    <div class="head"><div><p class="eyebrow" data-i18n="m.eyebrow"></p><h1 data-i18n="m.h1"></h1>
+      <p class="lede" id="modelLede"></p></div></div>
+    <div class="stats" id="mkpis"></div>
+    <div class="grid2">
+      <div class="panel"><h2 data-i18n="m.scTitle"></h2><p class="note" style="margin:4px 0 10px" data-i18n="m.scNote"></p><svg id="scatter" viewBox="0 0 560 400" role="img" data-i18n-aria="m.scTitle"></svg><div class="legend" id="slegend" style="border:0;padding:8px 0 0"></div></div>
+      <div class="panel"><h2 data-i18n="m.ratioTitle"></h2><p class="note" style="margin:4px 0 14px" data-i18n="m.ratioNote"></p>
+        <h3 style="margin-bottom:8px" data-i18n="m.byZone"></h3><div class="bars" id="byZone"></div>
+        <h3 style="margin:18px 0 8px" data-i18n="m.byCat"></h3><div class="bars" id="byCat"></div></div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div class="panel"><h2 data-i18n="m.m2Title"></h2><p class="note" style="margin:4px 0 14px" data-i18n="m.m2Note"></p><div class="bars" id="aptM2"></div></div>
+      <div class="panel"><h2 data-i18n="m.howTitle"></h2>
+        <ul class="tips" style="margin-top:10px">
+          <li><span class="ic info">1</span><span data-i18n="m.how1"></span></li>
+          <li><span class="ic info">2</span><span data-i18n="m.how2"></span></li>
+          <li><span class="ic warn">!</span><span data-i18n="m.how3"></span></li>
+          <li><span class="ic warn">!</span><span data-i18n="m.how4"></span></li>
+          <li><span class="ic bad">!</span><span id="how5"></span></li>
+        </ul></div>
+    </div>
+    <div class="panel" style="margin-top:16px">
+      <div class="head" style="margin-bottom:12px"><div><h2 data-i18n="h.title"></h2><p class="note" style="margin:4px 0 0" data-i18n="h.sub"></p></div><span class="count num" id="hcount"></span></div>
+      <div class="filters">
+        <div class="field" style="flex:1 1 220px"><label for="hq" data-i18n="f.search"></label><input class="inp" id="hq" type="search" autocomplete="off" data-i18n-ph="h.ph"></div>
+        <div class="field"><label for="hzone" data-i18n="f.zone"></label><select class="sel" id="hzone"></select></div>
+        <div class="field"><label for="hcat" data-i18n="f.type"></label><select class="sel" id="hcat"></select></div>
+        <div class="field"><label for="hocc" data-i18n="f.occ"></label><select class="sel" id="hocc"></select></div>
+        <div class="field"><label data-i18n="f.price"></label><div class="pair"><input class="inp num" id="hmin" type="number" min="0" step="5000" data-i18n-ph="f.min"><span>–</span><input class="inp num" id="hmax" type="number" min="0" step="5000" data-i18n-ph="f.max2"></div></div>
+      </div>
+      <div class="tw"><table class="ctable sortable" id="htable"><thead><tr>
+        <th><button type="button" data-hs="date" data-i18n="h.date"></button></th>
+        <th><button type="button" data-hs="name" data-i18n="cal.prop"></button></th>
+        <th><button type="button" data-hs="city" data-i18n="cal.city"></button></th>
+        <th class="r"><button type="button" data-hs="surface">m²</button></th>
+        <th class="r"><button type="button" data-hs="mp">Mise à prix</button></th>
+        <th class="r"><button type="button" data-hs="adj" data-i18n="h.adj"></button></th>
+        <th class="r"><button type="button" data-hs="ratio" data-i18n="h.ratio"></button></th>
+        <th class="r"><button type="button" data-hs="ppm" data-i18n="h.ppm"></button></th>
+      </tr></thead><tbody></tbody></table></div>
+      <button class="btn ghost more" id="hmore" hidden data-i18n="l.more"></button>
+    </div>
+  </section>
+
+  <section id="v-strateji" role="tabpanel" aria-labelledby="tab-strateji" hidden>
+    <div class="head"><div><p class="eyebrow" data-i18n="st.eyebrow"></p><h1 data-i18n="st.h1"></h1>
+      <p class="lede" data-i18n="st.lede"></p></div></div>
+    <div class="twocol">
+      <div class="panel"><h2 style="margin-bottom:12px" data-i18n="st.calc"></h2>
+        <div class="calc">
+          <div class="field"><label for="gBid" data-i18n="st.bid"></label><input class="inp num" id="gBid" type="number" min="0" step="1000" value="50000"></div>
+          <div class="field"><label for="gPre" data-i18n="st.pre"></label><input class="inp num" id="gPre" type="number" min="0" step="100" value="4000"></div>
+          <div class="field"><label for="gDm" data-i18n="st.dm"></label><select class="sel" id="gDm"><option value="0.0632" data-i18n="st.dm1"></option><option value="0.0581" data-i18n="st.dm2"></option></select></div>
+          <div class="field"><label for="gLaw" data-i18n="st.law"></label><input class="inp num" id="gLaw" type="number" min="0" step="100" data-i18n-ph="st.lawPh"></div>
+        </div>
+        <table class="fees" id="gFees"></table>
+        <p class="note" style="margin-top:10px" data-i18n="st.consig"></p>
+      </div>
+      <div class="panel"><h2 style="margin-bottom:12px" data-i18n="st.items"></h2>
+        <ul class="tips">
+          <li><span class="ic info">€</span><span data-i18n="st.i1"></span></li>
+          <li><span class="ic info">€</span><span data-i18n="st.i2"></span></li>
+          <li><span class="ic info">€</span><span data-i18n="st.i3"></span></li>
+          <li><span class="ic info">€</span><span data-i18n="st.i4"></span></li>
+          <li><span class="ic info">€</span><span data-i18n="st.i5"></span></li>
+        </ul></div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div class="panel"><h2 style="margin-bottom:14px" data-i18n="st.road"></h2>
+        <ol class="steps" id="steps"></ol></div>
+      <div class="panel"><h2 style="margin-bottom:14px" data-i18n="st.strat"></h2>
+        <ul class="tips" id="gtips"></ul></div>
+    </div>
+  </section>
+
+  <section id="v-auriol" role="tabpanel" aria-labelledby="tab-auriol" hidden>
+    <div id="auriol"></div>
+  </section>
+
+  <p class="src" id="src"></p>
+</main>
+
+<div class="tip" id="tip" hidden></div>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden></aside>
+<div class="lightbox" id="lightbox" hidden><img id="lbImg" alt=""><button id="lbClose" type="button" data-i18n="ui.close"></button></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+const I18N={
+tr:{
+ locale:'tr-TR',
+ 'nav.aria':'Bölümler','nav.list':'İlanlar &amp; harita','nav.cal':'Takvim','nav.model':'Fiyat modeli','nav.strat':'Masraf &amp; strateji',
+ 'tag.src':'Licitor · 12 Ekim 2026',
+ 'l.eyebrow':'Fransa · adli gayrimenkul ihaleleri','l.h1':'Yaklaşan ihaleler',
+ 'l.lede':"Licitor'da yayınlanan tüm yaklaşan <i>ventes judiciaires</i>: konum, ihale tarihi, mahkeme ve avukat, geçmiş sonuçlara göre tahmini fiyat aralığı ve masraflar. Bir ilana tıklayın.",
+ 'l.more':'Daha fazla göster',
+ 'f.search':'Ara','f.searchPh':'Şehir, sokak, mahkeme, avukat…','f.zone':'Bölge','f.max':'Azami mise à prix','f.all':'Hepsi','f.date':'İhale tarihi',
+ 'f.d7':'7 gün içinde','f.d30':'30 gün içinde','f.d60':'60 gün içinde','f.sort':'Sırala',
+ 's.date':'Tarih (yakın önce)','s.mpAsc':'Mise à prix (artan)','s.mpDesc':'Mise à prix (azalan)','s.disc':'Piyasa değerine göre en ucuz','s.pub':'En yeni ilan',
+ 'f.type':'Mülk tipi','f.other':'Diğer filtreler','f.photo':'Fotoğraflı','f.libre':'Boş (libre)','f.visit':'Ziyaret tarihi var','f.allFrance':'Tüm Fransa',
+ 'map.se':'Güneydoğu','map.hint':'Kaydır / yakınlaştır · noktaya tıkla','map.aria':'İhale konumları haritası','map.size':'Nokta boyu ∝ mise à prix',
+ 'c.eyebrow':'Ajanda','c.h1':'İhale ve ziyaret takvimi',
+ 'c.lede':"Duruşma günleri mahkemeye göre gruplu. Sağda yerinde ziyaret (<i>visite sur place</i>) tarihleri: genelde ihaleden 1–3 hafta önce, tek seferlik ve yaklaşık bir saat.",
+ 'c.visits':'Yaklaşan ziyaretler',
+ 'm.eyebrow':'Geçmiş sonuçlar','m.h1':'İhale ne kadara gidiyor?',
+ 'm.scTitle':'Mise à prix ve satış fiyatı','m.scNote':'Her nokta bir satış (log ölçek). Çizgiler: satış = mise à prix, ×2, ×4.',
+ 'm.ratioTitle':'Satış / mise à prix oranı','m.ratioNote':'Çeyrekler arası aralık (kutu) ve medyan (çizgi).','m.byZone':'Bölgeye göre','m.byCat':'Mülk tipine göre',
+ 'm.m2Title':'Daireler: ihalede ödenen €/m²','m.m2Note':'Yüzölçümü belli olan daire satışları. Piyasa €/m² ile kıyaslayınca ihale indirimini gösterir.',
+ 'm.howTitle':'Model nasıl çalışıyor',
+ 'm.how1':'Satış/mise à prix oranının logaritması; mise à prix büyüklüğü, mülk tipi, bölge, dolu/boş ve <i>licitation</i> değişkenleriyle doğrusal regresyona sokuldu (hafif ridge).',
+ 'm.how2':'Tahmin aralığı modelin hata dağılımından gelir: P25–P75 kutusu, sonuçların yarısının düştüğü aralıktır.',
+ 'm.how3':"Düşük mise à prix'li ilanlar orantısal olarak çok daha fazla artar (Paris'te ×5–×10 görülür). Mise à prix bir değer tahmini değil, mahkemenin başlangıç fiyatıdır.",
+ 'm.how4':'Veri sadece <b>satılmış</b> lotları kapsar. Teklif gelmeyen (<i>carence</i>) lotlar Licitor geçmişinde görünmediği için oranlar biraz yukarı yanlı.',
+ 'm.how5':r=>`Kesinlik sınırlı: R² ≈ ${r}, tipik sapma ±%35. Karar için ilanın kendi piyasa değeri hesabını (detay panelinde) birlikte kullanın.`,
+ 'm.lede':n=>`Licitor'un adjudication geçmişinden ${n} tek lotlu satış (çoğu Haziran–Ekim 2026; surenchère satışları hariç). Her ilan için bu veriyle olası satış aralığı hesaplandı.`,
+ 'mk.n':'Satış sayısı','mk.nS':'6 bölge','mk.med':'Medyan oran','mk.medS':'satış / mise à prix','mk.q':'Çeyrekler','mk.qS':'satışların yarısı bu aralıkta','mk.paris':'Paris medyanı','mk.parisS':n=>`${n} satış`,
+ 'm2.scale':'Ölçek 0–10 000 €/m². Paris piyasa ortalaması ilan sayfalarında genelde 9–11 bin €/m².',
+ 'sc.x':'mise à prix →','sc.y':'↑ satış fiyatı','sc.eq':'= mise à prix',
+ 'st.eyebrow':'Alıcı rehberi','st.h1':'Masraflar ve teklif stratejisi',
+ 'st.lede':'Adli ihalede satış bedelinin üstüne gelen kalemler ve teklif vermeden önce izlenecek adımlar. Hesaplayıcı tahmini rakam verir; kesin <i>frais préalables</i> ihale başında açıklanır.',
+ 'st.calc':'Masraf hesaplayıcı','st.bid':'İhale bedeli (€)','st.pre':'Ön masraflar (€)','st.dm':'Tapu harcı oranı','st.dm1':'%6,32 (çoğu département, Paris dahil)','st.dm2':'%5,81 (artırmayan département)','st.law':'Kendi avukatınız (€)','st.lawPh':'otomatik',
+ 'st.consig':"Teklif teminatı (<i>consignation</i>): çoğu mahkemede mise à prix'in %10'u, en az 3 000 €, banka çeki veya avukatın CARPA hesabına. Kazanamazsanız iade edilir.",
+ 'st.items':'Kalemler ne demek',
+ 'st.i1':'<b>Frais préalables</b>: takibi yapan avukatın masrafları, ilanlar, icra tutanağı, teknik raporlar. Satış fiyatından bağımsız; ihale başında hâkim açıklar.',
+ 'st.i2':'<b>Émoluments</b>: avukatın yasal tarifesi (kademeli: %7,256 / %2,993 / %1,995 / %1,497 + KDV).',
+ 'st.i3':"<b>Droits de mutation</b>: tapu harcı, 2025'ten beri çoğu yerde %6,32.",
+ 'st.i4':'<b>Contribution de sécurité immobilière</b>: %0,1.',
+ 'st.i5':"<b>Kendi avukatınız</b>: genelde fiyatın ~%4,5'i, 1 500–3 500 € arası. Pazarlığa açık.",
+ 'st.road':'İhaleye giden yol','st.strat':'Teklif stratejisi',
+ steps:[['Şartnameyi ve tutanağı okuyun',"<i>Cahier des conditions de vente</i> (CCV) ve <i>PV descriptif</i> çoğu ilanda Licitor'da PDF olarak var. Yüzölçümü, işgal durumu, kat mülkiyeti borçları ve özel şartlar buradadır."],
+  ['Ziyarete gidin','Tek seferlik, yaklaşık 1 saat. Kaçırırsanız ikinci şans genelde yok.'],
+  ['Mahkemenin barosundan avukat bulun',"Teklifi sadece o <i>tribunal judiciaire</i>'in barosuna kayıtlı avukat verebilir. Azami tutarı yazılı verirsiniz."],
+  ['Teminatı hazırlayın','Banka çeki (<i>chèque de banque</i>) veya CARPA havalesi; kimlik, finansman belgesi. Kredi şartlı teklif olmaz.'],
+  ['İhale günü','Süreli artırma: son tekliften sonra 90 saniye içinde daha yüksek teklif gelmezse o teklif kazanır.'],
+  ['10 günlük surenchère','Bu sürede biri en az %10 fazlasını yazarak ihaleyi yeniden açtırabilir.'],
+  ['Ödeme','Fiyat genelde 2 ay içinde, masraflar ise ilk ay içinde ödenir; gecikmede faiz işler.']],
+ gtips:[['ok','✓','<b>Azami teklifi önceden sabitleyin</b>: piyasa değeri × (1 − hedef marj) − tüm masraflar. Detay panelindeki hesap bunu yapar.'],
+  ['ok','✓','<b>Dolu mülklerde</b> tahliye 6–24 ay sürebilir; kira geliri varsa bu bir getiri, yoksa maliyettir. %15–30 ek indirim hesaplayın.'],
+  ['warn','!',"<b>Düşük mise à prix tuzağı</b>: çok düşük başlangıç kalabalık çeker. Modelin P75 değerini gerçekçi üst sınır kabul edin."],
+  ['warn','!','<b>Faculté de baisse</b> varsa ilk turda teklif gelmezse fiyat 1/3 sonra 1/2 düşer. Beklemek başkalarına da açık bir strateji.'],
+  ['info','i','<b>Licitation</b> satışlarında paydaşlar da teklif verebilir; ortaklığın giderilmesi satışıdır.'],
+  ['info','i','Kat mülkiyeti borçları ve iş kararları için yöneticiden (<i>syndic</i>) son genel kurul tutanaklarını isteyin.'],
+  ['bad','!','Ben avukat değilim; bu sayfa karar desteğidir. Teklif öncesi rakamları avukatınıza teyit ettirin.']],
+ cats:{appartement:'Daire',maison:'Ev',immeuble:'Bina / ensemble',commerce:'Ticari / sanayi',terrain:'Arsa',parking:'Otopark / garaj',autre:'Diğer',parts:'Şirket payı'},
+ zones:{'paris':'Paris','petite-couronne':'Petite couronne (92-93-94)','grande-couronne':'Grande couronne (77-78-91-95)','regions-du-nord-est':'Kuzey-Doğu','bretagne-grand-ouest':'Bretagne / Batı','centre-loire-limousin':'Centre / Loire / Limousin','sud-ouest-pyrenees':'Güney-Batı / Pireneler','sud-est-mediterrannee':'Güney-Doğu / Akdeniz','autre':'Konumsuz'},
+ 'k.upcoming':'Yaklaşan ilan','k.upcomingS':n=>`Licitor, ${n} mahkeme / etüt`,'k.week':'Bu hafta ihale','k.weekS':'12–19 Ekim arası','k.sum':'Toplam mise à prix','k.sumS':v=>`Medyan ${v}`,'k.photo':'Fotoğraflı dosya','k.photoS':'PV descriptif PDF\'inden',
+ 'p.libre':'Boş','p.occ':'Dolu','p.sur':'Surenchère','p.lic':'Licitation','p.baisse':'Fiyat düşebilir','p.lots':n=>`${n} lot`,'p.today':'Bugün','p.days':n=>`${n} gün`,
+ 'r.count':(a,b)=>`${a} ilan · ${b} haritada`,'r.none':'Bu filtrelerle ilan yok.','r.mp':'Mise à prix','r.est':'tahmin',
+ 'd.listing':'ilan','d.nophoto':'Bu ilan için yayınlanmış tutanak fotoğrafı yok.','d.docsBelow':'Belgeler aşağıda.','d.askPV':'Avukattan tutanağı isteyin.','d.photoNote':'Fotoğraflar icra tutanağından (PV descriptif).','d.photo':'Fotoğraf',
+ 'd.sale':'İhale','d.date':'Tarih','d.days':n=>`(${n} gün)`,'d.court':'Mahkeme','d.type':'Satış türü','d.visit':'Ziyaret','d.consig':'Teminat','d.consigDef':'Şartnamede belirtilir (genelde mise à prix %10, min. 3 000 €)','d.areaPrice':'Bölge €/m²','d.minAvgMax':(a,b,c)=>`min ${a} · ort ${b} · max ${c}`,
+ 'd.property':'Mülk','d.likely':'Olası satış fiyatı','d.likelySub':n=>`Geçmiş ${n} satıştan model aralığı, mise à prix ve bölge piyasa değeriyle.`,
+ 'd.nomodel':'Bu ilan için model tahmini yok (çok lotlu veya kategori dışı).','b.mp':'mise à prix','b.med':v=>`medyan ${v}`,'b.mkt':'piyasa','b.approx':'Yaklaşık piyasa','b.calc':(s,p)=>`(${s} m² × ${p}/m² bölge ort.)`,
+ 'd.maxTitle':'Azami teklif hesabı','d.maxSub':'Piyasa değeri ve hedef marjdan geriye doğru: bedel + tüm masraflar ≤ hedef maliyet.','d.mv':'Piyasa değeri (€)','d.mvPh':'kendi tahmininiz','d.margin':'Hedef marj','d.occDisc':'Doluluk indirimi','d.none':'Yok',
+ 'd.maxRes':(t,m)=>`Hedef toplam maliyet <b class="num">${t}</b> → azami teklif <b class="num">${m}</b>`,'d.maxBelow':" · <b>mise à prix'in altında kalıyor, bu ilan hedefinize uymuyor.</b>",'d.maxLow':" · modelin P25'inin altında: kazanma şansı düşük.",'d.maxHigh':" · modelin P75'inin üstünde: kazanma şansı yüksek.",'d.maxNeed':'Piyasa değeri girin (bölge €/m² × yüzölçümü veya kendi tahmininiz).',
+ 'd.fees':'Masraflar','d.feesSub':'Teklif tutarını değiştirin; kalemler yeniden hesaplanır.','d.bid':'Teklif (€)','d.pre':'Ön masraflar (€)','d.dm':'Tapu harcı',
+ 'd.tips':'Strateji notları','d.people':'Kurumlar ve kişiler','d.docs':'Belgeler','d.nodocs':'Belge yok','d.licitor':'Licitor ilanı',
+ 'd.pub':'Yayın','d.geo':'Konum','geo.licitor':'Licitor koordinatı','geo.commune':'belediye merkezi (yaklaşık)','geo.geocode':'adres geocoding','geo.none':'yok',
+ 'role.court':'Mahkeme','role.courtTxt':"İcra hâkimi (juge de l'exécution) önünde. Şartname mahkeme kalemine (greffe) de bırakılır.",'role.poursuivant':'Takibi yapan avukat (avocat poursuivant)','role.other':'Diğer avukat','copy':'E-postayı kopyala','copied':'Kopyalandı',
+ 'f.bid':'İhale bedeli','f.pre':'Ön masraflar','f.preW':'frais préalables · tahmini, ihale başında kesinleşir','f.emol':'Avukat yasal ücreti','f.emolW':'émoluments, kademeli tarife + KDV','f.dm':'Tapu harcı','f.dmW':r=>`droits de mutation · ${r}`,'f.dmParts':'droits de mutation · şirket payında uygulanmaz','f.csi':'Tapu sicil katkısı','f.csiW':'contribution de sécurité immobilière 0,1%','f.law':'Kendi avukatınız','f.lawW':'tahmini, pazarlığa açık','f.total':'Toplam maliyet','f.ratio':'Masrafların bedele oranı',
+ t:{parts:'Bu bir gayrimenkul değil, şirket payı satışı. Tapu harcı yok ama satış ücreti (ör. %14,28) ve şirketin borçları var; şartnameyi mutlaka okuyun.',
+  mv:(v,p,hot)=>`Mise à prix, yaklaşık piyasa değerinin (${v}) %${p}'i. ${hot?'Bu fark kalabalık çeker; fiyat hızla yükselebilir.':'Fark makul; orta düzey rekabet beklenir.'}`,
+  pred:(a,b,c)=>`Geçmiş benzer satışlara göre olası sonuç ${a} – ${b} (medyan ${c}).`,
+  occ:'Mülk dolu: tahliye süresi ve maliyeti (6–24 ay) teklifinize yansımalı. Kiracı mı, eski malik mi, şartnameden kontrol edin.',
+  libre:'Mülk boş: satış bedeli ödendikten sonra teslim hızlı olur.',
+  baisse:'Teklif gelmezse mise à prix 1/3 sonra 1/2 düşürülebilir. İlk turda teklif vermemek bir strateji ama salondaki başkaları da bekliyor olabilir.',
+  lic:'Licitation (ortaklığın giderilmesi): paydaşlar da teklif verebilir ve mülkü iyi tanıyan bir rakip olabilir.',
+  sur:'Bu bir surenchère ihalesi: mise à prix, önceki ihalenin en az %10 fazlası. Önceki sonucun zaten yüksek olduğunu gösterir.',
+  lots:n=>`İhale ${n} lot halinde: her lot ayrı satılır, her biri için ayrı teminat gerekebilir.`,
+  small:'9 m² altı: ana konut olarak kiraya verilemez (décence kuralı). Kullanım planınızı buna göre yapın.',
+  visitPast:'Ziyaret tarihi geçti; avukata ikinci ziyaret olup olmadığını sorun.',visit:(d,n)=>`Ziyaret ${d} (${n} gün sonra). Tek fırsat, takvime ekleyin.`,novisit:'İlanda ziyaret tarihi yok; avukata sorun.',
+  soon:n=>`İhaleye ${n} gün var: avukat bulmak, teminat çeki ve finansman için süre çok kısa.`},
+ 'cal.n':(a,b)=>`${a} ilan · ${b} mahkeme`,'cal.time':'Saat','cal.court':'Mahkeme','cal.prop':'Mülk','cal.city':'Şehir','cal.est':'Tahmin (P25–P75)','cal.more':n=>`+${n} ziyaret daha`,'cal.none':'Yaklaşan ziyaret yok.',
+ 'ui.close':'Kapat','ui.err':'Veri yüklenemedi: ',
+ src:n=>`Kaynaklar: ilanlar, mahkeme/avukat bilgileri, ziyaret tarihleri ve PV descriptif fotoğrafları <a href="https://www.licitor.com/" target="_blank" rel="noopener">Licitor</a>'dan (12 Ekim 2026 itibarıyla). Bölge €/m² değerleri ilan sayfalarındaki La Loupe Immo verisi. Geçmiş satışlar: Licitor adjudication geçmişi, ${n} tek lotlu satış. Tapu harcı: Paris için %6,32 (2025 artışı). Fotoğraflar Ferrari Publicité filigranlıdır. İlan metinleri kaynaktaki gibi Fransızca.`,
+ au:{eyebrow:'Dosya · ilan 110264 · TJ Paris',h1:'70 bd Vincent Auriol, lot 6',lede:"Eski JRH HOTEL'in tasfiyesinden satılan oda. Bir sosyal konut yurdunun 1. katında, boş. İhale 3 Aralık 2026, 14:00.",open:'İlan detayını aç',
+  k1s:'Teklif yoksa 1/3, sonra 1/2 düşebilir',k2:'Model aralığı',k2s:v=>`Medyan ${v}`,k3:'Teminat',k3s:'Bâtonnier Séquestre adına banka çeki',k4:'Ziyaret',k4v:'24 Kas.',k4s:'Salı 16:00–17:00, tek seferlik',
+  photoNote:'Tutanaktan (2 Temmuz 2026): oda, lavabo, paylaşılan balkon ve bulvar cephesi.',photoAlt:'Lot 6 fotoğraf',
+  prop:'Mülk',kv:[['Lot',"Kat mülkiyetinde 6 numaralı lot, kadastro 1301 AO 11; ortak alanların 241/10.000'i"],['Tarif','1. kat, kapı no 5: giriş + dolap, oda, küvetli banyo ve WC; balkon kullanım hakkı'],['Yüzölçümü','İlan: <b>16,18 m²</b>. Tutanak odayı "yaklaşık 8 m²" diye tarif ediyor. 16,18 m² muhtemelen giriş ve banyo dahil toplam. Carrez ölçümünü şartnameden kontrol edin.'],['Balkon','Tapuda münhasır kullanım hakkı; tutanakta iki başka odayla paylaşılan uzun balkon. Çelişki.'],['Durum','Boş. Kullanılmış: moket lekeli, radyatör sökük, küvet tıpası yok, priz kapakları kopuk, balkon şapında çatlaklar.'],['Bina',"2006'dan beri sosyal konut yurdu: 31 daire (28 sosyal, 3 özel). İşletmeci CASP, sosyal konutların sahibi Paris Habitat. Metro 6 hattı (havai) ve bulvar cepheli, asansörlü."],['İpotek','Yok (16.03.2026 tapu kaydı). Bildirilen alacak ~15 488 €.']],
+  price:'Olası fiyat',ptips:[['info','i',"Tasfiye memurunun kendi tahmini: Meilleurs Agents'a göre 6 440 €/m², benzer 8 m² oda + banyo ilanı <b>65 000 €</b>."],['info','i','Licitor bölge verisi: 6 541 / 7 460 / 8 731 €/m². 16,18 m² ile kaba değer ~120 k€, ama bu bir sosyal yurt içindeki tek oda; normal stüdyo gibi değerlendirilemez.'],['warn','!',"Model Paris'teki küçük lotlar için yüksek katsayılar öğrendi (×5–×10). Bu lotun özel durumu (yurt, kısıtlı kullanım, paylaşılan balkon) rekabeti azaltabilir; model üst sınırı iyimser olabilir."]],
+  watch:'Dikkat edilecekler',wtips:[['bad','!',"<b>Kiralama</b>: oturulabilir alan 9 m²'nin (veya 20 m³'ün) altındaysa ana konut olarak kiraya verilemez. Odanın tek başına ~8 m² olması kritik; ölçümü teyit edin."],['warn','!',"<b>Yurt içinde özel mülk</b>: giriş, güvenlik ve ortak alan kullanımı CASP'in işletmesine bağlı. Kat mülkiyeti yönetmeliğinde kullanım kısıtı olup olmadığını okuyun."],['warn','!','<b>Aidat ve iş kararları</b>: yönetici Cabinet AXIMO (sorumlu Catherine Ciesla). Son 3 genel kurul tutanağını ve yıllık aidatı isteyin.'],['info','i','<b>Gerçekçi alıcı profili</b>: binadaki diğer malikler, CASP/Paris Habitat veya küçük yatırımcı. Bir sosyal kurumun almak istemesi fiyatı yukarı çekebilir.'],['ok','✓',"<b>Strateji</b>: azami teklifi kullanım senaryonuzdan hesaplayın. 10 000 € başlangıç ve “fiyat düşebilir” şartı, ilk turda teklif çıkmazsa 6 667 € ve 5 000 €'ya inme ihtimali verir; ama Paris'te küçük lotlar nadiren teklifsiz kalır."]],
+  feesT:'Masraflar (örnek teklifler)',fBid:'Teklif',fFees:'Masraf',fTot:'Toplam',feesNote:'Ön masraf 4 000 € varsayıldı; tapu harcı %6,32.',
+  people:'Kurumlar ve kişiler',chron:'Kronoloji',docs:'Belgeler',
+  ppl:[['Mahkeme','Tribunal judiciaire de Paris',"Juge de l'exécution önünde ihale · 3 Aralık 2026, 14:00"],['Takibi yapan avukat','Me Éric Assouline, Cabinet Ethic All','15, bd Richard Lenoir, 75011 Paris\nTél.: 09 75 40 31 39\nventes.assouline@orange.fr','ventes.assouline@orange.fr'],['Tasfiye memuru','Me Marie-Hélène Montravers, SELARL Montravers Yang-Ting','9, rue du Mont Thabor, 75001 Paris'],['Juge-commissaire','Mme Béatrix Peret','Tribunal des activités économiques de Paris · dosya P199501243'],['Commissaire de justice','Me Jeanne Delacroix, SELAS Samain, Asensio, Gonzalez & Associés','31-33, rue Deparcieux, 75014 Paris · Tél.: 01 43 20 55 95'],['Yönetici (syndic)',"Cabinet AXIMO (Syndic parisien d'utilité publique)",'237 B, rue de Belleville · sorumlu Catherine Ciesla'],['Yurt işletmecisi',"CASP (Centre d'action sociale protestant)",'Sosyal konutların sahibi Paris Habitat'],['Satıcı (borçlu)','JRH HOTEL SNC','SIREN 380 430 884 · ortaklar Jean-Raoul Ismael, Henry Benguigui, Patrick Memoune']],
+  tl:[['1990','JRH HOTEL SNC kuruluyor (Jean-Raoul Ismael, Henry Benguigui).'],['11.12.1992',"JRH, 70 bd Vincent Auriol'daki eski klinik binasını satın alıyor (Me Claris)."],['19.11.1993','Kat mülkiyeti yönetmeliği (règlement de copropriété) tescil ediliyor.'],['29.12.1993',"6 numaralı lot 831.525 FRF'ye (126.765 €) satılıyor."],['27.02.1995','Paris Ticaret Mahkemesi JRH için yargısal tasfiye açıyor.'],['25.12.1995',"Vincent Auriol'daki işletme kapanıyor."],['02.05.2002','Alıcıların açtığı dava: TGI Paris lot 6 satışını iptal ediyor (istinaf onayı 14.10.2003).'],['25.09.2006','Tasfiye, varlık yetersizliğiyle kapatılıyor.'],['21.04.2010',"İptal tapuya işleniyor; lot 6 yeniden JRH'nin malvarlığında."],['11.09.2024','Tasfiye yeniden açılıyor; tasfiye memuru SELARL Montravers Yang-Ting.'],['22.04.2026','Tasfiye memuru satış talep ediyor (önerdiği mise à prix 40.000 €).'],['03.06.2026','Juge-commissaire Béatrix Peret satışı 10.000 € mise à prix ile emrediyor.'],['02.07.2026','Tespit tutanağı (Me Jeanne Delacroix).'],['24.11.2026','Yerinde ziyaret, 16:00–17:00.',1],['03.12.2026','İhale, TJ Paris, 14:00.',1]]}
+},
+fr:{
+ locale:'fr-FR',
+ 'nav.aria':'Sections','nav.list':'Annonces &amp; carte','nav.cal':'Calendrier','nav.model':'Modèle de prix','nav.strat':'Frais &amp; stratégie',
+ 'tag.src':'Licitor · 12 octobre 2026',
+ 'l.eyebrow':'France · ventes judiciaires immobilières','l.h1':'Ventes à venir',
+ 'l.lede':"Toutes les ventes judiciaires à venir publiées sur Licitor : localisation, date d'audience, tribunal et avocat, fourchette de prix estimée à partir des adjudications passées, et frais. Cliquez sur une annonce.",
+ 'l.more':'Afficher plus',
+ 'f.search':'Rechercher','f.searchPh':'Ville, rue, tribunal, avocat…','f.zone':'Zone','f.max':'Mise à prix max.','f.all':'Toutes','f.date':"Date d'audience",
+ 'f.d7':'Sous 7 jours','f.d30':'Sous 30 jours','f.d60':'Sous 60 jours','f.sort':'Trier',
+ 's.date':'Date (la plus proche)','s.mpAsc':'Mise à prix croissante','s.mpDesc':'Mise à prix décroissante','s.disc':'Plus forte décote vs marché','s.pub':'Annonces les plus récentes',
+ 'f.type':'Type de bien','f.other':'Autres filtres','f.photo':'Avec photos','f.libre':'Libre','f.visit':'Visite annoncée','f.allFrance':'Toute la France',
+ 'map.se':'Sud-Est','map.hint':'Glisser / zoomer · cliquer un point','map.aria':'Carte des ventes','map.size':'Taille ∝ mise à prix',
+ 'c.eyebrow':'Agenda','c.h1':'Audiences et visites',
+ 'c.lede':"Les audiences regroupées par tribunal. À droite, les visites sur place : en général 1 à 3 semaines avant la vente, une seule fois, pendant environ une heure.",
+ 'c.visits':'Prochaines visites',
+ 'm.eyebrow':'Adjudications passées','m.h1':'À combien partent les biens ?',
+ 'm.scTitle':'Mise à prix et prix adjugé','m.scNote':'Chaque point est une vente (échelle log). Lignes : adjudication = mise à prix, ×2, ×4.',
+ 'm.ratioTitle':'Ratio adjudication / mise à prix','m.ratioNote':'Écart interquartile (boîte) et médiane (trait).','m.byZone':'Par zone','m.byCat':'Par type de bien',
+ 'm.m2Title':'Appartements : €/m² payé aux enchères','m.m2Note':"Ventes d'appartements dont la surface est connue. À comparer au €/m² du marché pour voir la décote.",
+ 'm.howTitle':'Comment fonctionne le modèle',
+ 'm.how1':'Le logarithme du ratio adjudication / mise à prix est régressé sur le montant de la mise à prix, le type de bien, la zone, l’occupation et la <i>licitation</i> (régression ridge légère).',
+ 'm.how2':'La fourchette vient de la distribution des erreurs du modèle : la boîte P25–P75 contient la moitié des résultats.',
+ 'm.how3':"Les petites mises à prix montent beaucoup plus en proportion (×5 à ×10 à Paris). La mise à prix n'est pas une estimation de valeur, c'est le prix de départ fixé par le tribunal.",
+ 'm.how4':"Les données ne couvrent que les lots <b>adjugés</b>. Les carences d'enchères n'apparaissent pas dans l'historique Licitor, donc les ratios sont légèrement surestimés.",
+ 'm.how5':r=>`Précision limitée : R² ≈ ${r}, écart typique ±35 %. Pour décider, croisez avec le calcul de valeur de marché du bien (dans le panneau de détail).`,
+ 'm.lede':n=>`${n} ventes à lot unique tirées de l'historique des adjudications Licitor (surtout juin–octobre 2026 ; ventes sur surenchère exclues). Chaque annonce reçoit une fourchette de prix probable à partir de ces données.`,
+ 'mk.n':'Ventes','mk.nS':'6 zones','mk.med':'Ratio médian','mk.medS':'adjudication / mise à prix','mk.q':'Quartiles','mk.qS':'la moitié des ventes','mk.paris':'Médiane Paris','mk.parisS':n=>`${n} ventes`,
+ 'm2.scale':'Échelle 0–10 000 €/m². La moyenne du marché parisien affichée sur les annonces est en général de 9 à 11 k€/m².',
+ 'sc.x':'mise à prix →','sc.y':'↑ prix adjugé','sc.eq':'= mise à prix',
+ 'st.eyebrow':"Guide de l'acquéreur",'st.h1':"Frais et stratégie d'enchères",
+ 'st.lede':"Ce qui s'ajoute au prix d'adjudication et les étapes avant d'enchérir. Le calculateur donne une estimation ; les <i>frais préalables</i> exacts sont annoncés à l'audience.",
+ 'st.calc':'Calculateur de frais','st.bid':"Prix d'adjudication (€)",'st.pre':'Frais préalables (€)','st.dm':'Droits de mutation','st.dm1':'6,32 % (la plupart des départements, dont Paris)','st.dm2':"5,81 % (départements n'ayant pas relevé le taux)",'st.law':'Votre avocat (€)','st.lawPh':'automatique',
+ 'st.consig':"Consignation pour enchérir : en général 10 % de la mise à prix, minimum 3 000 €, par chèque de banque ou virement CARPA via l'avocat. Restituée si vous ne remportez pas la vente.",
+ 'st.items':'Ce que recouvre chaque poste',
+ 'st.i1':"<b>Frais préalables</b> : frais de l'avocat poursuivant, publicités, procès-verbal descriptif, diagnostics. Indépendants du prix ; annoncés par le juge à l'audience.",
+ 'st.i2':"<b>Émoluments</b> : tarif réglementé de l'avocat (dégressif : 7,256 % / 2,993 % / 1,995 % / 1,497 % HT, + TVA).",
+ 'st.i3':'<b>Droits de mutation</b> : 6,32 % dans la plupart des départements depuis 2025.',
+ 'st.i4':'<b>Contribution de sécurité immobilière</b> : 0,1 %.',
+ 'st.i5':'<b>Votre avocat</b> : souvent ~4,5 % du prix, entre 1 500 et 3 500 €. Négociable.',
+ 'st.road':'Les étapes','st.strat':"Stratégie d'enchères",
+ steps:[['Lire le cahier des conditions de vente et le PV','Le <i>CCV</i> et le <i>PV descriptif</i> sont souvent en PDF sur Licitor : surface, occupation, charges de copropriété, clauses particulières.'],
+  ['Aller à la visite',"Une seule visite d'environ une heure. Il n'y a généralement pas de seconde chance."],
+  ['Mandater un avocat du barreau du tribunal','Seul un avocat inscrit au barreau du <i>tribunal judiciaire</i> peut porter les enchères. Vous lui donnez un plafond écrit.'],
+  ['Préparer la consignation','Chèque de banque ou virement CARPA, pièce d’identité, justificatif de financement. Pas de condition suspensive de prêt.'],
+  ["Le jour de l'audience","Enchères à durée limitée : une enchère l'emporte si aucune autre ne la couvre dans les 90 secondes."],
+  ['Surenchère de 10 jours','Pendant ce délai, toute personne peut relancer la vente en offrant au moins 10 % de plus.'],
+  ['Paiement','Le prix est en général dû sous 2 mois, les frais dès le premier mois ; intérêts en cas de retard.']],
+ gtips:[['ok','✓','<b>Fixez votre plafond à l’avance</b> : valeur de marché × (1 − marge visée) − tous les frais. Le panneau de détail fait le calcul.'],
+  ['ok','✓','<b>Bien occupé</b> : l’expulsion peut prendre 6 à 24 mois ; un loyer en cours est un revenu, sinon un coût. Prévoyez 15 à 30 % de décote supplémentaire.'],
+  ['warn','!','<b>Le piège de la petite mise à prix</b> : un départ très bas attire du monde. Prenez le P75 du modèle comme plafond réaliste.'],
+  ['warn','!','<b>Faculté de baisse</b> : sans enchère au premier tour, la mise à prix baisse d’un tiers puis de moitié. Attendre est une stratégie que d’autres peuvent aussi jouer.'],
+  ['info','i','<b>Licitation</b> : les indivisaires peuvent aussi enchérir ; c’est une vente de sortie d’indivision.'],
+  ['info','i','Demandez au syndic les trois derniers procès-verbaux d’AG pour les impayés et les travaux votés.'],
+  ['bad','!','Je ne suis pas avocat ; cette page est une aide à la décision. Faites valider les chiffres par votre avocat avant d’enchérir.']],
+ cats:{appartement:'Appartement',maison:'Maison',immeuble:'Immeuble / ensemble',commerce:'Commerce / industrie',terrain:'Terrain',parking:'Parking / garage',autre:'Autre',parts:'Parts sociales'},
+ zones:{'paris':'Paris','petite-couronne':'Petite couronne (92-93-94)','grande-couronne':'Grande couronne (77-78-91-95)','regions-du-nord-est':'Nord-Est','bretagne-grand-ouest':'Bretagne / Grand Ouest','centre-loire-limousin':'Centre / Loire / Limousin','sud-ouest-pyrenees':'Sud-Ouest / Pyrénées','sud-est-mediterrannee':'Sud-Est / Méditerranée','autre':'Sans localisation'},
+ 'k.upcoming':'Ventes à venir','k.upcomingS':n=>`Licitor, ${n} tribunaux / études`,'k.week':'Audiences cette semaine','k.weekS':'du 12 au 19 octobre','k.sum':'Total des mises à prix','k.sumS':v=>`Médiane ${v}`,'k.photo':'Dossiers avec photos','k.photoS':'tirées des PV descriptifs',
+ 'p.libre':'Libre','p.occ':'Occupé','p.sur':'Surenchère','p.lic':'Licitation','p.baisse':'Baisse possible','p.lots':n=>`${n} lots`,'p.today':"Aujourd'hui",'p.days':n=>`J-${n}`,
+ 'r.count':(a,b)=>`${a} annonces · ${b} sur la carte`,'r.none':'Aucune annonce avec ces filtres.','r.mp':'Mise à prix','r.est':'estimé',
+ 'd.listing':'annonce','d.nophoto':'Aucune photo de PV publiée pour cette annonce.','d.docsBelow':'Documents ci-dessous.','d.askPV':"Demandez le PV à l'avocat.",'d.photoNote':'Photos issues du procès-verbal descriptif.','d.photo':'Photo',
+ 'd.sale':'Vente','d.date':'Date','d.days':n=>`(J-${n})`,'d.court':'Tribunal','d.type':'Type de vente','d.visit':'Visite','d.consig':'Consignation','d.consigDef':'Selon le cahier des conditions de vente (souvent 10 % de la mise à prix, min. 3 000 €)','d.areaPrice':'Prix du secteur','d.minAvgMax':(a,b,c)=>`min ${a} · moy ${b} · max ${c}`,
+ 'd.property':'Bien','d.likely':'Prix adjugé probable','d.likelySub':n=>`Fourchette du modèle (${n} ventes passées), mise à prix et valeur de marché du secteur.`,
+ 'd.nomodel':'Pas d’estimation pour cette annonce (plusieurs lots ou catégorie hors modèle).','b.mp':'mise à prix','b.med':v=>`médiane ${v}`,'b.mkt':'marché','b.approx':'Valeur de marché approx.','b.calc':(s,p)=>`(${s} m² × ${p}/m² moy. secteur)`,
+ 'd.maxTitle':'Calcul du plafond','d.maxSub':'En partant de la valeur de marché et de la marge visée : prix + tous les frais ≤ coût cible.','d.mv':'Valeur de marché (€)','d.mvPh':'votre estimation','d.margin':'Marge visée','d.occDisc':'Décote occupation','d.none':'Aucune',
+ 'd.maxRes':(t,m)=>`Coût total cible <b class="num">${t}</b> → enchère max. <b class="num">${m}</b>`,'d.maxBelow':' · <b>inférieur à la mise à prix : ce bien ne correspond pas à votre objectif.</b>','d.maxLow':' · sous le P25 du modèle : faibles chances de l’emporter.','d.maxHigh':' · au-dessus du P75 du modèle : bonnes chances de l’emporter.','d.maxNeed':'Saisissez une valeur de marché (€/m² du secteur × surface, ou votre estimation).',
+ 'd.fees':'Frais','d.feesSub':'Modifiez le montant ; les postes sont recalculés.','d.bid':'Enchère (€)','d.pre':'Frais préalables (€)','d.dm':'Droits de mutation',
+ 'd.tips':'Notes de stratégie','d.people':'Institutions et interlocuteurs','d.docs':'Documents','d.nodocs':'Aucun document','d.licitor':'Annonce Licitor',
+ 'd.pub':'Publiée','d.geo':'Localisation','geo.licitor':'coordonnées Licitor','geo.commune':'centre de la commune (approx.)','geo.geocode':'géocodage de l’adresse','geo.none':'aucune',
+ 'role.court':'Tribunal','role.courtTxt':"Audience devant le juge de l'exécution. Le cahier des conditions de vente est aussi déposé au greffe.",'role.poursuivant':'Avocat poursuivant','role.other':'Autre avocat','copy':"Copier l'e-mail",'copied':'Copié',
+ 'f.bid':"Prix d'adjudication",'f.pre':'Frais préalables','f.preW':"estimés, fixés à l'audience",'f.emol':'Émoluments','f.emolW':'tarif dégressif + TVA','f.dm':'Droits de mutation','f.dmW':r=>`taux ${r}`,'f.dmParts':'non applicables aux parts sociales','f.csi':'Contribution de sécurité immobilière','f.csiW':'0,1 %','f.law':'Votre avocat','f.lawW':'estimation, négociable','f.total':'Coût total','f.ratio':'Frais / prix',
+ t:{parts:"Il ne s'agit pas d'un bien immobilier mais de parts sociales. Pas de droits de mutation, mais des honoraires de vente (ex. 14,28 %) et les dettes de la société : lisez le cahier des charges.",
+  mv:(v,p,hot)=>`La mise à prix représente ${p} % de la valeur de marché approx. (${v}). ${hot?'Cet écart attire du monde ; les enchères peuvent monter vite.':'Écart raisonnable ; concurrence moyenne attendue.'}`,
+  pred:(a,b,c)=>`D'après les ventes comparables, adjudication probable entre ${a} et ${b} (médiane ${c}).`,
+  occ:"Bien occupé : intégrez le délai et le coût d'une expulsion (6 à 24 mois). Locataire ou ancien propriétaire ? Vérifiez dans le cahier des conditions de vente.",
+  libre:'Bien libre : remise des clés rapide une fois le prix payé.',
+  baisse:"Sans enchère, la mise à prix peut baisser d'un tiers puis de moitié. Ne pas enchérir au premier tour est une stratégie, mais d'autres dans la salle peuvent attendre aussi.",
+  lic:'Licitation (sortie d’indivision) : les indivisaires peuvent enchérir et connaissent bien le bien.',
+  sur:'Vente sur surenchère : la mise à prix vaut au moins 10 % de plus que la précédente adjudication, déjà élevée.',
+  lots:n=>`Vente en ${n} lots : chaque lot est adjugé séparément, une consignation par lot peut être exigée.`,
+  small:'Moins de 9 m² : ne peut pas être loué comme résidence principale (décence). Adaptez votre projet.',
+  visitPast:"La visite est passée ; demandez à l'avocat s'il y en a une seconde.",visit:(d,n)=>`Visite le ${d} (dans ${n} jours). Une seule occasion, notez-la.`,novisit:"Pas de date de visite dans l'annonce ; renseignez-vous auprès de l'avocat.",
+  soon:n=>`Vente dans ${n} jours : délai très court pour trouver un avocat, le chèque de consignation et le financement.`},
+ 'cal.n':(a,b)=>`${a} annonces · ${b} tribunaux`,'cal.time':'Heure','cal.court':'Tribunal','cal.prop':'Bien','cal.city':'Ville','cal.est':'Estimation (P25–P75)','cal.more':n=>`+${n} autres visites`,'cal.none':'Aucune visite à venir.',
+ 'ui.close':'Fermer','ui.err':'Impossible de charger les données : ',
+ src:n=>`Sources : annonces, tribunaux, avocats, dates de visite et photos des PV descriptifs issus de <a href="https://www.licitor.com/" target="_blank" rel="noopener">Licitor</a> (au 12 octobre 2026). Prix au m² du secteur : données La Loupe Immo affichées sur les annonces. Historique : adjudications Licitor, ${n} ventes à lot unique. Droits de mutation : 6,32 % à Paris (hausse 2025). Photos filigranées Ferrari Publicité.`,
+ au:{eyebrow:'Dossier · annonce 110264 · TJ Paris',h1:'70 bd Vincent Auriol, lot 6',lede:"Chambre vendue dans la liquidation de l'ancienne SNC JRH HOTEL. Au 1er étage d'une résidence sociale, libre. Vente le 3 décembre 2026 à 14 h.",open:"Ouvrir l'annonce",
+  k1s:'Baisse d’un tiers puis de moitié si carence',k2:'Fourchette du modèle',k2s:v=>`Médiane ${v}`,k3:'Consignation',k3s:"Chèque de banque à l'ordre du Bâtonnier Séquestre",k4:'Visite',k4v:'24 nov.',k4s:'Mardi 16 h–17 h, une seule fois',
+  photoNote:'Extraits du PV du 2 juillet 2026 : chambre, lavabo, balcon filant partagé et façade sur le boulevard.',photoAlt:'Lot 6, photo',
+  prop:'Le bien',kv:[['Lot','Lot n°6 de copropriété, cadastre 1301 AO 11 ; 241/10 000es des parties communes générales'],['Désignation','1er étage, porte n°5 : entrée avec placard, chambre, salle de bains avec baignoire et WC ; jouissance exclusive d’un balcon'],['Surface','Annonce : <b>16,18 m²</b>. Le PV décrit une chambre « d’environ 8 m² ». Les 16,18 m² incluent probablement entrée et salle de bains. Vérifiez le mesurage Carrez dans le cahier des conditions de vente.'],['Balcon','Jouissance exclusive selon le titre ; le PV décrit un balcon filant partagé avec deux autres chambres. Contradiction.'],['État','Libre. État d’usage : moquette tachée, radiateur décroché, bonde de baignoire absente, caches de prises arrachés, chape du balcon fissurée.'],['Immeuble','Résidence sociale depuis 2006 : 31 logements (28 sociaux, 3 privés). Gestionnaire CASP, propriétaire du parc social Paris Habitat. Façade sur le boulevard et la ligne 6 aérienne, ascenseur.'],['Hypothèques','Aucune (état hypothécaire du 16/03/2026). Passif déclaré ~15 488 €.']],
+  price:'Prix probable',ptips:[['info','i','Estimation du liquidateur : 6 440 €/m² selon Meilleurs Agents ; une pièce de 8 m² avec salle de bains comparable est proposée à <b>65 000 €</b>.'],['info','i','Prix du secteur Licitor : 6 541 / 7 460 / 8 731 €/m². Avec 16,18 m², valeur brute ~120 k€, mais il s’agit d’une chambre isolée dans une résidence sociale, pas d’un studio classique.'],['warn','!','Le modèle a appris de forts multiplicateurs pour les petits lots parisiens (×5 à ×10). Le contexte de ce lot (résidence, usage contraint, balcon partagé) peut réduire la concurrence : le haut de fourchette est sans doute optimiste.']],
+  watch:'Points de vigilance',wtips:[['bad','!','<b>Location</b> : en dessous de 9 m² habitables (ou 20 m³), pas de location en résidence principale. La chambre seule fait ~8 m² : faites vérifier le mesurage.'],['warn','!','<b>Lot privé dans une résidence sociale</b> : accès, sécurité et usage des parties communes dépendent du gestionnaire CASP. Vérifiez les restrictions d’usage du règlement de copropriété.'],['warn','!','<b>Charges et travaux</b> : syndic Cabinet AXIMO (gestionnaire Catherine Ciesla). Demandez les trois derniers PV d’AG et le montant des charges annuelles.'],['info','i','<b>Acquéreurs probables</b> : autres copropriétaires, CASP / Paris Habitat ou petits investisseurs. L’intérêt d’un bailleur social pourrait faire monter le prix.'],['ok','✓','<b>Stratégie</b> : fixez votre plafond selon votre usage. Mise à prix de 10 000 € avec faculté de baisse : 6 667 € puis 5 000 € en cas de carence, mais les petits lots parisiens restent rarement sans enchère.']],
+  feesT:'Frais (exemples)',fBid:'Enchère',fFees:'Frais',fTot:'Total',feesNote:'Frais préalables supposés à 4 000 € ; droits de mutation 6,32 %.',
+  people:'Institutions et interlocuteurs',chron:'Chronologie',docs:'Documents',
+  ppl:[['Tribunal','Tribunal judiciaire de Paris',"Audience du juge de l'exécution · 3 décembre 2026, 14 h"],['Avocat poursuivant','Me Éric Assouline, Cabinet Ethic All','15, bd Richard Lenoir, 75011 Paris\nTél. : 09 75 40 31 39\nventes.assouline@orange.fr','ventes.assouline@orange.fr'],['Liquidateur judiciaire','Me Marie-Hélène Montravers, SELARL Montravers Yang-Ting','9, rue du Mont Thabor, 75001 Paris'],['Juge-commissaire','Mme Béatrix Peret','Tribunal des activités économiques de Paris · greffe P199501243'],['Commissaire de justice','Me Jeanne Delacroix, SELAS Samain, Asensio, Gonzalez & Associés','31-33, rue Deparcieux, 75014 Paris · Tél. : 01 43 20 55 95'],['Syndic',"Cabinet AXIMO (Syndic parisien d'utilité publique)",'237 B, rue de Belleville · gestionnaire Catherine Ciesla'],['Gestionnaire de la résidence',"CASP (Centre d'action sociale protestant)",'Propriétaire du parc social : Paris Habitat'],['Vendeur (débiteur)','JRH HOTEL SNC','SIREN 380 430 884 · associés Jean-Raoul Ismael, Henry Benguigui, Patrick Memoune']],
+  tl:[['1990','Création de la SNC JRH HOTEL (Jean-Raoul Ismael, Henry Benguigui).'],['11.12.1992',"JRH acquiert l'ancienne clinique du 70 bd Vincent Auriol (Me Claris)."],['19.11.1993','Règlement de copropriété publié.'],['29.12.1993','Le lot n°6 est vendu 831 525 FRF (126 765 €).'],['27.02.1995','Le tribunal de commerce de Paris ouvre la liquidation judiciaire de JRH.'],['25.12.1995',"Fermeture de l'établissement du boulevard Vincent Auriol."],['02.05.2002','Action des acquéreurs : le TGI de Paris annule la vente du lot 6 (confirmé en appel le 14.10.2003).'],['25.09.2006',"Clôture pour insuffisance d'actif."],['21.04.2010','Publication de l’annulation : le lot 6 réintègre le patrimoine de JRH.'],['11.09.2024','Réouverture de la liquidation ; liquidateur SELARL Montravers Yang-Ting.'],['22.04.2026','Requête du liquidateur (mise à prix proposée : 40 000 €).'],['03.06.2026','Ordonnance de la juge-commissaire Béatrix Peret : mise à prix 10 000 €.'],['02.07.2026','PV descriptif (Me Jeanne Delacroix).'],['24.11.2026','Visite sur place, 16 h–17 h.',1],['03.12.2026','Vente, TJ de Paris, 14 h.',1]]}
+},
+en:{
+ locale:'en-GB',
+ 'nav.aria':'Sections','nav.list':'Listings &amp; map','nav.cal':'Calendar','nav.model':'Price model','nav.strat':'Costs &amp; strategy',
+ 'tag.src':'Licitor · 12 October 2026',
+ 'l.eyebrow':'France · court-ordered property auctions','l.h1':'Upcoming auctions',
+ 'l.lede':'Every upcoming <i>vente judiciaire</i> published on Licitor: location, hearing date, court and lawyer, a likely price range from past results, and costs. Click a listing.',
+ 'l.more':'Show more',
+ 'f.search':'Search','f.searchPh':'City, street, court, lawyer…','f.zone':'Area','f.max':'Max. reserve price','f.all':'All','f.date':'Auction date',
+ 'f.d7':'Within 7 days','f.d30':'Within 30 days','f.d60':'Within 60 days','f.sort':'Sort by',
+ 's.date':'Date (soonest first)','s.mpAsc':'Reserve price (low to high)','s.mpDesc':'Reserve price (high to low)','s.disc':'Biggest discount to market','s.pub':'Newest listings',
+ 'f.type':'Property type','f.other':'Other filters','f.photo':'With photos','f.libre':'Vacant','f.visit':'Viewing date set','f.allFrance':'All of France',
+ 'map.se':'South-East','map.hint':'Drag / zoom · click a dot','map.aria':'Map of auction locations','map.size':'Dot size ∝ reserve price',
+ 'c.eyebrow':'Agenda','c.h1':'Auctions and viewings',
+ 'c.lede':'Hearings grouped by court. On the right, on-site viewings (<i>visites sur place</i>): usually 1–3 weeks before the sale, held once, for about an hour.',
+ 'c.visits':'Upcoming viewings',
+ 'm.eyebrow':'Past results','m.h1':'What do properties sell for?',
+ 'm.scTitle':'Reserve price vs. hammer price','m.scNote':'Each dot is one sale (log scale). Lines: hammer = reserve, ×2, ×4.',
+ 'm.ratioTitle':'Hammer / reserve ratio','m.ratioNote':'Interquartile range (box) and median (line).','m.byZone':'By area','m.byCat':'By property type',
+ 'm.m2Title':'Apartments: €/m² paid at auction','m.m2Note':'Apartment sales with a known floor area. Compare with market €/m² to see the auction discount.',
+ 'm.howTitle':'How the model works',
+ 'm.how1':'The log of the hammer/reserve ratio is regressed on reserve size, property type, area, occupancy and <i>licitation</i> (light ridge regression).',
+ 'm.how2':'The range comes from the model’s error distribution: half of outcomes fall inside the P25–P75 box.',
+ 'm.how3':'Low reserve prices rise much more in proportion (×5 to ×10 in Paris). The reserve (<i>mise à prix</i>) is not a valuation; it is the court’s starting price.',
+ 'm.how4':'The data covers <b>sold</b> lots only. Lots with no bids (<i>carence</i>) don’t appear in Licitor’s history, so ratios are biased slightly upward.',
+ 'm.how5':r=>`Limited precision: R² ≈ ${r}, typical error ±35%. Use it together with the listing’s own market-value calculation (in the detail panel).`,
+ 'm.lede':n=>`${n} single-lot sales from Licitor’s adjudication history (mostly June–October 2026; resales on <i>surenchère</i> excluded). Every listing gets a likely price range from this data.`,
+ 'mk.n':'Sales','mk.nS':'6 areas','mk.med':'Median ratio','mk.medS':'hammer / reserve','mk.q':'Quartiles','mk.qS':'half of all sales','mk.paris':'Paris median','mk.parisS':n=>`${n} sales`,
+ 'm2.scale':'Scale 0–10,000 €/m². The Paris market average shown on listings is usually €9–11k/m².',
+ 'sc.x':'reserve price →','sc.y':'↑ hammer price','sc.eq':'= reserve',
+ 'st.eyebrow':'Buyer’s guide','st.h1':'Costs and bidding strategy',
+ 'st.lede':'What comes on top of the hammer price, and the steps before you bid. The calculator gives an estimate; the exact <i>frais préalables</i> are announced at the hearing.',
+ 'st.calc':'Cost calculator','st.bid':'Hammer price (€)','st.pre':'Prior costs (€)','st.dm':'Transfer tax','st.dm1':'6.32% (most départements, incl. Paris)','st.dm2':'5.81% (départements that kept the old rate)','st.law':'Your own lawyer (€)','st.lawPh':'automatic',
+ 'st.consig':'Bidding deposit (<i>consignation</i>): usually 10% of the reserve, at least €3,000, by banker’s draft or via your lawyer’s CARPA account. Returned if you don’t win.',
+ 'st.items':'What each item means',
+ 'st.i1':'<b>Frais préalables</b>: the seller’s lawyer’s costs, notices, bailiff’s report, technical surveys. Fixed regardless of price; announced by the judge at the hearing.',
+ 'st.i2':'<b>Émoluments</b>: the lawyer’s regulated fee (sliding scale: 7.256% / 2.993% / 1.995% / 1.497% + VAT).',
+ 'st.i3':'<b>Droits de mutation</b>: transfer tax, 6.32% in most départements since 2025.',
+ 'st.i4':'<b>Contribution de sécurité immobilière</b>: 0.1% land-registry levy.',
+ 'st.i5':'<b>Your own lawyer</b>: often ~4.5% of the price, €1,500–3,500. Negotiable.',
+ 'st.road':'Step by step','st.strat':'Bidding strategy',
+ steps:[['Read the conditions of sale and the report','The <i>cahier des conditions de vente</i> and <i>PV descriptif</i> are often PDFs on Licitor: floor area, occupancy, service-charge arrears, special terms.'],
+  ['Attend the viewing','Held once, for about an hour. There is usually no second chance.'],
+  ['Hire a lawyer from the court’s bar','Only a lawyer registered with that <i>tribunal judiciaire</i>’s bar can bid. You give them a written ceiling.'],
+  ['Prepare the deposit','Banker’s draft or CARPA transfer, ID, proof of funds. No mortgage-contingent bids.'],
+  ['Auction day','Timed bidding: a bid wins if nobody tops it within 90 seconds.'],
+  ['10-day surenchère','During this window anyone can reopen the sale by offering at least 10% more.'],
+  ['Payment','The price is usually due within 2 months, costs within the first month; interest accrues on late payment.']],
+ gtips:[['ok','✓','<b>Set your ceiling in advance</b>: market value × (1 − target margin) − all costs. The detail panel works it out.'],
+  ['ok','✓','<b>Occupied property</b>: eviction can take 6–24 months; an existing rent is income, otherwise it’s a cost. Allow a further 15–30% discount.'],
+  ['warn','!','<b>The low-reserve trap</b>: a very low start draws a crowd. Treat the model’s P75 as a realistic ceiling.'],
+  ['warn','!','<b>Faculté de baisse</b>: with no bids in the first round the reserve drops by a third, then a half. Waiting is a strategy others can play too.'],
+  ['info','i','<b>Licitation</b> sales end a co-ownership; the co-owners may bid too.'],
+  ['info','i','Ask the building manager (<i>syndic</i>) for the last three AGM minutes to check arrears and approved works.'],
+  ['bad','!','I am not a lawyer; this page supports your decision. Have your lawyer confirm the figures before bidding.']],
+ cats:{appartement:'Apartment',maison:'House',immeuble:'Building / complex',commerce:'Commercial / industrial',terrain:'Land',parking:'Parking / garage',autre:'Other',parts:'Company shares'},
+ zones:{'paris':'Paris','petite-couronne':'Inner suburbs (92-93-94)','grande-couronne':'Outer suburbs (77-78-91-95)','regions-du-nord-est':'North-East','bretagne-grand-ouest':'Brittany / West','centre-loire-limousin':'Centre / Loire / Limousin','sud-ouest-pyrenees':'South-West / Pyrenees','sud-est-mediterrannee':'South-East / Mediterranean','autre':'No location'},
+ 'k.upcoming':'Upcoming listings','k.upcomingS':n=>`Licitor, ${n} courts / offices`,'k.week':'Auctions this week','k.weekS':'12–19 October','k.sum':'Total reserve prices','k.sumS':v=>`Median ${v}`,'k.photo':'Files with photos','k.photoS':'from the bailiff’s reports',
+ 'p.libre':'Vacant','p.occ':'Occupied','p.sur':'Surenchère','p.lic':'Licitation','p.baisse':'Price may drop','p.lots':n=>`${n} lots`,'p.today':'Today','p.days':n=>`${n} days`,
+ 'r.count':(a,b)=>`${a} listings · ${b} on the map`,'r.none':'No listings match these filters.','r.mp':'Reserve','r.est':'est.',
+ 'd.listing':'listing','d.nophoto':'No report photos published for this listing.','d.docsBelow':'Documents below.','d.askPV':'Ask the lawyer for the report.','d.photoNote':'Photos from the bailiff’s report (PV descriptif).','d.photo':'Photo',
+ 'd.sale':'Auction','d.date':'Date','d.days':n=>`(in ${n} days)`,'d.court':'Court','d.type':'Sale type','d.visit':'Viewing','d.consig':'Deposit','d.consigDef':'Set by the conditions of sale (often 10% of reserve, min. €3,000)','d.areaPrice':'Area €/m²','d.minAvgMax':(a,b,c)=>`min ${a} · avg ${b} · max ${c}`,
+ 'd.property':'Property','d.likely':'Likely hammer price','d.likelySub':n=>`Model range from ${n} past sales, with the reserve and area market value.`,
+ 'd.nomodel':'No model estimate for this listing (multiple lots or out-of-scope category).','b.mp':'reserve','b.med':v=>`median ${v}`,'b.mkt':'market','b.approx':'Approx. market value','b.calc':(s,p)=>`(${s} m² × ${p}/m² area avg.)`,
+ 'd.maxTitle':'Maximum bid','d.maxSub':'Working back from market value and your target margin: price + all costs ≤ target cost.','d.mv':'Market value (€)','d.mvPh':'your estimate','d.margin':'Target margin','d.occDisc':'Occupancy discount','d.none':'None',
+ 'd.maxRes':(t,m)=>`Target all-in cost <b class="num">${t}</b> → max. bid <b class="num">${m}</b>`,'d.maxBelow':' · <b>below the reserve: this listing doesn’t fit your target.</b>','d.maxLow':' · below the model’s P25: low chance of winning.','d.maxHigh':' · above the model’s P75: good chance of winning.','d.maxNeed':'Enter a market value (area €/m² × floor area, or your own estimate).',
+ 'd.fees':'Costs','d.feesSub':'Change the bid; each item is recalculated.','d.bid':'Bid (€)','d.pre':'Prior costs (€)','d.dm':'Transfer tax',
+ 'd.tips':'Strategy notes','d.people':'Institutions and contacts','d.docs':'Documents','d.nodocs':'No documents','d.licitor':'Licitor listing',
+ 'd.pub':'Published','d.geo':'Location','geo.licitor':'Licitor coordinates','geo.commune':'town centre (approx.)','geo.geocode':'geocoded address','geo.none':'none',
+ 'role.court':'Court','role.courtTxt':'Sale before the enforcement judge (juge de l’exécution). The conditions of sale are also lodged with the court registry.','role.poursuivant':'Seller’s lawyer (avocat poursuivant)','role.other':'Other lawyer','copy':'Copy email','copied':'Copied',
+ 'f.bid':'Hammer price','f.pre':'Prior costs','f.preW':'frais préalables · estimated, fixed at the hearing','f.emol':'Lawyer’s regulated fee','f.emolW':'émoluments, sliding scale + VAT','f.dm':'Transfer tax','f.dmW':r=>`droits de mutation · ${r}`,'f.dmParts':'droits de mutation · not due on company shares','f.csi':'Land-registry levy','f.csiW':'contribution de sécurité immobilière 0.1%','f.law':'Your own lawyer','f.lawW':'estimate, negotiable','f.total':'Total cost','f.ratio':'Costs as share of price',
+ t:{parts:'This is a sale of company shares, not property. No transfer tax, but a sale fee (e.g. 14.28%) and the company’s debts: read the conditions of sale carefully.',
+  mv:(v,p,hot)=>`The reserve is ${p}% of the approx. market value (${v}). ${hot?'A gap this wide draws a crowd; bidding may climb fast.':'A reasonable gap; expect moderate competition.'}`,
+  pred:(a,b,c)=>`Based on similar past sales, the likely result is ${a} – ${b} (median ${c}).`,
+  occ:'Occupied: factor in eviction time and cost (6–24 months). Tenant or former owner? Check the conditions of sale.',
+  libre:'Vacant: quick handover once the price is paid.',
+  baisse:'With no bids the reserve can drop by a third, then by half. Holding back in round one is a strategy, but others in the room may wait too.',
+  lic:'Licitation (ending a co-ownership): the co-owners may bid and know the property well.',
+  sur:'A surenchère resale: the reserve is at least 10% above the previous hammer price, which was already high.',
+  lots:n=>`Sold in ${n} lots: each lot is sold separately and may need its own deposit.`,
+  small:'Under 9 m²: cannot be let as a main residence (decency rules). Plan your use accordingly.',
+  visitPast:'The viewing date has passed; ask the lawyer whether there is a second one.',visit:(d,n)=>`Viewing on ${d} (in ${n} days). Only one chance, put it in your diary.`,novisit:'No viewing date in the listing; ask the lawyer.',
+  soon:n=>`Auction in ${n} days: very little time to hire a lawyer, get the deposit draft and arrange funds.`},
+ 'cal.n':(a,b)=>`${a} listings · ${b} courts`,'cal.time':'Time','cal.court':'Court','cal.prop':'Property','cal.city':'City','cal.est':'Estimate (P25–P75)','cal.more':n=>`+${n} more viewings`,'cal.none':'No upcoming viewings.',
+ 'ui.close':'Close','ui.err':'Could not load data: ',
+ src:n=>`Sources: listings, courts, lawyers, viewing dates and report photos from <a href="https://www.licitor.com/" target="_blank" rel="noopener">Licitor</a> (as of 12 October 2026). Area €/m²: La Loupe Immo figures shown on listing pages. History: Licitor adjudications, ${n} single-lot sales. Transfer tax: 6.32% in Paris (2025 increase). Photos carry the Ferrari Publicité watermark. Listing texts are in the original French.`,
+ au:{eyebrow:'Case file · listing 110264 · TJ Paris',h1:'70 bd Vincent Auriol, lot 6',lede:'A room sold in the liquidation of the former JRH HOTEL partnership. First floor of a social-housing residence, vacant. Auction on 3 December 2026 at 2 pm.',open:'Open listing',
+  k1s:'Drops by a third, then a half, if no bids',k2:'Model range',k2s:v=>`Median ${v}`,k3:'Deposit',k3s:'Banker’s draft to the Bâtonnier Séquestre',k4:'Viewing',k4v:'24 Nov.',k4s:'Tuesday 4–5 pm, once only',
+  photoNote:'From the 2 July 2026 report: room, washbasin, shared balcony and boulevard façade.',photoAlt:'Lot 6 photo',
+  prop:'The property',kv:[['Lot','Co-ownership lot no. 6, cadastre 1301 AO 11; 241/10,000ths of the common parts'],['Description','1st floor, door no. 5: entrance with cupboard, room, bathroom with bath and WC; exclusive use of a balcony'],['Floor area','Listing: <b>16.18 m²</b>. The report describes the room as “about 8 m²”. The 16.18 m² probably includes the entrance and bathroom. Check the Carrez measurement in the conditions of sale.'],['Balcony','Exclusive use under the title deed; the report describes a long balcony shared with two other rooms. A contradiction.'],['Condition','Vacant. Worn: stained carpet, heater off the wall, bath plug missing, socket covers torn off, cracks in the balcony screed.'],['Building','Social-housing residence since 2006: 31 units (28 social, 3 private). Run by CASP; the social units belong to Paris Habitat. Faces the boulevard and the elevated metro line 6; has a lift.'],['Mortgages','None (land-registry search of 16/03/2026). Declared debts ~€15,488.']],
+  price:'Likely price',ptips:[['info','i','The liquidator’s own estimate: €6,440/m² per Meilleurs Agents; a comparable 8 m² room with bathroom is advertised at <b>€65,000</b>.'],['info','i','Licitor area prices: €6,541 / 7,460 / 8,731 per m². At 16.18 m² that gives ~€120k gross, but this is a single room inside a social residence, not an ordinary studio.'],['warn','!','The model learned high multipliers for small Paris lots (×5–×10). This lot’s context (residence, restricted use, shared balcony) may thin the competition, so the top of the range is probably optimistic.']],
+  watch:'Watch-outs',wtips:[['bad','!','<b>Letting</b>: under 9 m² of living space (or 20 m³), it cannot be let as a main residence. The room alone is ~8 m²; get the measurement confirmed.'],['warn','!','<b>Private lot inside a social residence</b>: access, security and use of common areas depend on CASP. Check the co-ownership rules for use restrictions.'],['warn','!','<b>Service charges and works</b>: managing agent Cabinet AXIMO (contact Catherine Ciesla). Ask for the last three AGM minutes and the annual charges.'],['info','i','<b>Likely bidders</b>: other owners in the building, CASP / Paris Habitat or small investors. Interest from a social landlord could push the price up.'],['ok','✓','<b>Strategy</b>: set your ceiling from your intended use. The €10,000 reserve with a price-drop clause could fall to €6,667 and then €5,000 if nobody bids, but small Paris lots rarely go without bids.']],
+  feesT:'Costs (example bids)',fBid:'Bid',fFees:'Costs',fTot:'Total',feesNote:'Prior costs assumed at €4,000; transfer tax 6.32%.',
+  people:'Institutions and contacts',chron:'Timeline',docs:'Documents',
+  ppl:[['Court','Tribunal judiciaire de Paris','Before the enforcement judge · 3 December 2026, 2 pm'],['Seller’s lawyer','Me Éric Assouline, Cabinet Ethic All','15, bd Richard Lenoir, 75011 Paris\nTel.: 09 75 40 31 39\nventes.assouline@orange.fr','ventes.assouline@orange.fr'],['Liquidator','Me Marie-Hélène Montravers, SELARL Montravers Yang-Ting','9, rue du Mont Thabor, 75001 Paris'],['Supervising judge (juge-commissaire)','Mme Béatrix Peret','Paris commercial court · case P199501243'],['Bailiff (commissaire de justice)','Me Jeanne Delacroix, SELAS Samain, Asensio, Gonzalez & Associés','31-33, rue Deparcieux, 75014 Paris · Tel.: 01 43 20 55 95'],['Managing agent (syndic)',"Cabinet AXIMO (Syndic parisien d'utilité publique)",'237 B, rue de Belleville · contact Catherine Ciesla'],['Residence operator',"CASP (Centre d'action sociale protestant)",'Social units owned by Paris Habitat'],['Seller (debtor)','JRH HOTEL SNC','SIREN 380 430 884 · partners Jean-Raoul Ismael, Henry Benguigui, Patrick Memoune']],
+  tl:[['1990','JRH HOTEL SNC is set up (Jean-Raoul Ismael, Henry Benguigui).'],['11.12.1992','JRH buys the former clinic at 70 bd Vincent Auriol (Me Claris).'],['19.11.1993','Co-ownership rules registered.'],['29.12.1993','Lot no. 6 sold for FRF 831,525 (€126,765).'],['27.02.1995','Paris commercial court opens JRH’s judicial liquidation.'],['25.12.1995','The Vincent Auriol establishment closes.'],['02.05.2002','Buyers’ claim: Paris court annuls the sale of lot 6 (upheld on appeal 14.10.2003).'],['25.09.2006','Liquidation closed for insufficient assets.'],['21.04.2010','Annulment registered; lot 6 returns to JRH’s estate.'],['11.09.2024','Liquidation reopened; liquidator SELARL Montravers Yang-Ting.'],['22.04.2026','Liquidator applies for a sale (proposed reserve €40,000).'],['03.06.2026','Judge Béatrix Peret orders the sale with a €10,000 reserve.'],['02.07.2026','Bailiff’s report (Me Jeanne Delacroix).'],['24.11.2026','On-site viewing, 4–5 pm.',1],['03.12.2026','Auction, TJ Paris, 2 pm.',1]]}
+}};
+
+Object.assign(I18N.tr,{
+ 'f.searchPh':'Şehir, adres, mahkeme, avukat, tip… (ör. paris 13 boş prix<50000)',
+ 'f.more':'Gelişmiş filtreler','f.week':'Bu hafta','f.dep':'Département','f.court':'Mahkeme','f.lawyer':'Avukat','f.price':'Mise à prix (€)','f.surf':'Yüzölçümü (m²)','f.min':'min','f.max2':'maks',
+ 'f.dates':'İhale tarihi aralığı','f.occ':'Doluluk','f.disc':'Mise à prix / piyasa değeri','f.saleType':'Satış türü','f.docsLbl':'Belge ve veri','f.any':'Hepsi','f.clear':'Tümünü temizle',
+ 'occ.libre':'Boş','occ.occ':'Dolu','occ.unk':'Belirtilmemiş',
+ 'disc.25':'≤ %25 (çok düşük)','disc.50':'≤ %50','disc.75':'≤ %75',
+ 'fl.sur':'Surenchère','fl.lic':'Licitation','fl.baisse':'Fiyat düşebilir','fl.multi':'Çok lotlu',
+ 'dc.photo':'Fotoğraflı','dc.docs':'Şartname / tutanak var','dc.visit':'Ziyaret tarihi var','dc.est':'Model tahmini var','dc.mv':'Piyasa değeri hesaplı',
+ 's.rel':'Alaka (arama)','s.date':'İhale tarihi','s.pub':'Yayın tarihi','s.mp':'Mise à prix','s.surf':'Yüzölçümü','s.ppm':'€/m² (mise à prix)','s.disc':'Piyasa değerine oran','s.upside':'Beklenen artış (tahmin / mise à prix)','s.visit':'Ziyaret tarihi','s.city':'Şehir (A–Z)','s.court':'Mahkeme (A–Z)','s.dir':'Sıralama yönünü değiştir',
+ 'fc.q':'Arama','fc.zone':'Bölge','fc.dep':'Dép.','fc.court':'Mahkeme','fc.lawyer':'Avukat','fc.city':'Şehir','fc.price':'Fiyat','fc.surf':'m²','fc.date':'Tarih','fc.occ':'Doluluk','fc.disc':'Oran','fc.week':'Bu hafta','fc.remove':'Filtreyi kaldır',
+ 'q.helpBtn':'Arama ipuçları',
+ 'q.help':'<b>Arama ipuçları</b> (örneğe tıklayın)<ul><li><code>paris 13 boş</code> tüm kelimeler eşleşmeli</li><li><code>"vincent auriol"</code> tam ifade</li><li><code>-dolu</code> veya <code>-occupé</code> hariç tut</li><li><code>dep:13</code> <code>ville:nice</code> <code>tribunal:créteil</code></li><li><code>avocat:simonnet</code> <code>type:ev</code></li><li><code>prix&lt;50000</code> <code>prix&gt;100k</code> <code>m2&gt;30</code> <code>jours&lt;14</code></li><li>Yazım hatası toleransı: <code>marsiele</code> → Marseille</li><li>Üç dil: <code>daire</code> = <code>appartement</code> = <code>apartment</code></li></ul>',
+ 'sg.city':'Şehirler','sg.dep':'Départementlar','sg.court':'Mahkemeler','sg.lawyer':'Avukatlar','sg.listing':'İlanlar','sg.none':'Eşleşme yok','sg.n':n=>`${n} ilan`,'sg.all':n=>`Tüm sonuçlar (${n}) →`,
+ 'c.group':'Grupla','c.g.date':'Tarihe göre','c.g.court':'Mahkemeye göre','c.g.zone':'Bölgeye göre','c.sortIn':'Grup içinde sırala','c.share':'İlan filtrelerini uygula',
+ 'cs.time':'Saat','cs.mp':'Mise à prix','cs.est':'Tahmin (medyan)','cs.city':'Şehir','cs.court':'Mahkeme',
+ 'c.info':(n,s)=>`${n} ihale gösteriliyor${s?' · İlanlar sekmesindeki filtre ve arama uygulanıyor':''}.`,
+ 'v.date':'Tarihe göre','v.city':'Şehre göre','v.mp':'Mise à prix\'e göre',
+ 'h.title':'Geçmiş satışlar','h.sub':'Modelin dayandığı tek lotlu satışlar. Sütun başlığına tıklayarak sıralayın.','h.ph':'Şehir, mülk, département…','h.date':'Satış tarihi','h.adj':'Satış fiyatı','h.ratio':'Oran','h.ppm':'€/m²','h.count':(a,b)=>`${a} / ${b} satış`
+});
+Object.assign(I18N.fr,{
+ 'f.searchPh':'Ville, adresse, tribunal, avocat, type… (ex. paris 13 libre prix<50000)',
+ 'f.more':'Filtres avancés','f.week':'Cette semaine','f.dep':'Département','f.court':'Tribunal','f.lawyer':'Avocat','f.price':'Mise à prix (€)','f.surf':'Surface (m²)','f.min':'min','f.max2':'max',
+ 'f.dates':"Période d'audience",'f.occ':'Occupation','f.disc':'Mise à prix / valeur de marché','f.saleType':'Type de vente','f.docsLbl':'Documents et données','f.any':'Tous','f.clear':'Tout effacer',
+ 'occ.libre':'Libre','occ.occ':'Occupé','occ.unk':'Non précisé',
+ 'disc.25':'≤ 25 % (très bas)','disc.50':'≤ 50 %','disc.75':'≤ 75 %',
+ 'fl.sur':'Surenchère','fl.lic':'Licitation','fl.baisse':'Faculté de baisse','fl.multi':'Plusieurs lots',
+ 'dc.photo':'Avec photos','dc.docs':'CCV / PV disponibles','dc.visit':'Visite annoncée','dc.est':'Estimation du modèle','dc.mv':'Valeur de marché calculée',
+ 's.rel':'Pertinence (recherche)','s.date':"Date d'audience",'s.pub':'Date de publication','s.mp':'Mise à prix','s.surf':'Surface','s.ppm':'€/m² (mise à prix)','s.disc':'Ratio / valeur de marché','s.upside':'Hausse attendue (estimation / mise à prix)','s.visit':'Date de visite','s.city':'Ville (A–Z)','s.court':'Tribunal (A–Z)','s.dir':"Inverser l'ordre",
+ 'fc.q':'Recherche','fc.zone':'Zone','fc.dep':'Dép.','fc.court':'Tribunal','fc.lawyer':'Avocat','fc.city':'Ville','fc.price':'Prix','fc.surf':'m²','fc.date':'Date','fc.occ':'Occupation','fc.disc':'Ratio','fc.week':'Cette semaine','fc.remove':'Retirer le filtre',
+ 'q.helpBtn':'Aide à la recherche',
+ 'q.help':"<b>Aide à la recherche</b> (cliquez sur un exemple)<ul><li><code>paris 13 libre</code> tous les mots doivent correspondre</li><li><code>\"vincent auriol\"</code> expression exacte</li><li><code>-occupé</code> exclure</li><li><code>dep:13</code> <code>ville:nice</code> <code>tribunal:créteil</code></li><li><code>avocat:simonnet</code> <code>type:maison</code></li><li><code>prix&lt;50000</code> <code>prix&gt;100k</code> <code>m2&gt;30</code> <code>jours&lt;14</code></li><li>Tolère les fautes : <code>marsiele</code> → Marseille</li><li>Trois langues : <code>appartement</code> = <code>apartment</code> = <code>daire</code></li></ul>",
+ 'sg.city':'Villes','sg.dep':'Départements','sg.court':'Tribunaux','sg.lawyer':'Avocats','sg.listing':'Annonces','sg.none':'Aucun résultat','sg.n':n=>`${n} annonce${n>1?'s':''}`,'sg.all':n=>`Tous les résultats (${n}) →`,
+ 'c.group':'Regrouper','c.g.date':'Par date','c.g.court':'Par tribunal','c.g.zone':'Par zone','c.sortIn':'Trier dans le groupe','c.share':'Appliquer les filtres des annonces',
+ 'cs.time':'Heure','cs.mp':'Mise à prix','cs.est':'Estimation (médiane)','cs.city':'Ville','cs.court':'Tribunal',
+ 'c.info':(n,s)=>`${n} ventes affichées${s?' · filtres et recherche de l’onglet Annonces appliqués':''}.`,
+ 'v.date':'Par date','v.city':'Par ville','v.mp':'Par mise à prix',
+ 'h.title':'Adjudications passées','h.sub':'Les ventes à lot unique utilisées par le modèle. Cliquez sur un en-tête pour trier.','h.ph':'Ville, bien, département…','h.date':'Date de vente','h.adj':'Prix adjugé','h.ratio':'Ratio','h.ppm':'€/m²','h.count':(a,b)=>`${a} / ${b} ventes`
+});
+Object.assign(I18N.en,{
+ 'f.searchPh':'City, address, court, lawyer, type… (e.g. paris 13 vacant price<50000)',
+ 'f.more':'More filters','f.week':'This week','f.dep':'Département','f.court':'Court','f.lawyer':'Lawyer','f.price':'Reserve price (€)','f.surf':'Floor area (m²)','f.min':'min','f.max2':'max',
+ 'f.dates':'Auction date range','f.occ':'Occupancy','f.disc':'Reserve / market value','f.saleType':'Sale type','f.docsLbl':'Documents and data','f.any':'Any','f.clear':'Clear all',
+ 'occ.libre':'Vacant','occ.occ':'Occupied','occ.unk':'Not stated',
+ 'disc.25':'≤ 25% (very low)','disc.50':'≤ 50%','disc.75':'≤ 75%',
+ 'fl.sur':'Surenchère','fl.lic':'Licitation','fl.baisse':'Price may drop','fl.multi':'Multiple lots',
+ 'dc.photo':'With photos','dc.docs':'Conditions / report available','dc.visit':'Viewing date set','dc.est':'Has model estimate','dc.mv':'Market value computed',
+ 's.rel':'Relevance (search)','s.date':'Auction date','s.pub':'Publication date','s.mp':'Reserve price','s.surf':'Floor area','s.ppm':'€/m² (reserve)','s.disc':'Reserve / market value','s.upside':'Expected uplift (estimate / reserve)','s.visit':'Viewing date','s.city':'City (A–Z)','s.court':'Court (A–Z)','s.dir':'Reverse order',
+ 'fc.q':'Search','fc.zone':'Area','fc.dep':'Dép.','fc.court':'Court','fc.lawyer':'Lawyer','fc.city':'City','fc.price':'Price','fc.surf':'m²','fc.date':'Date','fc.occ':'Occupancy','fc.disc':'Ratio','fc.week':'This week','fc.remove':'Remove filter',
+ 'q.helpBtn':'Search tips',
+ 'q.help':'<b>Search tips</b> (click an example)<ul><li><code>paris 13 vacant</code> all words must match</li><li><code>"vincent auriol"</code> exact phrase</li><li><code>-occupied</code> exclude</li><li><code>dep:13</code> <code>city:nice</code> <code>court:créteil</code></li><li><code>lawyer:simonnet</code> <code>type:house</code></li><li><code>price&lt;50000</code> <code>price&gt;100k</code> <code>m2&gt;30</code> <code>days&lt;14</code></li><li>Typo-tolerant: <code>marsiele</code> → Marseille</li><li>Three languages: <code>apartment</code> = <code>appartement</code> = <code>daire</code></li></ul>',
+ 'sg.city':'Cities','sg.dep':'Départements','sg.court':'Courts','sg.lawyer':'Lawyers','sg.listing':'Listings','sg.none':'No matches','sg.n':n=>`${n} listing${n>1?'s':''}`,'sg.all':n=>`All results (${n}) →`,
+ 'c.group':'Group by','c.g.date':'Date','c.g.court':'Court','c.g.zone':'Area','c.sortIn':'Sort within group','c.share':'Apply listing filters',
+ 'cs.time':'Time','cs.mp':'Reserve','cs.est':'Estimate (median)','cs.city':'City','cs.court':'Court',
+ 'c.info':(n,s)=>`Showing ${n} auctions${s?' · filters and search from the Listings tab applied':''}.`,
+ 'v.date':'By date','v.city':'By city','v.mp':'By reserve',
+ 'h.title':'Past sales','h.sub':'The single-lot sales the model is built on. Click a column header to sort.','h.ph':'City, property, département…','h.date':'Sale date','h.adj':'Hammer price','h.ratio':'Ratio','h.ppm':'€/m²','h.count':(a,b)=>`${a} / ${b} sales`
+});
+
+(function(){
+"use strict";
+const TODAY=new Date('2026-10-12T00:00:00');
+let LANG='tr';
+try{const s=localStorage.getItem('ench_lang');if(s&&I18N[s])LANG=s;else{const n=(navigator.language||'').slice(0,2);if(I18N[n])LANG=n;}}catch(e){}
+const T=()=>I18N[LANG];
+const t=(k,...a)=>{const v=T()[k];return typeof v==='function'?v(...a):(v==null?k:v);};
+const CATS=()=>T().cats, ZONES=()=>T().zones;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nf=(v,o)=>v.toLocaleString(LANG==='en'?'en-GB':'fr-FR',o).replace(/ /g,LANG==='en'?',':' ');
+const eur=v=>v==null||isNaN(v)?'—':(LANG==='en'?'€'+nf(Math.round(v)):nf(Math.round(v))+' €');
+const keur=v=>v==null?'—':(v>=1e6?nf(v/1e6,{maximumFractionDigits:1})+' M€':(LANG==='en'?'€'+nf(Math.round(v/1000))+'k':nf(Math.round(v/1000))+' k€'));
+const dec=(v,d)=>LANG==='en'?String(v):String(v).replace('.',',');
+const pct=r=>(r*100).toFixed(2).replace('.',LANG==='en'?'.':',')+(LANG==='en'?'%':' %');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const catColor=c=>css('--c-'+(T().cats[c]?c:'autre'));
+const fmtDate=(iso,opt)=>{if(!iso)return '—';return new Date(iso).toLocaleDateString(T().locale,opt||{weekday:'short',day:'numeric',month:'long'});};
+const daysTo=iso=>Math.round((new Date(iso.slice(0,10)+'T00:00:00')-TODAY)/864e5);
+const sq=v=>dec(v)+' m²';
+const houseIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>';
+
+/* fees */
+function emol(p){const br=[[6500,.07256],[17000,.02993],[60000,.01995],[Infinity,.01497]];let r=0,lo=0;for(const [hi,tx] of br){if(p>lo)r+=(Math.min(p,hi)-lo)*tx;lo=hi;}return r*1.2;}
+function lawyerFee(p){return Math.min(3500,Math.max(1500,p*0.045));}
+function fees(bid,o){o=o||{};const pre=o.pre!=null?o.pre:4000;const dm=o.dm!=null?o.dm:0.0632;const law=o.law!=null&&o.law!==''?+o.law:lawyerFee(bid);
+  const e=emol(bid),d=o.parts?0:bid*dm,c=o.parts?0:bid*0.001;return {pre,emol:e,dm:d,csi:c,law,total:pre+e+d+c+law};}
+function maxBidFor(b,o){let lo=0,hi=b;for(let i=0;i<50;i++){const m=(lo+hi)/2;if(m+fees(m,o).total<=b)lo=m;else hi=m;}return Math.max(0,Math.floor(lo/500)*500);}
+function feeRows(bid,o){o=o||{};const f=fees(bid,o);return `
+  <tr><td>${t('f.bid')}</td><td>${eur(bid)}</td></tr>
+  <tr><td>${t('f.pre')} <span class="why">${t('f.preW')}</span></td><td>${eur(f.pre)}</td></tr>
+  <tr><td>${t('f.emol')} <span class="why">${t('f.emolW')}</span></td><td>${eur(f.emol)}</td></tr>
+  <tr><td>${t('f.dm')} <span class="why">${o.parts?t('f.dmParts'):t('f.dmW',pct(o.dm||0.0632))}</span></td><td>${eur(f.dm)}</td></tr>
+  <tr><td>${t('f.csi')} <span class="why">${t('f.csiW')}</span></td><td>${eur(f.csi)}</td></tr>
+  <tr><td>${t('f.law')} <span class="why">${t('f.lawW')}</span></td><td>${eur(f.law)}</td></tr>
+  <tr class="tot"><td>${t('f.total')}</td><td>${eur(bid+f.total)}</td></tr>
+  <tr><td class="note">${t('f.ratio')}</td><td class="note">${bid?Math.round(f.total/bid*100)+(LANG==='en'?'%':' %'):'—'}</td></tr>`;}
+
+/* ---------- search engine ---------- */
+const NORM=s=>String(s==null?'':s).toLowerCase().replace(/ı/g,'i').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+const NCH=c=>{const n=c.toLowerCase().replace(/ı/g,'i').normalize('NFD').replace(/[̀-ͯ]/g,'');return n.length===1&&/[a-z0-9]/.test(n)?n:' ';};
+const SYN={daire:'c:appartement',apartment:'c:appartement',appartement:'c:appartement',appart:'c:appartement',apart:'c:appartement',flat:'c:appartement',
+ ev:'c:maison',house:'c:maison',maison:'c:maison',villa:'c:maison',pavillon:'c:maison',home:'c:maison',mustakil:'c:maison',
+ bina:'c:immeuble',building:'c:immeuble',immeuble:'c:immeuble',apartman:'c:immeuble',
+ dukkan:'c:commerce',ticari:'c:commerce',shop:'c:commerce',commercial:'c:commerce',commerce:'c:commerce',magaza:'c:commerce',bureau:'c:commerce',office:'c:commerce',ofis:'c:commerce',
+ arsa:'c:terrain',land:'c:terrain',terrain:'c:terrain',parcelle:'c:terrain',plot:'c:terrain',
+ garaj:'c:parking',garage:'c:parking',parking:'c:parking',otopark:'c:parking',box:'c:parking',
+ bos:'o:libre',vacant:'o:libre',libre:'o:libre',empty:'o:libre',
+ dolu:'o:occupé',occupied:'o:occupé',occupe:'o:occupé',kiracili:'o:occupé',
+ surenchere:'f:sur',licitation:'f:lic'};
+const FKEYS={ville:'city',city:'city',sehir:'city',dep:'dep',departement:'dep',department:'dep',tribunal:'court',court:'court',mahkeme:'court',tj:'court',avocat:'lawyer',lawyer:'lawyer',avukat:'lawyer',type:'cat',tip:'cat',id:'id'};
+const NKEYS={prix:'mp',price:'mp',fiyat:'mp',mp:'mp',m2:'surf',surface:'surf',jours:'days',days:'days',gun:'days'};
+function lev(a,b,max){if(Math.abs(a.length-b.length)>max)return max+1;let prev=Array.from({length:b.length+1},(_,i)=>i);
+  for(let i=1;i<=a.length;i++){const cur=[i];let best=i;for(let j=1;j<=b.length;j++){cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));if(cur[j]<best)best=cur[j];}if(best>max)return max+1;prev=cur;}return prev[b.length];}
+function buildIndex(L){
+  const allCat=c=>['tr','fr','en'].map(l=>I18N[l].cats[c]).join(' '),allZone=z=>['tr','fr','en'].map(l=>I18N[l].zones[z]||'').join(' ');
+  L.forEach(x=>{
+    const pa=(x.city||'').match(/^Paris (\d+)/);
+    x.lawKeys=x.lawyers.map(l=>l.name.split(',')[0].trim());
+    const F=[['id',x.id+' '+(x.ref||''),6],['city',(x.city||'')+(pa?' 750'+String(pa[1]).padStart(2,'0'):''),5],['dep',(x.dep||'')+' '+(x.depName||''),4],
+      ['title',x.title,3],['street',x.street,3],['court',x.court,2.5],['lawyer',x.lawyers.map(l=>l.name+' '+l.contact).join(' '),2],
+      ['cat',allCat(x.cat),2],['zone',allZone(x.zone),1.5],['text',x.subs.map(s=>s.title+' '+s.text).join(' ')+' '+(x.notes||'')+' '+x.saleType+' '+x.visits.join(' '),1]];
+    x._f=F.map(([k,v,w])=>{const s=NORM(v);return {k,w,s:' '+s+' ',toks:[...new Set(s.split(' ').filter(Boolean))]};});
+  });
+}
+function parseQ(q){
+  const P={terms:[],phrases:[],neg:[],fields:[],nums:[],hl:[]};
+  (q.match(/-?"[^"]*"?|-?[^\s"]+/g)||[]).forEach(raw=>{
+    let neg=false;if(raw.length>1&&raw[0]==='-'){neg=true;raw=raw.slice(1);}
+    let m;
+    if(raw[0]==='"'){const v=NORM(raw.replace(/"/g,''));if(v){(neg?P.neg:P.phrases).push(v);if(!neg)P.hl.push(v);}return;}
+    if((m=raw.match(/^([a-zçğıöşü0-9]+)(<=|>=|<|>|=)(\d+(?:[.,]\d+)?)(k|m)?$/i))&&NKEYS[NORM(m[1])]){
+      let v=parseFloat(m[3].replace(',','.'));if(m[4])v*=m[4].toLowerCase()==='k'?1e3:1e6;P.nums.push({k:NKEYS[NORM(m[1])],op:m[2],v});return;}
+    if((m=raw.match(/^([a-zçğıöşü]+):(.+)$/i))&&FKEYS[NORM(m[1])]){const v=NORM(m[2].replace(/"/g,''));if(v){P.fields.push({k:FKEYS[NORM(m[1])],v,neg});if(!neg&&FKEYS[NORM(m[1])]!=='cat')P.hl.push(v);}return;}
+    NORM(raw).split(' ').filter(Boolean).forEach(tm=>{if(neg)P.neg.push(tm);else{P.terms.push(tm);P.hl.push(tm);}});
+  });
+  P.empty=!P.terms.length&&!P.phrases.length&&!P.neg.length&&!P.fields.length&&!P.nums.length;
+  return P;}
+function termScore(x,tm){let best=0,sum=0;
+  for(const f of x._f){let s=0;
+    for(const tk of f.toks){let v=0;
+      if(tk===tm)v=3;else if(tm.length>=2&&tk.startsWith(tm)&&!(/^\d+$/.test(tm)&&/^\d/.test(tk.slice(tm.length))))v=2+tm.length/tk.length*.5;
+      else if(tm.length>=4&&tk.length>=4&&!/\d/.test(tm)&&lev(tk,tm,tm.length>=8?2:1)<=(tm.length>=8?2:1))v=1.2;
+      if(v>s)s=v;if(s===3)break;}
+    if(!s&&tm.length>=3&&!/^\d+$/.test(tm)&&f.s.includes(tm))s=1;
+    s*=f.w;sum+=s;if(s>best)best=s;}
+  return best?best+0.1*(sum-best):0;}
+function synOK(x,tm){const s=SYN[tm];if(!s)return null;const [k,v]=s.split(':');
+  return k==='c'?x.cat===v:k==='o'?x.occ===v:k==='f'?(v==='sur'?x.surenchere:x.lic):false;}
+function fieldOK(x,f){const v=f.v;
+  if(f.k==='city')return NORM(x.city).includes(v);
+  if(f.k==='dep')return NORM(x.dep)===v||NORM(x.depName).includes(v);
+  if(f.k==='court')return NORM(x.court).includes(v);
+  if(f.k==='lawyer')return NORM(x.lawyers.map(l=>l.name).join(' ')).includes(v);
+  if(f.k==='id')return String(x.id)===v||NORM(x.ref).includes(v);
+  if(f.k==='cat'){const s=SYN[v];if(s&&s[0]==='c')return x.cat===s.slice(2);return ['tr','fr','en'].some(l=>NORM(I18N[l].cats[x.cat]).includes(v));}
+  return true;}
+function numOK(x,n){const val=n.k==='mp'?x.mp:n.k==='surf'?x.surface:(x.date?daysTo(x.date):null);if(val==null)return false;
+  return n.op==='<'?val<n.v:n.op==='>'?val>n.v:n.op==='<='?val<=n.v:n.op==='>='?val>=n.v:val===n.v;}
+function scoreDoc(x,P){
+  if(P.empty)return 1;let sc=0;
+  for(const tm of P.terms){let s=termScore(x,tm);const so=synOK(x,tm);if(so)s=Math.max(s,8);if(!s)return 0;sc+=s;}
+  for(const ph of P.phrases){const hit=x._f.find(f=>f.s.includes(' '+ph));if(!hit)return 0;sc+=4*hit.w;}
+  for(const tm of P.neg){const so=synOK(x,tm);if(so)return 0;if(so===null&&x._f.some(f=>f.toks.some(tk=>tk===tm||(tm.length>=3&&tk.startsWith(tm)))))return 0;}
+  for(const f of P.fields){const ok=fieldOK(x,f);if(ok===!!f.neg)return 0;sc+=2;}
+  for(const n of P.nums){if(!numOK(x,n))return 0;sc+=1;}
+  return sc||1;}
+function hl(text,P){
+  const s=String(text==null?'':text);if(!P||!P.hl.length)return esc(s);
+  const ns=[...s].map(NCH).join('');const marks=new Array(s.length).fill(false);
+  P.hl.forEach(tm=>{let i=-1;while((i=ns.indexOf(tm,i+1))!==-1){if(i===0||ns[i-1]===' '){for(let k=i;k<i+tm.length;k++)marks[k]=true;}}});
+  let out='',open=false;[...s].forEach((c,i)=>{if(marks[i]&&!open){out+='<mark>';open=true;}if(!marks[i]&&open){out+='</mark>';open=false;}out+=esc(c);});
+  return out+(open?'</mark>':'');}
+
+/* state */
+let D=null,L=[],filtered=[],shown=40,selId=null,drawerOpen=false,booted=false,P=parseQ('');
+const SORTS={rel:-1,date:1,pub:-1,mp:1,surf:-1,ppm:1,disc:1,upside:-1,visit:1,city:1,court:1};
+const st={q:'',zone:'',dep:'',court:'',lawyer:'',city:'',cats:new Set(),mpMin:'',mpMax:'',sMin:'',sMax:'',dFrom:'',dTo:'',occ:'',disc:'',flags:new Set(),docs:new Set(),week:false,sort:'date',dir:1,sortUser:false};
+try{const s=JSON.parse(localStorage.getItem('ench_sort')||'null');if(s&&SORTS[s.sort]!=null){st.sort=s.sort;st.dir=s.dir;st.sortUser=true;}}catch(e){}
+applyStatic();
+fetch('data.json').then(r=>r.json()).then(d=>{D=d;L=d.listings;buildIndex(L);init();}).catch(e=>{$('#list').innerHTML='<div class="panel empty">'+t('ui.err')+esc(e.message)+'</div>';});
+
+function applyStatic(){
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('[data-i18n]').forEach(n=>n.innerHTML=t(n.dataset.i18n));
+  document.querySelectorAll('[data-i18n-ph]').forEach(n=>n.placeholder=t(n.dataset.i18nPh));
+  document.querySelectorAll('[data-i18n-aria]').forEach(n=>n.setAttribute('aria-label',t(n.dataset.i18nAria).replace(/&amp;/g,'&')));
+  document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===LANG));
+  const fr=document.querySelector('[data-zoom=fr]');if(fr)fr.textContent=LANG==='tr'?'Fransa':'France';
+  $('#steps').innerHTML=T().steps.map((s,i)=>`<li><span class="n">${i+1}</span><div><h3>${s[0]}</h3><p>${s[1]}</p></div></li>`).join('');
+  $('#gtips').innerHTML=T().gtips.map(([c,i,s])=>`<li><span class="ic ${c}">${i}</span><span>${s}</span></li>`).join('');
+  $('#qhelp').innerHTML=t('q.help');
+  $('#qhelp').querySelectorAll('code').forEach(c=>c.addEventListener('click',()=>{$('#q').value=c.textContent;onQuery(c.textContent,true);$('#q').focus();}));
+}
+function setLang(l){if(!I18N[l]||l===LANG)return;LANG=l;try{localStorage.setItem('ench_lang',l);}catch(e){}
+  applyStatic();if(!D)return;renderDynamic();if(drawerOpen&&selId)openDetail(selId,true);}
+function init(){bind();drawMap();renderDynamic();booted=true;if(location.hash==='#auriol')showTab('auriol');}
+function renderDynamic(){kpis();controlsUI();apply();model();histUI();strategy();auriol();$('#src').innerHTML=t('src',D.model.n);}
+function median(a){if(!a.length)return null;a=[...a].sort((x,y)=>x-y);const m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2;}
+function kpis(){
+  const wk=L.filter(x=>x.date&&daysTo(x.date)>=0&&daysTo(x.date)<=7).length;
+  const ph=L.filter(x=>x.photos.length).length;const sum=L.reduce((a,x)=>a+(x.mp||0),0);
+  $('#kpis').innerHTML=[[t('k.upcoming'),L.length,t('k.upcomingS',new Set(L.map(x=>x.court)).size)],[t('k.week'),wk,t('k.weekS')],[t('k.sum'),keur(sum),t('k.sumS',eur(median(L.map(x=>x.mp).filter(Boolean))))],[t('k.photo'),ph,t('k.photoS')]]
+    .map(([k,v,s])=>`<div class="panel stat"><p class="k">${k}</p><p class="v num">${v}</p><p class="s">${esc(s)}</p></div>`).join('');}
+const opt=(v,l,sel)=>`<option value="${esc(v)}"${sel?' selected':''}>${esc(l)}</option>`;
+function uniq(arr){const m=new Map();arr.forEach(v=>{if(v)m.set(v,(m.get(v)||0)+1);});return m;}
+function controlsUI(){
+  const zc=uniq(L.map(x=>x.zone));
+  $('#fzone').innerHTML=opt('',t('f.allFrance'))+Object.keys(ZONES()).filter(z=>zc.get(z)).map(z=>opt(z,`${ZONES()[z]} (${zc.get(z)})`,st.zone===z)).join('');
+  const dc=new Map();L.forEach(x=>{if(x.dep)dc.set(x.dep,{n:(dc.get(x.dep)||{n:0}).n+1,name:x.depName});});
+  $('#fdep').innerHTML=opt('',t('f.any'))+[...dc.entries()].sort((a,b)=>a[0].localeCompare(b[0])).map(([c,v])=>opt(c,`${c} · ${v.name} (${v.n})`,st.dep===c)).join('');
+  const cc=uniq(L.map(x=>x.court));
+  $('#fcourt').innerHTML=opt('',t('f.any'))+[...cc.entries()].sort((a,b)=>a[0].localeCompare(b[0],'fr')).map(([c,n])=>opt(c,`${c.replace('Tribunal Judiciaire','TJ')} (${n})`,st.court===c)).join('');
+  const lc=uniq(L.flatMap(x=>x.lawKeys));
+  $('#flaw').innerHTML=opt('',t('f.any'))+[...lc.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'fr')).map(([c,n])=>opt(c,`${c.replace(/^Maître\s+/,'')} (${n})`,st.lawyer===c)).join('');
+  $('#focc').innerHTML=opt('',t('f.any'))+[['libre','occ.libre'],['occupé','occ.occ'],['unk','occ.unk']].map(([v,k])=>opt(v,t(k),st.occ===v)).join('');
+  $('#fdisc').innerHTML=opt('',t('f.any'))+[['0.25','disc.25'],['0.5','disc.50'],['0.75','disc.75']].map(([v,k])=>opt(v,t(k),st.disc===v)).join('');
+  $('#fflags').innerHTML=[['sur','fl.sur'],['lic','fl.lic'],['baisse','fl.baisse'],['multi','fl.multi']].map(([v,k])=>`<button type="button" class="chip" data-flag="${v}" aria-pressed="${st.flags.has(v)}">${t(k)} <span class="num">${L.filter(x=>flagOK(x,v)).length}</span></button>`).join('');
+  $('#fdocs').innerHTML=[['photo','dc.photo'],['docs','dc.docs'],['visit','dc.visit'],['est','dc.est'],['mv','dc.mv']].map(([v,k])=>`<button type="button" class="chip" data-doc="${v}" aria-pressed="${st.docs.has(v)}">${t(k)} <span class="num">${L.filter(x=>docOK(x,v)).length}</span></button>`).join('');
+  const ct=uniq(L.map(x=>x.cat));
+  $('#fcat').innerHTML=Object.keys(CATS()).filter(c=>ct.get(c)).map(c=>`<button class="chip" aria-pressed="${st.cats.has(c)}" data-cat="${c}"><span class="dot" style="background:var(--c-${c})"></span>${CATS()[c]} <span class="num">${ct.get(c)}</span></button>`).join('');
+  $('#legend').innerHTML=Object.keys(CATS()).filter(c=>ct.get(c)&&c!=='parts').map(c=>`<span><i style="background:var(--c-${c})"></i>${CATS()[c]}</span>`).join('')+`<span>${t('map.size')}</span>`;
+  sortUI();syncInputs();
+}
+function sortUI(){
+  $('#fsort').innerHTML=Object.keys(SORTS).filter(k=>k!=='rel'||!P.empty).map(k=>opt(k,t('s.'+k),st.sort===k)).join('');
+  $('#fdirIc').textContent=st.dir>0?'↑':'↓';
+}
+function syncInputs(){
+  [['fmpMin','mpMin'],['fmpMax','mpMax'],['fsMin','sMin'],['fsMax','sMax'],['fdFrom','dFrom'],['fdTo','dTo']].forEach(([id,k])=>{if($('#'+id).value!==st[k])$('#'+id).value=st[k];});
+  [['fzone','zone'],['fdep','dep'],['fcourt','court'],['flaw','lawyer'],['focc','occ'],['fdisc','disc']].forEach(([id,k])=>{$('#'+id).value=st[k];});
+  $('#fphoto').setAttribute('aria-pressed',st.docs.has('photo'));$('#fvisit').setAttribute('aria-pressed',st.docs.has('visit'));
+  $('#flibre').setAttribute('aria-pressed',st.occ==='libre');$('#fweek').setAttribute('aria-pressed',st.week);
+  document.querySelectorAll('[data-flag]').forEach(b=>b.setAttribute('aria-pressed',st.flags.has(b.dataset.flag)));
+  document.querySelectorAll('[data-doc]').forEach(b=>b.setAttribute('aria-pressed',st.docs.has(b.dataset.doc)));
+  document.querySelectorAll('[data-cat]').forEach(b=>b.setAttribute('aria-pressed',st.cats.has(b.dataset.cat)));
+  const n=['zone','dep','court','lawyer','city','mpMin','mpMax','sMin','sMax','dFrom','dTo','occ','disc'].filter(k=>st[k]).length+st.flags.size+st.docs.size;
+  $('#advN').hidden=!n;$('#advN').textContent=n;
+}
+const flagOK=(x,f)=>f==='sur'?x.surenchere:f==='lic'?x.lic:f==='baisse'?x.baisse:x.nLots>1;
+const docOK=(x,d)=>d==='photo'?x.photos.length>0:d==='docs'?x.docs.length>0:d==='visit'?x.visitDates.length>0:d==='est'?!!x.pred:!!x.marketValue;
+
+let qTimer=null;
+function onQuery(v,now){st.q=v;clearTimeout(qTimer);const run=()=>{P=parseQ(st.q);
+  if(!P.empty&&!st.sortUser)st.sort='rel',st.dir=-1;if(P.empty&&st.sort==='rel')st.sort='date',st.dir=1;
+  sortUI();apply();suggest();};now?run():qTimer=setTimeout(run,110);}
+function bind(){
+  document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+  document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+  const q=$('#q');
+  q.addEventListener('input',e=>onQuery(e.target.value));
+  q.addEventListener('focus',()=>{if(q.value)suggest();});
+  q.addEventListener('keydown',suggKey);
+  document.addEventListener('click',e=>{if(!e.target.closest('.sbox'))closeSugg();});
+  $('#qhelpBtn').addEventListener('click',()=>{const h=$('#qhelp');h.hidden=!h.hidden;$('#qhelpBtn').setAttribute('aria-expanded',!h.hidden);});
+  document.addEventListener('keydown',e=>{
+    const typing=/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName);
+    if((e.key==='k'&&(e.metaKey||e.ctrlKey))||(e.key==='/'&&!typing)){e.preventDefault();closeDrawer();showTab('ilanlar');q.focus();q.select();}
+    if(e.key==='Escape'){if(!$('#lightbox').hidden)$('#lightbox').hidden=true;else if(!$('#sugg').hidden)closeSugg();else closeDrawer();}});
+  $('#fsort').addEventListener('change',e=>{st.sort=e.target.value;st.dir=SORTS[st.sort];st.sortUser=true;saveSort();sortUI();apply();});
+  $('#fdir').addEventListener('click',()=>{st.dir*=-1;st.sortUser=true;saveSort();sortUI();apply();});
+  $('#advBtn').addEventListener('click',()=>{const a=$('#adv');a.hidden=!a.hidden;$('#advBtn').setAttribute('aria-expanded',!a.hidden);});
+  [['fzone','zone'],['fdep','dep'],['fcourt','court'],['flaw','lawyer'],['focc','occ'],['fdisc','disc']].forEach(([id,k])=>$('#'+id).addEventListener('change',e=>{st[k]=e.target.value;apply();if(k==='zone'&&st.zone)zoomZone(st.zone);}));
+  [['fmpMin','mpMin'],['fmpMax','mpMax'],['fsMin','sMin'],['fsMax','sMax'],['fdFrom','dFrom'],['fdTo','dTo']].forEach(([id,k])=>$('#'+id).addEventListener('input',e=>{st[k]=e.target.value;apply();}));
+  $('#fcat').addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(!b)return;const c=b.dataset.cat;st.cats.has(c)?st.cats.delete(c):st.cats.add(c);apply();});
+  $('#fflags').addEventListener('click',e=>{const b=e.target.closest('[data-flag]');if(!b)return;const c=b.dataset.flag;st.flags.has(c)?st.flags.delete(c):st.flags.add(c);apply();});
+  $('#fdocs').addEventListener('click',e=>{const b=e.target.closest('[data-doc]');if(!b)return;const c=b.dataset.doc;st.docs.has(c)?st.docs.delete(c):st.docs.add(c);apply();});
+  $('#fphoto').addEventListener('click',()=>{st.docs.has('photo')?st.docs.delete('photo'):st.docs.add('photo');apply();});
+  $('#fvisit').addEventListener('click',()=>{st.docs.has('visit')?st.docs.delete('visit'):st.docs.add('visit');apply();});
+  $('#flibre').addEventListener('click',()=>{st.occ=st.occ==='libre'?'':'libre';apply();});
+  $('#fweek').addEventListener('click',()=>{st.week=!st.week;apply();});
+  $('#more').addEventListener('click',()=>{shown+=40;renderList();});
+  $('#scrim').addEventListener('click',closeDrawer);
+  $('#lbClose').addEventListener('click',()=>$('#lightbox').hidden=true);
+  $('#lightbox').addEventListener('click',e=>{if(e.target.id==='lightbox')$('#lightbox').hidden=true;});
+  document.querySelectorAll('[data-zoom]').forEach(b=>b.addEventListener('click',()=>zoomPreset(b.dataset.zoom)));
+  ['gBid','gPre','gDm','gLaw'].forEach(i=>$('#'+i).addEventListener('input',strategy));
+  bindCalendar();bindHist();
+}
+function saveSort(){try{localStorage.setItem('ench_sort',JSON.stringify({sort:st.sort,dir:st.dir}));}catch(e){}}
+function showTab(tab){document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
+  document.querySelectorAll('main > section').forEach(s=>s.hidden=s.id!=='v-'+tab);window.scrollTo(0,0);}
+
+function passFilters(x){
+  if(st.zone&&x.zone!==st.zone)return false;
+  if(st.dep&&x.dep!==st.dep)return false;
+  if(st.court&&x.court!==st.court)return false;
+  if(st.lawyer&&!x.lawKeys.includes(st.lawyer))return false;
+  if(st.city&&x.city!==st.city)return false;
+  if(st.cats.size&&!st.cats.has(x.cat))return false;
+  if(st.mpMin!==''&&!(x.mp>=+st.mpMin))return false;
+  if(st.mpMax!==''&&!(x.mp&&x.mp<=+st.mpMax))return false;
+  if(st.sMin!==''&&!(x.surface>=+st.sMin))return false;
+  if(st.sMax!==''&&!(x.surface&&x.surface<=+st.sMax))return false;
+  if(st.dFrom&&!(x.date&&x.date.slice(0,10)>=st.dFrom))return false;
+  if(st.dTo&&!(x.date&&x.date.slice(0,10)<=st.dTo))return false;
+  if(st.week&&!(x.date&&daysTo(x.date)>=0&&daysTo(x.date)<=7))return false;
+  if(st.occ){if(st.occ==='unk'?x.occ!=null:x.occ!==st.occ)return false;}
+  if(st.disc&&!(x.marketValue&&x.mp&&x.mp/x.marketValue<=+st.disc))return false;
+  for(const f of st.flags)if(!flagOK(x,f))return false;
+  for(const d of st.docs)if(!docOK(x,d))return false;
+  return true;}
+function sortVal(x,k){switch(k){
+  case 'rel':return x._score;case 'date':return x.date||null;case 'pub':return x.published||null;case 'mp':return x.mp||null;case 'surf':return x.surface||null;
+  case 'ppm':return x.mp&&x.surface?x.mp/x.surface:null;case 'disc':return x.mp&&x.marketValue?x.mp/x.marketValue:null;case 'upside':return x.pred&&x.mp?x.pred.p50/x.mp:null;
+  case 'visit':return x.visitDates.filter(d=>daysTo(d)>=0)[0]||null;case 'city':return NORM(x.city)||null;case 'court':return NORM(x.court)||null;}}
+function cmpBy(k,dir){return (a,b)=>{const va=sortVal(a,k),vb=sortVal(b,k);if(va==null&&vb==null)return 0;if(va==null)return 1;if(vb==null)return -1;
+  const c=typeof va==='string'?va.localeCompare(vb):va-vb;return c*dir||(a.date||'').localeCompare(b.date||'');};}
+function apply(){
+  filtered=[];for(const x of L){if(!passFilters(x))continue;const s=scoreDoc(x,P);if(!s)continue;x._score=s;filtered.push(x);}
+  filtered.sort(cmpBy(st.sort,st.dir));
+  shown=40;syncInputs();activeChips();renderList();updateMap();calendar();
+}
+function activeChips(){
+  const c=[],dash=(a,b)=>(a!==''?a:'…')+' – '+(b!==''?b:'…');
+  if(st.q.trim())c.push([t('fc.q')+': “'+st.q.trim()+'”',()=>{st.q='';$('#q').value='';P=parseQ('');if(!st.sortUser){st.sort='date';st.dir=1;}sortUI();}]);
+  if(st.zone)c.push([ZONES()[st.zone],()=>st.zone='']);
+  if(st.dep)c.push([t('fc.dep')+' '+st.dep,()=>st.dep='']);
+  if(st.court)c.push([st.court.replace('Tribunal Judiciaire','TJ'),()=>st.court='']);
+  if(st.lawyer)c.push([st.lawyer,()=>st.lawyer='']);
+  if(st.city)c.push([t('fc.city')+': '+st.city,()=>st.city='']);
+  st.cats.forEach(k=>c.push([CATS()[k],()=>st.cats.delete(k)]));
+  if(st.mpMin!==''||st.mpMax!=='')c.push([t('fc.price')+' '+dash(st.mpMin&&eur(+st.mpMin),st.mpMax&&eur(+st.mpMax)),()=>{st.mpMin='';st.mpMax='';}]);
+  if(st.sMin!==''||st.sMax!=='')c.push([t('fc.surf')+' '+dash(st.sMin,st.sMax),()=>{st.sMin='';st.sMax='';}]);
+  if(st.dFrom||st.dTo)c.push([t('fc.date')+' '+dash(st.dFrom&&fmtDate(st.dFrom+'T00:00:00',{day:'numeric',month:'short'}),st.dTo&&fmtDate(st.dTo+'T00:00:00',{day:'numeric',month:'short'})),()=>{st.dFrom='';st.dTo='';}]);
+  if(st.week)c.push([t('fc.week'),()=>st.week=false]);
+  if(st.occ)c.push([t({libre:'occ.libre','occupé':'occ.occ',unk:'occ.unk'}[st.occ]),()=>st.occ='']);
+  if(st.disc)c.push([t('fc.disc')+' '+t({'0.25':'disc.25','0.5':'disc.50','0.75':'disc.75'}[st.disc]),()=>st.disc='']);
+  st.flags.forEach(k=>c.push([t('fl.'+k),()=>st.flags.delete(k)]));
+  st.docs.forEach(k=>c.push([t('dc.'+k),()=>st.docs.delete(k)]));
+  const box=$('#active');box.hidden=!c.length;
+  box.innerHTML=c.map(([l],i)=>`<button type="button" class="fchip" data-i="${i}" aria-label="${esc(t('fc.remove')+': '+l)}">${esc(l)}<span class="x" aria-hidden="true">×</span></button>`).join('')+(c.length>1?`<button type="button" class="clear" id="clearAll">${t('f.clear')}</button>`:'');
+  box.querySelectorAll('.fchip').forEach(b=>b.addEventListener('click',()=>{c[+b.dataset.i][1]();apply();}));
+  const ca=$('#clearAll');if(ca)ca.addEventListener('click',clearAll);
+}
+function clearAll(){Object.assign(st,{q:'',zone:'',dep:'',court:'',lawyer:'',city:'',mpMin:'',mpMax:'',sMin:'',sMax:'',dFrom:'',dTo:'',occ:'',disc:'',week:false});
+  st.cats.clear();st.flags.clear();st.docs.clear();$('#q').value='';P=parseQ('');if(st.sort==='rel'){st.sort='date';st.dir=1;}sortUI();apply();}
+function pills(x){const p=[];
+  if(x.occ==='libre')p.push(`<span class="pill ok">${t('p.libre')}</span>`);else if(x.occ==='occupé')p.push(`<span class="pill warn">${t('p.occ')}</span>`);
+  if(x.surenchere)p.push(`<span class="pill info">${t('p.sur')}</span>`);
+  if(x.lic)p.push(`<span class="pill info">${t('p.lic')}</span>`);
+  if(x.baisse)p.push(`<span class="pill neutral">${t('p.baisse')}</span>`);
+  if(x.nLots>1)p.push(`<span class="pill neutral">${t('p.lots',x.nLots)}</span>`);
+  if(x.date){const d=daysTo(x.date);if(d>=0&&d<=7)p.push(`<span class="pill bad">${d===0?t('p.today'):t('p.days',d)}</span>`);}
+  return p.join('');}
+function sortHint(x){const k=st.sort;if(['ppm','disc','upside','surf','visit'].indexOf(k)<0)return '';const v=sortVal(x,k);if(v==null)return '';
+  return `<span class="score num" style="display:block">${k==='ppm'?eur(v)+'/m²':k==='disc'?Math.round(v*100)+' %':k==='upside'?'×'+dec(v.toFixed(1)):k==='surf'?sq(v):fmtDate(v+'T00:00:00',{day:'numeric',month:'short'})}</span>`;}
+function snippet(x){if(P.empty||!P.hl.length)return '';
+  const txt=x.subs.map(s=>s.text).join(' · ').replace(/\s+/g,' ');const ns=[...txt].map(NCH).join('');
+  let pos=-1;for(const tm of P.hl){const i=ns.indexOf(tm);if(i>=0&&(pos<0||i<pos))pos=i;}if(pos<0)return '';
+  const a=Math.max(0,pos-40),s=(a?'…':'')+[...txt].slice(a,pos+90).join('')+'…';
+  return `<span class="m" style="display:block;white-space:normal">${hl(s,P)}</span>`;}
+function renderList(){
+  $('#count').textContent=t('r.count',filtered.length,filtered.filter(x=>x.lat!=null).length);
+  $('#list').innerHTML=filtered.slice(0,shown).map(x=>`
+    <button class="row${x.id===selId?' sel':''}" data-id="${x.id}" type="button">
+      ${x.photos.length?`<img class="thumb" src="${x.photos[0]}" alt="" loading="lazy">`:`<span class="thumb" style="color:var(--c-${x.cat})">${houseIcon}</span>`}
+      <span style="min-width:0;display:block">
+        <span class="t" style="display:block">${hl(x.title,P)}${x.surface?' · '+sq(x.surface):''}</span>
+        <span class="m" style="display:block">${hl(x.city,P)}${x.dep?' ('+esc(x.dep)+')':''} · ${fmtDate(x.date)} · ${hl(x.court.replace('Tribunal Judiciaire','TJ'),P)}</span>
+        ${snippet(x)}
+        <span class="pills">${pills(x)}</span>
+      </span>
+      <span class="price"><span class="lbl" style="display:block">${t('r.mp')}</span><span class="mp num" style="display:block">${eur(x.mp)}</span>${x.pred?`<span class="est num" style="display:block">${t('r.est')} ${keur(x.pred.p25)}–${keur(x.pred.p75)}</span>`:''}${sortHint(x)}</span>
+    </button>`).join('')||`<div class="panel empty">${t('r.none')}${st.q||$('#advN').textContent?` <button type="button" class="clear" id="clearAll2">${t('f.clear')}</button>`:''}</div>`;
+  $('#more').hidden=filtered.length<=shown;
+  $('#list').querySelectorAll('.row').forEach(r=>r.addEventListener('click',()=>openDetail(+r.dataset.id)));
+  const c2=$('#clearAll2');if(c2)c2.addEventListener('click',clearAll);
+}
+
+/* suggestions */
+let sItems=[],sIdx=-1;
+function suggest(){
+  const box=$('#sugg'),q=$('#q').value;const raw=q.trim();
+  if(!raw||/[:<>]/.test(raw.split(/\s+/).pop())){closeSugg();return;}
+  const nq=NORM(raw.replace(/-?"[^"]*"?/g,' ').replace(/(^|\s)-\S+/g,' '));
+  if(!nq){closeSugg();return;}
+  const m=(label)=>{const n=NORM(label);if(n.startsWith(nq))return 3;if((' '+n).includes(' '+nq))return 2;if(nq.length>=3&&n.includes(nq))return 1;
+    if(nq.length>=4){const tks=n.split(' ');if(tks.some(tk=>tk.length>=4&&lev(tk,nq,1)<=1))return .5;}return 0;};
+  const grp=(arr,kind,max)=>arr.map(([label,val,n,extra])=>({label,val,n,extra,kind,s:m(label+' '+(extra||''))})).filter(o=>o.s).sort((a,b)=>b.s-a.s||b.n-a.n).slice(0,max);
+  const cities=grp([...uniq(L.map(x=>x.city)).entries()].map(([c,n])=>[c,c,n]),'city',5);
+  const dmap=new Map();L.forEach(x=>{if(x.dep)dmap.set(x.dep,[x.dep+' · '+x.depName,x.dep,(dmap.get(x.dep)||[0,0,0])[2]+1]);});
+  const deps=grp([...dmap.values()],'dep',3);
+  const courts=grp([...uniq(L.map(x=>x.court)).entries()].map(([c,n])=>[c.replace('Tribunal Judiciaire','TJ'),c,n]),'court',3);
+  const laws=grp([...uniq(L.flatMap(x=>x.lawKeys)).entries()].map(([c,n])=>[c.replace(/^Maître\s+/,''),c,n]),'lawyer',3);
+  const lst=filtered.slice().sort((a,b)=>b._score-a._score).slice(0,5).map(x=>({kind:'listing',val:x.id,label:x.title+(x.surface?' · '+sq(x.surface):''),extra:x.city+' · '+eur(x.mp)}));
+  const groups=[['sg.listing',lst],['sg.city',cities],['sg.dep',deps],['sg.court',courts],['sg.lawyer',laws]].filter(g=>g[1].length);
+  sItems=[];let h='';
+  groups.forEach(([k,arr])=>{h+=`<div class="grp" role="presentation">${t(k)}</div>`;arr.forEach(o=>{const i=sItems.length;sItems.push(o);
+    h+=`<div class="opt" role="option" id="sg${i}" data-i="${i}" aria-selected="false"><span class="ot">${hl(o.label,P)}</span><span class="oc">${o.kind==='listing'?esc(o.extra):t('sg.n',o.n)}</span></div>`;});});
+  if(!sItems.length)h=`<div class="empty2">${t('sg.none')}</div>`;
+  else h+=`<div class="opt" role="option" id="sg${sItems.length}" data-i="${sItems.length}" aria-selected="false"><span class="ot"><b>${t('sg.all',filtered.length)}</b></span></div>`,sItems.push({kind:'all'});
+  box.innerHTML=h;box.hidden=false;$('#q').setAttribute('aria-expanded','true');sIdx=-1;
+  box.querySelectorAll('.opt').forEach(o=>{o.addEventListener('mousedown',e=>{e.preventDefault();pick(+o.dataset.i);});});
+}
+function closeSugg(){$('#sugg').hidden=true;$('#q').setAttribute('aria-expanded','false');$('#q').removeAttribute('aria-activedescendant');sIdx=-1;}
+function suggKey(e){const box=$('#sugg');
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){if(box.hidden){suggest();return;}e.preventDefault();sIdx=(sIdx+(e.key==='ArrowDown'?1:-1)+sItems.length)%sItems.length;
+    box.querySelectorAll('.opt').forEach((o,i)=>o.setAttribute('aria-selected',i===sIdx));const a=$('#sg'+sIdx);if(a){a.scrollIntoView({block:'nearest'});$('#q').setAttribute('aria-activedescendant','sg'+sIdx);}}
+  else if(e.key==='Enter'){e.preventDefault();if(!box.hidden&&sIdx>=0)pick(sIdx);else{onQuery($('#q').value,true);closeSugg();}}}
+function pick(i){const o=sItems[i];if(!o)return;closeSugg();
+  if(o.kind==='listing'){openDetail(o.val);return;}
+  if(o.kind==='all'){onQuery($('#q').value,true);closeSugg();return;}
+  st[o.kind]=o.val;$('#q').value='';st.q='';P=parseQ('');if(!st.sortUser){st.sort='date';st.dir=1;}sortUI();apply();
+  if(o.kind==='dep'||o.kind==='city'||o.kind==='court'){const pts=filtered.filter(x=>x.lat!=null);if(pts.length){const lo=d3.extent(pts,d=>d.lon),la=d3.extent(pts,d=>d.lat);zoomBox([[lo[0]-.05,la[0]-.05],[lo[1]+.05,la[1]+.05]]);}}}
+
+/* map */
+let svg,g,proj,zoom,gPts,W=800,H=640;
+const sz=k=>Math.pow(k,-0.8);
+const rad=d=>2.2+Math.sqrt((d.mp||20000)/20000)*1.6;
+function drawMap(){
+  svg=d3.select('#map');const node=svg.node();W=node.clientWidth||800;H=node.clientHeight||600;svg.attr('viewBox',`0 0 ${W} ${H}`);
+  g=svg.append('g');
+  fetch('dep.json').then(r=>r.json()).then(geo=>{
+    const metro={type:'FeatureCollection',features:geo.features.filter(f=>!/^97/.test(f.properties.c))};
+    proj=d3.geoConicConformal().parallels([44,49]).rotate([-3,0]).fitExtent([[12,12],[W-12,H-12]],metro);
+    const path=d3.geoPath(proj);
+    g.append('g').selectAll('path').data(metro.features).join('path').attr('class','dep').attr('d',path).append('title').text(f=>f.properties.n+' ('+f.properties.c+')');
+    gPts=g.append('g');
+    zoom=d3.zoom().scaleExtent([1,220]).on('zoom',ev=>{g.attr('transform',ev.transform);const k=ev.transform.k;gPts.selectAll('circle').attr('r',d=>rad(d)*sz(k)).attr('stroke-width',1/k);});
+    svg.call(zoom);updateMap();});
+}
+function updateMap(){
+  if(!gPts)return;const pts=filtered.filter(x=>x.lat!=null);const k=d3.zoomTransform(svg.node()).k;
+  const sel=gPts.selectAll('circle').data(pts,d=>d.id);sel.exit().remove();
+  sel.enter().append('circle').attr('class','pt').on('click',(ev,d)=>openDetail(d.id))
+    .on('mousemove',(ev,d)=>{const tp=$('#tip');tp.hidden=false;tp.style.left=(ev.clientX+12)+'px';tp.style.top=(ev.clientY+12)+'px';tp.innerHTML=`<b>${esc(d.city)}</b><br>${esc(d.title)} · ${eur(d.mp)}<br>${fmtDate(d.date)}`;})
+    .on('mouseleave',()=>{$('#tip').hidden=true;})
+    .merge(sel).attr('cx',d=>proj([d.lon,d.lat])[0]).attr('cy',d=>proj([d.lon,d.lat])[1]).attr('r',d=>rad(d)*sz(k)).attr('stroke-width',1/k)
+    .attr('fill',d=>catColor(d.cat)).attr('fill-opacity',.82).classed('sel',d=>d.id===selId);
+  gPts.selectAll('circle').sort((a,b)=>(b.mp||0)-(a.mp||0));
+}
+const PRESETS={fr:null,idf:[[1.45,48.12],[3.56,49.24]],paris:[[2.22,48.81],[2.47,48.91]],se:[[3.6,42.3],[7.8,46.4]]};
+function zoomBox(bb){if(!zoom)return;if(!bb){svg.transition().duration(500).call(zoom.transform,d3.zoomIdentity);return;}
+  const [[x0,y0],[x1,y1]]=[proj([bb[0][0],bb[1][1]]),proj([bb[1][0],bb[0][1]])];const k=Math.min(220,0.9/Math.max((x1-x0)/W,(y1-y0)/H));
+  svg.transition().duration(600).call(zoom.transform,d3.zoomIdentity.translate(W/2,H/2).scale(k).translate(-(x0+x1)/2,-(y0+y1)/2));}
+function zoomPreset(p){zoomBox(PRESETS[p]);}
+function zoomZone(z){const pts=L.filter(x=>x.zone===z&&x.lat!=null);if(!pts.length)return;const lo=d3.extent(pts,d=>d.lon),la=d3.extent(pts,d=>d.lat);zoomBox([[lo[0]-.1,la[0]-.1],[lo[1]+.1,la[1]+.1]]);}
+
+/* detail */
+function strategyTips(x){const tt=T().t,out=[];
+  if(x.cat==='parts')out.push(['bad','!',tt.parts]);
+  if(x.marketValue){const r=x.mp/x.marketValue;out.push([r<.35?'warn':'info',r<.35?'!':'i',tt.mv(eur(x.marketValue),Math.round(r*100),r<.35)]);}
+  if(x.pred)out.push(['info','i',tt.pred(eur(x.pred.p25),eur(x.pred.p75),eur(x.pred.p50))]);
+  if(x.occ==='occupé')out.push(['warn','!',tt.occ]);
+  if(x.occ==='libre')out.push(['ok','✓',tt.libre]);
+  if(x.baisse)out.push(['warn','!',tt.baisse]);
+  if(x.lic)out.push(['info','i',tt.lic]);
+  if(x.surenchere)out.push(['info','i',tt.sur]);
+  if(x.nLots>1)out.push(['info','i',tt.lots(x.nLots)]);
+  if(x.cat==='appartement'&&x.surface&&x.surface<9)out.push(['bad','!',tt.small]);
+  if(x.visitDates.length){const d=daysTo(x.visitDates[0]);out.push(d<0?['info','–',tt.visitPast]:['ok','✓',tt.visit(fmtDate(x.visitDates[0]),d)]);}else out.push(['warn','!',tt.novisit]);
+  if(x.date){const d=daysTo(x.date);if(d<=10)out.push(['bad','!',tt.soon(d)]);}
+  return out;}
+function bandHTML(x){
+  const p=x.pred;if(!p)return `<p class="note">${t('d.nomodel')}</p>`;
+  const lo=Math.min(x.mp,p.p10)*0.9,hi=Math.max(p.p90,x.marketValue||0)*1.05;
+  const pos=v=>((Math.log(v)-Math.log(lo))/(Math.log(hi)-Math.log(lo))*100).toFixed(2)+'%';
+  let h=`<div class="band"><div class="track"></div><div class="iq" style="left:${pos(p.p25)};width:calc(${pos(p.p75)} - ${pos(p.p25)})"></div><div class="tick" style="left:${pos(p.p50)}"></div>
+    <div class="mk" style="left:${pos(x.mp)};background:var(--faint)"></div><span class="lab" style="left:${pos(x.mp)}">${t('b.mp')}</span><span class="lab2" style="left:${pos(p.p50)}">${t('b.med',keur(p.p50))}</span>`;
+  if(x.marketValue)h+=`<div class="mk" style="left:${pos(x.marketValue)};background:var(--ok)"></div><span class="lab" style="left:${pos(x.marketValue)}">${t('b.mkt')}</span>`;
+  return h+`</div><dl class="kv num" style="margin-top:10px"><dt>P10 – P90</dt><dd>${eur(p.p10)} – ${eur(p.p90)}</dd><dt>P25 – P75</dt><dd><b>${eur(p.p25)} – ${eur(p.p75)}</b></dd>${x.marketValue?`<dt>${t('b.approx')}</dt><dd>${eur(x.marketValue)} <span class="note">${t('b.calc',dec(x.surface),eur(x.areaPrice[1]))}</span></dd>`:''}</dl>`;}
+function openDetail(id,keepScroll){
+  const x=L.find(y=>y.id===id);if(!x)return;selId=id;drawerOpen=true;
+  const prev=keepScroll?$('#drawer').scrollTop:0;
+  const keep={};if(keepScroll)['dBid','dPre','dDm','dMv','dMg','dOc'].forEach(i=>{const n=$('#'+i);if(n)keep[i]=n.value;});
+  document.querySelectorAll('.row').forEach(r=>r.classList.toggle('sel',+r.dataset.id===id));
+  if(gPts)gPts.selectAll('circle').classed('sel',d=>d.id===id);
+  const parts=x.cat==='parts',defBid=x.pred?x.pred.p50:(x.mp||0);
+  const lots=x.subs.map(s=>`<div class="lot"><b>${esc(s.title)}</b> <span class="desc">${esc(s.text)}</span></div>`).join('');
+  const lw=x.lawyers.map((l,i)=>person(i===0?t('role.poursuivant'):t('role.other'),l.name,[l.contact,l.email,l.web].filter(Boolean).join('\n'),l.email)).join('');
+  const docs=x.docs.map(d=>`<a class="btn ghost sm" href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.label)} ↗</a>`).join('')+(x.url?`<a class="btn ghost sm" href="${esc(x.url)}" target="_blank" rel="noopener">${t('d.licitor')} ↗</a>`:'');
+  const geo={licitor:t('geo.licitor'),commune:t('geo.commune'),'geocodé':t('geo.geocode')}[x.geo]||t('geo.none');
+  const dr=$('#drawer');dr.setAttribute('aria-label',x.title);
+  dr.innerHTML=`
+   <div class="dhead"><div style="min-width:0"><p class="eyebrow">${esc(CATS()[x.cat])} · ${t('d.listing')} ${x.id}${x.ref?' · '+esc(x.ref):''}</p><h2>${esc(x.title)}${x.surface?' · '+sq(x.surface):''}</h2>
+     <p class="note" style="margin:2px 0 0">${esc(x.street||'')}${x.street?', ':''}${esc(x.city)}${x.depName?' · '+esc(x.depName):''}</p><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">${pills(x)}</div></div>
+     <button class="x" type="button" aria-label="${t('ui.close')}" id="dClose"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+   <div class="dbody">
+     ${x.photos.length?`<div class="gallery">${x.photos.map((p,i)=>`<button type="button" data-ph="${p}" aria-label="${t('d.photo')} ${i+1}"><img src="${p}" alt="${t('d.photo')} ${i+1}" loading="lazy"></button>`).join('')}</div><p class="note" style="margin:-6px 0 0">${t('d.photoNote')}</p>`
+       :`<div class="nophoto">${houseIcon.replace('<svg','<svg width="22" height="22"')}<span>${t('d.nophoto')} ${x.docs.length?t('d.docsBelow'):t('d.askPV')}</span></div>`}
+     <div class="panel sec"><h3>${t('d.sale')}</h3><dl class="kv">
+       <dt>${t('d.date')}</dt><dd><b>${esc(x.dateText||'—')}</b>${x.date?` <span class="note">${t('d.days',daysTo(x.date))}</span>`:''}</dd>
+       <dt>${t('d.court')}</dt><dd>${esc(x.court)}</dd>
+       <dt>${t('d.type')}</dt><dd>${esc(x.saleType)}</dd>
+       <dt>Mise à prix</dt><dd class="num"><b>${eur(x.mp)}</b>${x.nLots>1?' <span class="note">('+x.lotPrices.map(eur).join(' + ')+')</span>':''}</dd>
+       <dt>${t('d.visit')}</dt><dd>${x.visits.length?x.visits.map(esc).join('<br>'):'—'}</dd>
+       <dt>${t('d.consig')}</dt><dd>${esc(x.consig||t('d.consigDef'))}</dd>
+       ${x.areaPrice?`<dt>${t('d.areaPrice')}</dt><dd class="num">${t('d.minAvgMax',eur(x.areaPrice[0]),eur(x.areaPrice[1]),eur(x.areaPrice[2]))}</dd>`:''}
+     </dl></div>
+     <div class="panel sec"><h3>${t('d.property')}</h3>${lots}${x.notes&&!x.consig?`<p class="desc note" style="margin-top:8px">${esc(x.notes)}</p>`:''}</div>
+     <div class="panel sec"><h3>${t('d.likely')}</h3><p class="sub">${t('d.likelySub',D.model.n)}</p>${bandHTML(x)}</div>
+     <div class="panel sec"><h3>${t('d.maxTitle')}</h3><p class="sub">${t('d.maxSub')}</p>
+       <div class="calc">
+         <div class="field"><label for="dMv">${t('d.mv')}</label><input class="inp num" id="dMv" type="number" step="1000" value="${x.marketValue||''}" placeholder="${t('d.mvPh')}"></div>
+         <div class="field"><label for="dMg">${t('d.margin')}</label><select class="sel" id="dMg"><option value="0.1">10 %</option><option value="0.2" selected>20 %</option><option value="0.3">30 %</option></select></div>
+         <div class="field"><label for="dOc">${t('d.occDisc')}</label><select class="sel" id="dOc"><option value="0">${t('d.none')}</option><option value="0.15" ${x.occ==='occupé'?'selected':''}>15 %</option><option value="0.3">30 %</option></select></div>
+       </div><div id="dMax" class="callout info"></div></div>
+     <div class="panel sec"><h3>${t('d.fees')}</h3><p class="sub">${t('d.feesSub')}</p>
+       <div class="calc">
+         <div class="field"><label for="dBid">${t('d.bid')}</label><input class="inp num" id="dBid" type="number" step="500" value="${Math.round(defBid)}"></div>
+         <div class="field"><label for="dPre">${t('d.pre')}</label><input class="inp num" id="dPre" type="number" step="100" value="4000"></div>
+         <div class="field"><label for="dDm">${t('d.dm')}</label><select class="sel" id="dDm"><option value="0.0632">${pct(0.0632)}</option><option value="0.0581">${pct(0.0581)}</option></select></div>
+       </div><table class="fees" id="dFees"></table></div>
+     <div class="panel sec"><h3>${t('d.tips')}</h3><ul class="tips">${strategyTips(x).map(([c,i,s])=>`<li><span class="ic ${c}">${i}</span><span>${s}</span></li>`).join('')}</ul></div>
+     <div class="panel sec"><h3>${t('d.people')}</h3><div class="people">
+       ${person(t('role.court'),x.court,t('role.courtTxt'))}${lw}
+       ${x.extra.length?`<p class="note">${x.extra.map(esc).join('<br>')}</p>`:''}</div></div>
+     <div class="panel sec"><h3>${t('d.docs')}</h3><div class="docs">${docs||`<span class="note">${t('d.nodocs')}</span>`}</div>
+       <p class="note" style="margin-top:10px">${t('d.pub')}: ${esc(x.published)} · ${t('d.geo')}: ${geo}</p></div>
+   </div>`;
+  Object.entries(keep).forEach(([i,v])=>{const n=$('#'+i);if(n)n.value=v;});
+  dr.hidden=false;$('#scrim').hidden=false;dr.scrollTop=prev;
+  $('#dClose').addEventListener('click',closeDrawer);if(!keepScroll)$('#dClose').focus();
+  dr.querySelectorAll('[data-ph]').forEach(b=>b.addEventListener('click',()=>{$('#lbImg').src=b.dataset.ph;$('#lightbox').hidden=false;}));
+  dr.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>copy(b)));
+  const upd=()=>{const o={pre:+$('#dPre').value||0,dm:+$('#dDm').value,parts};$('#dFees').innerHTML=feeRows(+$('#dBid').value||0,o);
+    const mv=+$('#dMv').value;if(mv){const tgt=mv*(1-(+$('#dOc').value))*(1-(+$('#dMg').value));const mb=maxBidFor(tgt,o);
+      $('#dMax').innerHTML=t('d.maxRes',eur(tgt),eur(mb))+(x.mp&&mb<x.mp?t('d.maxBelow'):x.pred&&mb<x.pred.p25?t('d.maxLow'):x.pred&&mb>x.pred.p75?t('d.maxHigh'):'');}
+    else $('#dMax').innerHTML=t('d.maxNeed');};
+  ['dBid','dPre','dDm','dMv','dMg','dOc'].forEach(i=>$('#'+i).addEventListener('input',upd));upd();
+}
+function person(role,name,ct,email){const ini=(name||'?').replace(/^(Maître|Me|Mme)\s+/,'').split(/\s+/).filter(w=>/^[A-ZÀ-Ý]/.test(w)).slice(0,2).map(w=>w[0]).join('')||'·';
+  return `<div class="person"><span class="av">${esc(ini)}</span><div style="min-width:0"><div class="role">${esc(role)}</div><div class="nm">${esc(name)}</div><div class="ct">${esc(ct||'')}</div>${email?`<button class="copy" type="button" data-copy="${esc(email)}">${t('copy')}</button>`:''}</div></div>`;}
+function copy(b){const v=b.dataset.copy;const done=()=>{b.textContent=t('copied');setTimeout(()=>b.textContent=t('copy'),1400);};
+  const sel=()=>{const r=document.createRange();r.selectNodeContents(b.previousElementSibling);const s=getSelection();s.removeAllRanges();s.addRange(r);};
+  try{navigator.clipboard.writeText(v).then(done,sel);}catch(e){sel();}}
+function closeDrawer(){$('#drawer').hidden=true;$('#scrim').hidden=true;drawerOpen=false;}
+
+
+/* calendar */
+const cst={group:'date',sort:'time',dir:1,q:'',share:true,vsort:'date'};let cP=parseQ('');
+const CSORTS={time:1,mp:1,est:-1,city:1,court:1};
+function bindCalendar(){
+  $('#cq').addEventListener('input',e=>{cst.q=e.target.value;cP=parseQ(cst.q);calendar();});
+  $('#cgroup').addEventListener('change',e=>{cst.group=e.target.value;calendar();});
+  $('#csort').addEventListener('change',e=>{cst.sort=e.target.value;cst.dir=CSORTS[cst.sort];calendar();});
+  $('#cdir').addEventListener('click',()=>{cst.dir*=-1;calendar();});
+  $('#cshare').addEventListener('click',()=>{cst.share=!cst.share;calendar();});
+  $('#vsort').addEventListener('change',e=>{cst.vsort=e.target.value;calendar();});
+}
+function cval(x,k){return k==='time'?x.date:k==='mp'?x.mp:k==='est'?(x.pred?x.pred.p50:null):k==='city'?NORM(x.city):NORM(x.court);}
+function calendar(){
+  if(!D)return;
+  $('#cgroup').innerHTML=[['date','c.g.date'],['court','c.g.court'],['zone','c.g.zone']].map(([v,k])=>opt(v,t(k),cst.group===v)).join('');
+  $('#csort').innerHTML=Object.keys(CSORTS).map(k=>opt(k,t('cs.'+k),cst.sort===k)).join('');
+  $('#cdirIc').textContent=cst.dir>0?'↑':'↓';$('#cshare').setAttribute('aria-pressed',cst.share);
+  $('#vsort').innerHTML=[['date','v.date'],['city','v.city'],['mp','v.mp']].map(([v,k])=>opt(v,t(k),cst.vsort===v)).join('');
+  const base=(cst.share?filtered:L).filter(x=>x.date&&scoreDoc(x,cP));
+  $('#cinfo').textContent=t('c.info',base.length,cst.share&&filtered.length!==L.length);
+  const gk=x=>cst.group==='date'?x.date.slice(0,10):cst.group==='court'?x.court:x.zone;
+  const by=new Map();base.forEach(x=>{const k=gk(x);if(!by.has(k))by.set(k,[]);by.get(k).push(x);});
+  let keys=[...by.keys()];
+  if(cst.group==='date')keys.sort();else if(cst.group==='court')keys.sort((a,b)=>a.localeCompare(b,'fr'));else keys.sort((a,b)=>by.get(b).length-by.get(a).length);
+  const cmp=(a,b)=>{const va=cval(a,cst.sort),vb=cval(b,cst.sort);if(va==null&&vb==null)return 0;if(va==null)return 1;if(vb==null)return -1;return (typeof va==='string'?va.localeCompare(vb):va-vb)*cst.dir;};
+  const th=(k,lab,r)=>`<th${r?' class="r"':''}><button type="button" data-cs="${k}">${lab}${cst.sort===k?`<span class="ar">${cst.dir>0?'↑':'↓'}</span>`:''}</button></th>`;
+  const head=(k)=>cst.group==='date'?fmtDate(k+'T00:00:00',{weekday:'long',day:'numeric',month:'long'}):cst.group==='court'?esc(k):esc(ZONES()[k]||k);
+  $('#calMain').innerHTML=keys.length?keys.map(k=>{const xs=by.get(k).sort(cmp);
+    return `<div class="day"><div class="dayh"><h2>${head(k)}</h2><span>${t('cal.n',xs.length,new Set(xs.map(x=>x.court)).size)}</span></div>
+    <div class="panel tw" style="padding:6px 8px"><table class="ctable sortable"><thead><tr>${th('time',cst.group==='date'?t('cal.time'):t('d.date'))}${th('court',t('cal.court'))}<th>${t('cal.prop')}</th>${th('city',t('cal.city'))}${th('mp','Mise à prix',1)}${th('est',t('cal.est'),1)}</tr></thead><tbody>
+    ${xs.map(x=>`<tr class="click" data-id="${x.id}" tabindex="0"><td class="num">${cst.group==='date'?x.date.slice(11,16):fmtDate(x.date,{day:'numeric',month:'short'})+' '+x.date.slice(11,16)}</td><td>${hl(x.court.replace('Tribunal Judiciaire','TJ'),cP)}</td><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c-${x.cat});margin-right:6px"></span>${hl(x.title,cP)}${x.surface?' · '+sq(x.surface):''}</td><td>${hl(x.city,cP)}</td><td class="num r">${eur(x.mp)}</td><td class="num r" style="color:var(--accent)">${x.pred?keur(x.pred.p25)+'–'+keur(x.pred.p75):'—'}</td></tr>`).join('')}
+    </tbody></table></div></div>`;}).join(''):`<div class="panel empty">${t('r.none')}</div>`;
+  $('#calMain').querySelectorAll('tr.click').forEach(r=>{r.addEventListener('click',()=>openDetail(+r.dataset.id));r.addEventListener('keydown',e=>{if(e.key==='Enter')openDetail(+r.dataset.id);});});
+  $('#calMain').querySelectorAll('[data-cs]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.cs;if(cst.sort===k)cst.dir*=-1;else{cst.sort=k;cst.dir=CSORTS[k];}calendar();}));
+  const vs=[];base.forEach(x=>x.visitDates.forEach((d,i)=>{if(daysTo(d)>=0)vs.push({d,x,txt:x.visits[i]||x.visits[0]});}));
+  vs.sort((a,b)=>cst.vsort==='city'?NORM(a.x.city).localeCompare(NORM(b.x.city))||a.d.localeCompare(b.d):cst.vsort==='mp'?(a.x.mp||1e12)-(b.x.mp||1e12):a.d.localeCompare(b.d));
+  $('#visits').innerHTML=vs.length?'<ul class="timeline">'+vs.slice(0,120).map(v=>`<li><span class="d">${fmtDate(v.d+'T00:00:00',{day:'numeric',month:'short'})}</span><span><a href="#" data-id="${v.x.id}">${esc(v.x.title)}, ${esc(v.x.city)}</a> <span class="note num">· ${eur(v.x.mp)}</span><br><span class="note">${esc((v.txt||'').replace(/^Visite sur place\s*/,''))}</span></span></li>`).join('')+'</ul>'+(vs.length>120?`<p class="note">${t('cal.more',vs.length-120)}</p>`:''):`<p class="note">${t('cal.none')}</p>`;
+  $('#visits').querySelectorAll('a[data-id]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();openDetail(+a.dataset.id);}));
+}
+
+/* past sales table */
+const hst={q:'',zone:'',cat:'',occ:'',min:'',max:'',sort:'date',dir:-1,shown:50};
+const HSORTS={date:-1,name:1,city:1,surface:-1,mp:1,adj:-1,ratio:-1,ppm:-1};
+function hkey(r,k){switch(k){case 'date':return r.date?r.date.slice(6)+r.date.slice(3,5)+r.date.slice(0,2):null;case 'name':return NORM(r.name);case 'city':return NORM(r.city);
+  case 'surface':return r.surface||null;case 'mp':return r.mp;case 'adj':return r.adj;case 'ratio':return r.adj/r.mp;case 'ppm':return r.surface&&r.surface>8?r.adj/r.surface:null;}}
+function bindHist(){
+  $('#hq').addEventListener('input',e=>{hst.q=e.target.value;hst.shown=50;histRender();});
+  [['hzone','zone'],['hcat','cat'],['hocc','occ']].forEach(([id,k])=>$('#'+id).addEventListener('change',e=>{hst[k]=e.target.value;hst.shown=50;histRender();}));
+  [['hmin','min'],['hmax','max']].forEach(([id,k])=>$('#'+id).addEventListener('input',e=>{hst[k]=e.target.value;hst.shown=50;histRender();}));
+  $('#htable').querySelectorAll('[data-hs]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.hs;if(hst.sort===k)hst.dir*=-1;else{hst.sort=k;hst.dir=HSORTS[k];}histRender();}));
+  $('#hmore').addEventListener('click',()=>{hst.shown+=50;histRender();});
+}
+function histUI(){
+  const H=D.hist,zc=uniq(H.map(r=>r.zone)),cc=uniq(H.map(r=>r.cat));
+  $('#hzone').innerHTML=opt('',t('f.any'))+Object.keys(ZONES()).filter(z=>zc.get(z)).map(z=>opt(z,`${ZONES()[z]} (${zc.get(z)})`,hst.zone===z)).join('');
+  $('#hcat').innerHTML=opt('',t('f.any'))+Object.keys(CATS()).filter(c=>cc.get(c)).map(c=>opt(c,`${CATS()[c]} (${cc.get(c)})`,hst.cat===c)).join('');
+  $('#hocc').innerHTML=opt('',t('f.any'))+[['libre','occ.libre'],['occupé','occ.occ']].map(([v,k])=>opt(v,t(k),hst.occ===v)).join('');
+  histRender();}
+function histRender(){
+  const H=D.hist,qP=parseQ(hst.q);
+  const rows=H.filter(r=>{if(hst.zone&&r.zone!==hst.zone)return false;if(hst.cat&&r.cat!==hst.cat)return false;if(hst.occ&&r.occ!==hst.occ)return false;
+    if(hst.min!==''&&r.mp<+hst.min)return false;if(hst.max!==''&&r.mp>+hst.max)return false;
+    if(!qP.empty){const s=' '+NORM([r.name,r.city,r.dep,ZONES()[r.zone],CATS()[r.cat]].join(' '))+' ';if(!qP.terms.every(tm=>s.includes(' '+tm)||(tm.length>=3&&s.includes(tm))))return false;}
+    return true;});
+  rows.sort((a,b)=>{const va=hkey(a,hst.sort),vb=hkey(b,hst.sort);if(va==null&&vb==null)return 0;if(va==null)return 1;if(vb==null)return -1;return (typeof va==='string'?va.localeCompare(vb):va-vb)*hst.dir;});
+  $('#hcount').textContent=t('h.count',rows.length,H.length);
+  $('#htable').querySelectorAll('[data-hs]').forEach(b=>{const k=b.dataset.hs;const old=b.querySelector('.ar');if(old)old.remove();if(k===hst.sort)b.insertAdjacentHTML('beforeend',`<span class="ar">${hst.dir>0?'↑':'↓'}</span>`);});
+  $('#htable tbody').innerHTML=rows.slice(0,hst.shown).map(r=>{const ra=r.adj/r.mp,ppm=hkey(r,'ppm');
+    return `<tr><td class="num">${esc(r.date||'—')}</td><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c-${r.cat});margin-right:6px"></span>${hl(r.name,qP)}<br><span class="note">${esc(ZONES()[r.zone]||'')}${r.occ?' · '+t(r.occ==='libre'?'occ.libre':'occ.occ'):''}</span></td><td>${hl(r.city,qP)} <span class="note">(${esc(r.dep)})</span></td><td class="num r">${r.surface?dec(r.surface):'—'}</td><td class="num r">${eur(r.mp)}</td><td class="num r"><b>${eur(r.adj)}</b></td><td class="num r"><span class="pill ${ra>=3?'warn':ra<1.2?'ok':'neutral'}">×${dec(ra.toFixed(2))}</span></td><td class="num r">${ppm?eur(ppm):'—'}</td></tr>`;}).join('')||`<tr><td colspan="8" class="empty">${t('r.none')}</td></tr>`;
+  $('#hmore').hidden=rows.length<=hst.shown;
+}
+
+/* model */
+function model(){
+  const M=D.model,S=M.stats,H=D.hist,x2=v=>'×'+dec(v);
+  $('#modelLede').innerHTML=t('m.lede',M.n);$('#how5').innerHTML=t('m.how5',dec(M.r2.toFixed(2)));
+  const all=S.all.q;
+  $('#mkpis').innerHTML=[[t('mk.n'),M.n,t('mk.nS')],[t('mk.med'),x2(all[1]),t('mk.medS')],[t('mk.q'),x2(all[0])+' – '+x2(all[2]),t('mk.qS')],[t('mk.paris'),x2(S.byZone.paris.q[1]),t('mk.parisS',S.byZone.paris.n)]]
+    .map(([k,v,s])=>`<div class="panel stat"><p class="k">${k}</p><p class="v num">${v}</p><p class="s">${esc(s)}</p></div>`).join('');
+  const bars=(obj,lab,max)=>Object.entries(obj).filter(([k,v])=>v.n>=5).sort((a,b)=>b[1].q[1]-a[1].q[1]).map(([k,v])=>{const sc=z=>Math.min(100,z/max*100);
+    return `<div class="b"><span>${esc(lab[k]||k)} <span class="note">n=${v.n}</span></span><span class="tr"><span class="iq" style="left:${sc(v.q[0])}%;width:${sc(v.q[2])-sc(v.q[0])}%"></span><span class="md" style="left:${sc(v.q[1])}%"></span></span><span class="num">${x2(v.q[1])} <span class="note">(${dec(v.q[0])}–${dec(v.q[2])})</span></span></div>`;}).join('');
+  $('#byZone').innerHTML=bars(S.byZone,ZONES(),8);$('#byCat').innerHTML=bars(S.byCat,CATS(),8);
+  $('#aptM2').innerHTML=Object.entries(S.aptM2).sort((a,b)=>b[1].q[1]-a[1].q[1]).map(([k,v])=>{const sc=z=>Math.min(100,z/10000*100);
+    return `<div class="b"><span>${esc(ZONES()[k]||k)} <span class="note">n=${v.n}</span></span><span class="tr"><span class="iq" style="left:${sc(v.q[0])}%;width:${sc(v.q[2])-sc(v.q[0])}%"></span><span class="md" style="left:${sc(v.q[1])}%"></span></span><span class="num">${eur(v.q[1])}/m²</span></div>`;}).join('')+`<p class="note">${t('m2.scale')}</p>`;
+  const sv=d3.select('#scatter');sv.selectAll('*').remove();const w=560,h=400,m={l:56,r:14,t:10,b:40};
+  const pts=H.filter(r=>r.mp>0&&r.adj>0);
+  const x=d3.scaleLog().domain([1000,4e6]).range([m.l,w-m.r]).clamp(true),y=d3.scaleLog().domain([1000,1e7]).range([h-m.b,m.t]).clamp(true);
+  const ticks=[1e3,1e4,1e5,1e6],lab=v=>v>=1e6?(v/1e6)+' M€':(v/1e3)+' k€';
+  sv.append('g').attr('class','gridl').selectAll('line').data(ticks).join('line').attr('x1',d=>x(d)).attr('x2',d=>x(d)).attr('y1',m.t).attr('y2',h-m.b);
+  sv.append('g').attr('class','gridl').selectAll('line').data([...ticks,1e7]).join('line').attr('y1',d=>y(d)).attr('y2',d=>y(d)).attr('x1',m.l).attr('x2',w-m.r);
+  sv.append('g').attr('class','axis').attr('transform',`translate(0,${h-m.b})`).call(d3.axisBottom(x).tickValues(ticks).tickFormat(lab));
+  sv.append('g').attr('class','axis').attr('transform',`translate(${m.l},0)`).call(d3.axisLeft(y).tickValues([...ticks,1e7]).tickFormat(lab));
+  [[1,t('sc.eq')],[2,'×2'],[4,'×4']].forEach(([k,tx])=>{const x0=1000,x1=Math.min(4e6,1e7/k);
+    sv.append('line').attr('x1',x(x0)).attr('y1',y(x0*k)).attr('x2',x(x1)).attr('y2',y(x1*k)).attr('stroke',css('--faint')).attr('stroke-dasharray','4 4').attr('fill','none');
+    const lx=k===1?2.2e6:1.4e3;sv.append('text').attr('x',x(lx)+(k===1?0:4)).attr('y',y(lx*k)+(k===1?14:-6)).attr('text-anchor',k===1?'end':'start').attr('fill',css('--muted')).attr('font-size',11).text(tx);});
+  sv.append('g').selectAll('circle').data(pts).join('circle').attr('cx',d=>x(d.mp)).attr('cy',d=>y(d.adj)).attr('r',3.2).attr('fill',d=>catColor(d.cat)).attr('fill-opacity',.7)
+    .append('title').text(d=>`${d.name}, ${d.city} (${d.dep})\n${eur(d.mp)} → ${eur(d.adj)} · ${d.date}`);
+  sv.append('text').attr('x',w-m.r).attr('y',h-6).attr('text-anchor','end').attr('fill',css('--muted')).attr('font-size',11).text(t('sc.x'));
+  sv.append('text').attr('x',m.l+4).attr('y',m.t+10).attr('fill',css('--muted')).attr('font-size',11).text(t('sc.y'));
+  $('#slegend').innerHTML=[...new Set(pts.map(p=>p.cat))].map(c=>`<span><i style="background:var(--c-${c})"></i>${CATS()[c]||c}</span>`).join('');
+}
+function strategy(){const law=$('#gLaw').value;$('#gFees').innerHTML=feeRows(+$('#gBid').value||0,{pre:+$('#gPre').value||0,dm:+$('#gDm').value,law:law===''?null:+law});}
+
+/* auriol */
+function auriol(){
+  const x=L.find(y=>y.id===110264);if(!x){$('#auriol').innerHTML='<div class="panel empty">—</div>';return;}
+  const A=T().au,p=x.pred;
+  $('#auriol').innerHTML=`
+   <div class="head"><div><p class="eyebrow">${A.eyebrow}</p><h1>${A.h1}</h1><p class="lede">${A.lede}</p></div><button class="btn" type="button" id="aOpen">${A.open}</button></div>
+   <div class="stats">
+     <div class="panel stat"><p class="k">Mise à prix</p><p class="v num">${eur(10000)}</p><p class="s">${A.k1s}</p></div>
+     <div class="panel stat"><p class="k">${A.k2}</p><p class="v num">${keur(p.p25)}–${keur(p.p75)}</p><p class="s">${A.k2s(eur(p.p50))}</p></div>
+     <div class="panel stat"><p class="k">${A.k3}</p><p class="v num">${eur(3000)}</p><p class="s">${A.k3s}</p></div>
+     <div class="panel stat"><p class="k">${A.k4}</p><p class="v">${A.k4v}</p><p class="s">${A.k4s}</p></div></div>
+   <div class="twocol">
+     <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+       <div class="panel"><div class="gallery">${x.photos.map((ph,i)=>`<button type="button" data-ph="${ph}" aria-label="${A.photoAlt} ${i+1}"><img src="${ph}" alt="${A.photoAlt} ${i+1}" loading="lazy"></button>`).join('')}</div><p class="note" style="margin:8px 0 0">${A.photoNote}</p></div>
+       <div class="panel sec"><h3>${A.prop}</h3><dl class="kv">${A.kv.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl></div>
+       <div class="panel sec"><h3>${A.price}</h3>${bandHTML(x)}<ul class="tips" style="margin-top:14px">${A.ptips.map(([c,i,s])=>`<li><span class="ic ${c}">${i}</span><span>${s}</span></li>`).join('')}</ul></div>
+     </div>
+     <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+       <div class="panel sec"><h3>${A.watch}</h3><ul class="tips">${A.wtips.map(([c,i,s])=>`<li><span class="ic ${c}">${i}</span><span>${s}</span></li>`).join('')}</ul></div>
+       <div class="panel sec"><h3>${A.feesT}</h3><div class="tw"><table class="ctable num"><thead><tr><th>${A.fBid}</th><th style="text-align:right">${A.fFees}</th><th style="text-align:right">${A.fTot}</th></tr></thead><tbody>
+         ${[10000,30000,50000,70000,100000].map(b=>{const f=fees(b);return `<tr><td>${eur(b)}</td><td style="text-align:right">${eur(f.total)}</td><td style="text-align:right"><b>${eur(b+f.total)}</b></td></tr>`;}).join('')}
+         </tbody></table></div><p class="note" style="margin-top:8px">${A.feesNote}</p></div>
+       <div class="panel sec"><h3>${A.people}</h3><div class="people">${A.ppl.map(q=>person(q[0],q[1],q[2],q[3])).join('')}</div></div>
+       <div class="panel sec"><h3>${A.chron}</h3><ul class="timeline">${A.tl.map(([d,s,f])=>`<li class="${f?'future':''}"><span class="d">${d}</span><span>${esc(s)}</span></li>`).join('')}</ul></div>
+       <div class="panel sec"><h3>${A.docs}</h3><div class="docs">${x.docs.map(d=>`<a class="btn ghost sm" href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.label)} ↗</a>`).join('')}<a class="btn ghost sm" href="${esc(x.url)}" target="_blank" rel="noopener">${t('d.licitor')} ↗</a><a class="btn ghost sm" href="https://www.pappers.fr/entreprise/jrh-hotel-380430884" target="_blank" rel="noopener">JRH HOTEL · Pappers ↗</a></div></div>
+     </div></div>`;
+  $('#aOpen').addEventListener('click',()=>openDetail(110264));
+  $('#auriol').querySelectorAll('[data-ph]').forEach(b=>b.addEventListener('click',()=>{$('#lbImg').src=b.dataset.ph;$('#lightbox').hidden=false;}));
+  $('#auriol').querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>copy(b)));
+}
+
+})();
+
+</script>
+
+</body>
+</html>
