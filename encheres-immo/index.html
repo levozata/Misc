@@ -273,6 +273,17 @@ mark{background:var(--warn-bg);color:inherit;border-radius:3px;padding:0 1px}
 .ctable .r{text-align:right}
 .ctable th.r button{justify-content:flex-end}
 .score{font-size:11px;color:var(--faint)}
+#pmap .dep{fill:var(--land);stroke:var(--land-line);stroke-width:.8;vector-effect:non-scaling-stroke}
+#pmap circle.pt{stroke:var(--surface);cursor:pointer}#pmap circle.pt.sel{stroke:var(--ink);stroke-width:2.5}
+.prow{grid-template-columns:72px minmax(0,1fr) auto}
+.rbadge{width:72px;height:60px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:700;font-size:16px}
+.rbadge .rl{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;opacity:.8}
+.rbadge.b1{background:var(--ok-bg);color:var(--ok)}.rbadge.b2{background:var(--accent-soft);color:var(--accent)}.rbadge.b3{background:var(--warn-bg);color:var(--warn)}.rbadge.b4{background:var(--bad-bg);color:var(--bad)}.rbadge.none{background:var(--surface-2);color:var(--faint)}
+.mbars{display:flex;align-items:flex-end;gap:6px;height:180px;overflow-x:auto;padding-bottom:2px}
+.mb{flex:1 0 34px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px;min-width:34px}
+.mbar{width:100%;max-width:30px;background:var(--accent-2);border-radius:5px 5px 2px 2px;opacity:.85}
+.mv{font-size:10.5px;color:var(--accent);font-weight:600}.mn{font-size:11px;color:var(--muted)}.ml{font-size:10.5px;color:var(--faint);text-align:center;line-height:1.2}
+@media (max-width:760px){.prow{grid-template-columns:60px minmax(0,1fr)}.rbadge{width:60px;height:52px;font-size:14px}}
 </style>
 
 <header class="bar">
@@ -280,6 +291,7 @@ mark{background:var(--warn-bg);color:inherit;border-radius:3px;padding:0 1px}
   <nav class="tabs" role="tablist" data-i18n-aria="nav.aria">
     <button role="tab" id="tab-ilanlar" aria-selected="true" data-tab="ilanlar" data-i18n="nav.list"></button>
     <button role="tab" id="tab-takvim" aria-selected="false" data-tab="takvim" data-i18n="nav.cal"></button>
+    <button role="tab" id="tab-past" aria-selected="false" data-tab="past" data-i18n="nav.past"></button>
     <button role="tab" id="tab-model" aria-selected="false" data-tab="model" data-i18n="nav.model"></button>
     <button role="tab" id="tab-strateji" aria-selected="false" data-tab="strateji" data-i18n="nav.strat"></button>
     <button role="tab" id="tab-auriol" aria-selected="false" data-tab="auriol">70 bd Vincent Auriol</button>
@@ -382,6 +394,47 @@ mark{background:var(--warn-bg);color:inherit;border-radius:3px;padding:0 1px}
     </div>
   </section>
 
+  <section id="v-past" role="tabpanel" aria-labelledby="tab-past" hidden>
+    <div class="head"><div><p class="eyebrow" data-i18n="p.eyebrow"></p><h1 data-i18n="p.h1"></h1>
+      <p class="lede" data-i18n="p.lede"></p></div></div>
+    <div class="stats" id="pkpis"></div>
+    <div class="panel" style="margin-bottom:12px">
+      <div class="filters">
+        <div class="field" style="flex:1 1 260px"><label for="pq" data-i18n="f.search"></label><input class="inp" id="pq" type="search" autocomplete="off" data-i18n-ph="p.ph"></div>
+        <div class="field"><label for="psort" data-i18n="f.sort"></label><div style="display:flex;gap:6px"><select class="sel" id="psort"></select><button type="button" class="btn ghost" id="pdir" style="width:44px;padding:0;justify-content:center" data-i18n-aria="s.dir"><span id="pdirIc">↓</span></button></div></div>
+        <div class="field"><label>&nbsp;</label><button type="button" class="clear" id="pclear" style="height:40px" data-i18n="f.clear"></button></div>
+      </div>
+      <div class="adv" style="margin-top:4px;padding-top:12px">
+        <div class="field"><label for="pzone" data-i18n="f.zone"></label><select class="sel" id="pzone"></select></div>
+        <div class="field"><label for="pdep" data-i18n="f.dep"></label><select class="sel" id="pdep"></select></div>
+        <div class="field"><label for="pcat" data-i18n="f.type"></label><select class="sel" id="pcat"></select></div>
+        <div class="field"><label for="pocc" data-i18n="f.occ"></label><select class="sel" id="pocc"></select></div>
+        <div class="field"><label data-i18n="p.adjRange"></label><div class="pair"><input class="inp num" id="paMin" type="number" min="0" step="5000" data-i18n-ph="f.min"><span>–</span><input class="inp num" id="paMax" type="number" min="0" step="5000" data-i18n-ph="f.max2"></div></div>
+        <div class="field"><label data-i18n="p.period"></label><div class="pair"><select class="sel" id="pdFrom" style="flex:1;min-width:0"></select><span>–</span><select class="sel" id="pdTo" style="flex:1;min-width:0"></select></div></div>
+        <div class="field"><label for="prmin" data-i18n="p.rmin"></label><select class="sel" id="prmin"></select></div>
+        <div class="field wide"><label data-i18n="f.saleType"></label><div class="chips" id="pflags"></div></div>
+      </div>
+    </div>
+    <div class="split">
+      <div style="display:flex;flex-direction:column;gap:16px;min-width:0" class="pside">
+        <div class="panel mapwrap" style="position:static">
+          <div class="maptools">
+            <button class="btn ghost sm" data-pzoom="fr">France</button><button class="btn ghost sm" data-pzoom="idf">Île-de-France</button><button class="btn ghost sm" data-pzoom="paris">Paris</button><button class="btn ghost sm" data-pzoom="se" data-i18n="map.se"></button>
+            <span class="hint" data-i18n="p.mapHint"></span>
+          </div>
+          <svg id="pmap" role="img" data-i18n-aria="p.mapAria" style="display:block;width:100%;height:min(56vh,520px);background:var(--surface);touch-action:none;cursor:grab"></svg>
+          <div class="legend" id="plegend"></div>
+        </div>
+        <div class="panel"><h2 data-i18n="p.months"></h2><p class="note" style="margin:4px 0 12px" data-i18n="p.monthsSub"></p><div id="pmonths"></div></div>
+      </div>
+      <div>
+        <div class="listhead"><span class="count num" id="pcount"></span></div>
+        <div class="list" id="plist"></div>
+        <button class="btn ghost more" id="pmore" hidden data-i18n="l.more"></button>
+      </div>
+    </div>
+  </section>
+
   <section id="v-model" role="tabpanel" aria-labelledby="tab-model" hidden>
     <div class="head"><div><p class="eyebrow" data-i18n="m.eyebrow"></p><h1 data-i18n="m.h1"></h1>
       <p class="lede" id="modelLede"></p></div></div>
@@ -403,26 +456,9 @@ mark{background:var(--warn-bg);color:inherit;border-radius:3px;padding:0 1px}
           <li><span class="ic bad">!</span><span id="how5"></span></li>
         </ul></div>
     </div>
-    <div class="panel" style="margin-top:16px">
-      <div class="head" style="margin-bottom:12px"><div><h2 data-i18n="h.title"></h2><p class="note" style="margin:4px 0 0" data-i18n="h.sub"></p></div><span class="count num" id="hcount"></span></div>
-      <div class="filters">
-        <div class="field" style="flex:1 1 220px"><label for="hq" data-i18n="f.search"></label><input class="inp" id="hq" type="search" autocomplete="off" data-i18n-ph="h.ph"></div>
-        <div class="field"><label for="hzone" data-i18n="f.zone"></label><select class="sel" id="hzone"></select></div>
-        <div class="field"><label for="hcat" data-i18n="f.type"></label><select class="sel" id="hcat"></select></div>
-        <div class="field"><label for="hocc" data-i18n="f.occ"></label><select class="sel" id="hocc"></select></div>
-        <div class="field"><label data-i18n="f.price"></label><div class="pair"><input class="inp num" id="hmin" type="number" min="0" step="5000" data-i18n-ph="f.min"><span>–</span><input class="inp num" id="hmax" type="number" min="0" step="5000" data-i18n-ph="f.max2"></div></div>
-      </div>
-      <div class="tw"><table class="ctable sortable" id="htable"><thead><tr>
-        <th><button type="button" data-hs="date" data-i18n="h.date"></button></th>
-        <th><button type="button" data-hs="name" data-i18n="cal.prop"></button></th>
-        <th><button type="button" data-hs="city" data-i18n="cal.city"></button></th>
-        <th class="r"><button type="button" data-hs="surface">m²</button></th>
-        <th class="r"><button type="button" data-hs="mp">Mise à prix</button></th>
-        <th class="r"><button type="button" data-hs="adj" data-i18n="h.adj"></button></th>
-        <th class="r"><button type="button" data-hs="ratio" data-i18n="h.ratio"></button></th>
-        <th class="r"><button type="button" data-hs="ppm" data-i18n="h.ppm"></button></th>
-      </tr></thead><tbody></tbody></table></div>
-      <button class="btn ghost more" id="hmore" hidden data-i18n="l.more"></button>
+    <div class="panel" style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div><h2 data-i18n="h.title"></h2><p class="note" style="margin:4px 0 0" data-i18n="m.toPastSub"></p></div>
+      <button type="button" class="btn" id="toPast" data-i18n="m.toPast"></button>
     </div>
   </section>
 
@@ -497,7 +533,7 @@ tr:{
  'm.how3':"Düşük mise à prix'li ilanlar orantısal olarak çok daha fazla artar (Paris'te ×5–×10 görülür). Mise à prix bir değer tahmini değil, mahkemenin başlangıç fiyatıdır.",
  'm.how4':'Veri sadece <b>satılmış</b> lotları kapsar. Teklif gelmeyen (<i>carence</i>) lotlar Licitor geçmişinde görünmediği için oranlar biraz yukarı yanlı.',
  'm.how5':r=>`Kesinlik sınırlı: R² ≈ ${r}, tipik sapma ±%35. Karar için ilanın kendi piyasa değeri hesabını (detay panelinde) birlikte kullanın.`,
- 'm.lede':n=>`Licitor'un adjudication geçmişinden ${n} tek lotlu satış (çoğu Haziran–Ekim 2026; surenchère satışları hariç). Her ilan için bu veriyle olası satış aralığı hesaplandı.`,
+ 'm.lede':n=>`Licitor'un adjudication geçmişinden ${n} tek lotlu satış (ağırlıkla 2024–2026; surenchère satışları hariç). Her ilan için bu veriyle olası satış aralığı hesaplandı.`,
  'mk.n':'Satış sayısı','mk.nS':'6 bölge','mk.med':'Medyan oran','mk.medS':'satış / mise à prix','mk.q':'Çeyrekler','mk.qS':'satışların yarısı bu aralıkta','mk.paris':'Paris medyanı','mk.parisS':n=>`${n} satış`,
  'm2.scale':'Ölçek 0–10 000 €/m². Paris piyasa ortalaması ilan sayfalarında genelde 9–11 bin €/m².',
  'sc.x':'mise à prix →','sc.y':'↑ satış fiyatı','sc.eq':'= mise à prix',
@@ -593,7 +629,7 @@ fr:{
  'm.how3':"Les petites mises à prix montent beaucoup plus en proportion (×5 à ×10 à Paris). La mise à prix n'est pas une estimation de valeur, c'est le prix de départ fixé par le tribunal.",
  'm.how4':"Les données ne couvrent que les lots <b>adjugés</b>. Les carences d'enchères n'apparaissent pas dans l'historique Licitor, donc les ratios sont légèrement surestimés.",
  'm.how5':r=>`Précision limitée : R² ≈ ${r}, écart typique ±35 %. Pour décider, croisez avec le calcul de valeur de marché du bien (dans le panneau de détail).`,
- 'm.lede':n=>`${n} ventes à lot unique tirées de l'historique des adjudications Licitor (surtout juin–octobre 2026 ; ventes sur surenchère exclues). Chaque annonce reçoit une fourchette de prix probable à partir de ces données.`,
+ 'm.lede':n=>`${n} ventes à lot unique tirées de l'historique des adjudications Licitor (surtout 2024–2026 ; ventes sur surenchère exclues). Chaque annonce reçoit une fourchette de prix probable à partir de ces données.`,
  'mk.n':'Ventes','mk.nS':'6 zones','mk.med':'Ratio médian','mk.medS':'adjudication / mise à prix','mk.q':'Quartiles','mk.qS':'la moitié des ventes','mk.paris':'Médiane Paris','mk.parisS':n=>`${n} ventes`,
  'm2.scale':'Échelle 0–10 000 €/m². La moyenne du marché parisien affichée sur les annonces est en général de 9 à 11 k€/m².',
  'sc.x':'mise à prix →','sc.y':'↑ prix adjugé','sc.eq':'= mise à prix',
@@ -689,7 +725,7 @@ en:{
  'm.how3':'Low reserve prices rise much more in proportion (×5 to ×10 in Paris). The reserve (<i>mise à prix</i>) is not a valuation; it is the court’s starting price.',
  'm.how4':'The data covers <b>sold</b> lots only. Lots with no bids (<i>carence</i>) don’t appear in Licitor’s history, so ratios are biased slightly upward.',
  'm.how5':r=>`Limited precision: R² ≈ ${r}, typical error ±35%. Use it together with the listing’s own market-value calculation (in the detail panel).`,
- 'm.lede':n=>`${n} single-lot sales from Licitor’s adjudication history (mostly June–October 2026; resales on <i>surenchère</i> excluded). Every listing gets a likely price range from this data.`,
+ 'm.lede':n=>`${n} single-lot sales from Licitor’s adjudication history (mostly 2024–2026; resales on <i>surenchère</i> excluded). Every listing gets a likely price range from this data.`,
  'mk.n':'Sales','mk.nS':'6 areas','mk.med':'Median ratio','mk.medS':'hammer / reserve','mk.q':'Quartiles','mk.qS':'half of all sales','mk.paris':'Paris median','mk.parisS':n=>`${n} sales`,
  'm2.scale':'Scale 0–10,000 €/m². The Paris market average shown on listings is usually €9–11k/m².',
  'sc.x':'reserve price →','sc.y':'↑ hammer price','sc.eq':'= reserve',
@@ -817,6 +853,43 @@ Object.assign(I18N.en,{
  'c.info':(n,s)=>`Showing ${n} auctions${s?' · filters and search from the Listings tab applied':''}.`,
  'v.date':'By date','v.city':'By city','v.mp':'By reserve',
  'h.title':'Past sales','h.sub':'The single-lot sales the model is built on. Click a column header to sort.','h.ph':'City, property, département…','h.date':'Sale date','h.adj':'Hammer price','h.ratio':'Ratio','h.ppm':'€/m²','h.count':(a,b)=>`${a} / ${b} sales`
+});
+
+Object.assign(I18N.tr,{
+ 'nav.past':'Geçmiş satışlar','p.eyebrow':'Sonuçlanmış ihaleler','p.h1':'Geçmiş satışlar',
+ 'p.lede':'Licitor\'da sonucu yayınlanmış ihaleler: mise à prix, satış fiyatı, oran, konum ve mahkeme. Filtreleyin, sıralayın, haritada inceleyin; bir satışa tıklayınca yakınındaki yaklaşan ilanları da görürsünüz.',
+ 'p.ph':'Şehir, adres, mülk, mahkeme, avukat… (ör. paris 15 daire)','p.adjRange':'Satış fiyatı (€)','p.period':'Dönem','p.rmin':'Asgari oran',
+ 'ps.date':'Satış tarihi','ps.adj':'Satış fiyatı','ps.mp':'Mise à prix','ps.ratio':'Oran (satış / mise à prix)','ps.ppm':'€/m²','ps.surf':'Yüzölçümü','ps.city':'Şehir (A–Z)',
+ 'pk.n':'Satış','pk.med':'Medyan satış fiyatı','pk.medS':'filtrelenmiş satışlar','pk.ratio':'Medyan oran','pk.ratioS':n=>`mise à prix'i bilinen ${n} satış`,'pk.m2':'Daire medyan €/m²','pk.m2S':n=>`${n} daire (yüzölçümü bilinen)`,
+ 'p.count':(a,b)=>`${a} / ${b} satış`,'p.sold':'Satış','p.ratio':'oran','p.noMp':'MAP yok','p.sizeNote':'Nokta boyu ∝ satış fiyatı','p.mapHint':'Renk = oran','p.mapAria':'Geçmiş satışlar haritası',
+ 'p.months':'Aylara göre','p.monthsSub':'Çubuk: satış sayısı. Üstteki rakam: o ayın medyan oranı.',
+ 'p.detailEy':'Geçmiş satış','p.nearUp':'Yakındaki yaklaşan ilanlar','p.nearUpSub':'Aynı tipte, 40 km içinde',
+ 'cp.title':'Benzer geçmiş satışlar','cp.none':'Yakında benzer sonuçlanmış satış bulunamadı.','cp.sum':(n,r,m)=>`En yakın ${n} benzer satış: medyan oran ×${r}${m?`, medyan ${m}/m²`:''}. Satıra tıklayın.`,
+ 'm.toPast':'Geçmiş satışları aç →','m.toPastSub':'Modelin dayandığı satışların tamamı, harita ve filtrelerle ayrı sekmede.'
+});
+Object.assign(I18N.fr,{
+ 'nav.past':'Adjudications','p.eyebrow':'Ventes réalisées','p.h1':'Adjudications passées',
+ 'p.lede':'Les ventes dont le résultat est publié sur Licitor : mise à prix, prix adjugé, ratio, localisation et tribunal. Filtrez, triez, explorez la carte ; en cliquant sur une vente, vous voyez aussi les annonces à venir à proximité.',
+ 'p.ph':'Ville, adresse, bien, tribunal, avocat… (ex. paris 15 appartement)','p.adjRange':'Prix adjugé (€)','p.period':'Période','p.rmin':'Ratio minimum',
+ 'ps.date':'Date de vente','ps.adj':'Prix adjugé','ps.mp':'Mise à prix','ps.ratio':'Ratio (adjugé / mise à prix)','ps.ppm':'€/m²','ps.surf':'Surface','ps.city':'Ville (A–Z)',
+ 'pk.n':'Ventes','pk.med':'Prix adjugé médian','pk.medS':'ventes filtrées','pk.ratio':'Ratio médian','pk.ratioS':n=>`${n} ventes avec mise à prix connue`,'pk.m2':'€/m² médian (appartements)','pk.m2S':n=>`${n} appartements (surface connue)`,
+ 'p.count':(a,b)=>`${a} / ${b} ventes`,'p.sold':'Adjugé','p.ratio':'ratio','p.noMp':'MAP inconnue','p.sizeNote':'Taille ∝ prix adjugé','p.mapHint':'Couleur = ratio','p.mapAria':'Carte des adjudications passées',
+ 'p.months':'Par mois','p.monthsSub':'Barre : nombre de ventes. Chiffre au-dessus : ratio médian du mois.',
+ 'p.detailEy':'Adjudication','p.nearUp':'Ventes à venir à proximité','p.nearUpSub':'Même type, dans un rayon de 40 km',
+ 'cp.title':'Adjudications comparables','cp.none':'Aucune adjudication comparable à proximité.','cp.sum':(n,r,m)=>`Les ${n} ventes comparables les plus proches : ratio médian ×${r}${m?`, médiane ${m}/m²`:''}. Cliquez sur une ligne.`,
+ 'm.toPast':'Ouvrir les adjudications →','m.toPastSub':'Toutes les ventes utilisées par le modèle, avec carte et filtres, dans un onglet dédié.'
+});
+Object.assign(I18N.en,{
+ 'nav.past':'Past sales','p.eyebrow':'Completed auctions','p.h1':'Past sales',
+ 'p.lede':'Auctions whose results are published on Licitor: reserve, hammer price, ratio, location and court. Filter, sort and explore the map; click a sale to see upcoming listings nearby.',
+ 'p.ph':'City, address, property, court, lawyer… (e.g. paris 15 apartment)','p.adjRange':'Hammer price (€)','p.period':'Period','p.rmin':'Minimum ratio',
+ 'ps.date':'Sale date','ps.adj':'Hammer price','ps.mp':'Reserve price','ps.ratio':'Ratio (hammer / reserve)','ps.ppm':'€/m²','ps.surf':'Floor area','ps.city':'City (A–Z)',
+ 'pk.n':'Sales','pk.med':'Median hammer price','pk.medS':'filtered sales','pk.ratio':'Median ratio','pk.ratioS':n=>`${n} sales with a known reserve`,'pk.m2':'Median €/m² (apartments)','pk.m2S':n=>`${n} apartments (known area)`,
+ 'p.count':(a,b)=>`${a} / ${b} sales`,'p.sold':'Sold','p.ratio':'ratio','p.noMp':'No reserve','p.sizeNote':'Dot size ∝ hammer price','p.mapHint':'Colour = ratio','p.mapAria':'Map of past sales',
+ 'p.months':'By month','p.monthsSub':'Bar: number of sales. Figure above: that month’s median ratio.',
+ 'p.detailEy':'Past sale','p.nearUp':'Upcoming listings nearby','p.nearUpSub':'Same type, within 40 km',
+ 'cp.title':'Comparable past sales','cp.none':'No comparable past sales nearby.','cp.sum':(n,r,m)=>`The ${n} nearest comparable sales: median ratio ×${r}${m?`, median ${m}/m²`:''}. Click a row.`,
+ 'm.toPast':'Open past sales →','m.toPastSub':'Every sale behind the model, with map and filters, in its own tab.'
 });
 
 (function(){
@@ -954,9 +1027,9 @@ function applyStatic(){
   $('#qhelp').querySelectorAll('code').forEach(c=>c.addEventListener('click',()=>{$('#q').value=c.textContent;onQuery(c.textContent,true);$('#q').focus();}));
 }
 function setLang(l){if(!I18N[l]||l===LANG)return;LANG=l;try{localStorage.setItem('ench_lang',l);}catch(e){}
-  applyStatic();if(!D)return;renderDynamic();if(drawerOpen&&selId)openDetail(selId,true);}
-function init(){bind();drawMap();renderDynamic();booted=true;if(location.hash==='#auriol')showTab('auriol');}
-function renderDynamic(){kpis();controlsUI();apply();model();histUI();strategy();auriol();$('#src').innerHTML=t('src',D.model.n);}
+  applyStatic();if(!D)return;renderDynamic();if(drawerOpen){if(drawerMode==='past'&&pSel)openPast(pSel);else if(selId)openDetail(selId,true);}}
+function init(){pastIndex();bind();drawMap();renderDynamic();booted=true;if(location.hash==='#auriol')showTab('auriol');}
+function renderDynamic(){kpis();controlsUI();apply();model();pastControls();pastApply();strategy();auriol();$('#src').innerHTML=t('src',D.model.n);}
 function median(a){if(!a.length)return null;a=[...a].sort((x,y)=>x-y);const m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2;}
 function kpis(){
   const wk=L.filter(x=>x.date&&daysTo(x.date)>=0&&daysTo(x.date)<=7).length;
@@ -1036,11 +1109,11 @@ function bind(){
   $('#lightbox').addEventListener('click',e=>{if(e.target.id==='lightbox')$('#lightbox').hidden=true;});
   document.querySelectorAll('[data-zoom]').forEach(b=>b.addEventListener('click',()=>zoomPreset(b.dataset.zoom)));
   ['gBid','gPre','gDm','gLaw'].forEach(i=>$('#'+i).addEventListener('input',strategy));
-  bindCalendar();bindHist();
+  bindCalendar();bindPast();$('#toPast').addEventListener('click',()=>showTab('past'));
 }
 function saveSort(){try{localStorage.setItem('ench_sort',JSON.stringify({sort:st.sort,dir:st.dir}));}catch(e){}}
 function showTab(tab){document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
-  document.querySelectorAll('main > section').forEach(s=>s.hidden=s.id!=='v-'+tab);window.scrollTo(0,0);}
+  document.querySelectorAll('main > section').forEach(s=>s.hidden=s.id!=='v-'+tab);window.scrollTo(0,0);if(tab==='past')showPastTab();}
 
 function passFilters(x){
   if(st.zone&&x.zone!==st.zone)return false;
@@ -1166,37 +1239,42 @@ function pick(i){const o=sItems[i];if(!o)return;closeSugg();
   if(o.kind==='dep'||o.kind==='city'||o.kind==='court'){const pts=filtered.filter(x=>x.lat!=null);if(pts.length){const lo=d3.extent(pts,d=>d.lon),la=d3.extent(pts,d=>d.lat);zoomBox([[lo[0]-.05,la[0]-.05],[lo[1]+.05,la[1]+.05]]);}}}
 
 /* map */
-let svg,g,proj,zoom,gPts,W=800,H=640;
+let GEO=null;const geoP=fetch('dep.json').then(r=>r.json()).then(g=>{GEO={type:'FeatureCollection',features:g.features.filter(f=>!/^97/.test(f.properties.c))};return GEO;});
 const sz=k=>Math.pow(k,-0.8);
-const rad=d=>2.2+Math.sqrt((d.mp||20000)/20000)*1.6;
-function drawMap(){
-  svg=d3.select('#map');const node=svg.node();W=node.clientWidth||800;H=node.clientHeight||600;svg.attr('viewBox',`0 0 ${W} ${H}`);
-  g=svg.append('g');
-  fetch('dep.json').then(r=>r.json()).then(geo=>{
-    const metro={type:'FeatureCollection',features:geo.features.filter(f=>!/^97/.test(f.properties.c))};
-    proj=d3.geoConicConformal().parallels([44,49]).rotate([-3,0]).fitExtent([[12,12],[W-12,H-12]],metro);
-    const path=d3.geoPath(proj);
-    g.append('g').selectAll('path').data(metro.features).join('path').attr('class','dep').attr('d',path).append('title').text(f=>f.properties.n+' ('+f.properties.c+')');
-    gPts=g.append('g');
-    zoom=d3.zoom().scaleExtent([1,220]).on('zoom',ev=>{g.attr('transform',ev.transform);const k=ev.transform.k;gPts.selectAll('circle').attr('r',d=>rad(d)*sz(k)).attr('stroke-width',1/k);});
-    svg.call(zoom);updateMap();});
-}
-function updateMap(){
-  if(!gPts)return;const pts=filtered.filter(x=>x.lat!=null);const k=d3.zoomTransform(svg.node()).k;
-  const sel=gPts.selectAll('circle').data(pts,d=>d.id);sel.exit().remove();
-  sel.enter().append('circle').attr('class','pt').on('click',(ev,d)=>openDetail(d.id))
-    .on('mousemove',(ev,d)=>{const tp=$('#tip');tp.hidden=false;tp.style.left=(ev.clientX+12)+'px';tp.style.top=(ev.clientY+12)+'px';tp.innerHTML=`<b>${esc(d.city)}</b><br>${esc(d.title)} · ${eur(d.mp)}<br>${fmtDate(d.date)}`;})
-    .on('mouseleave',()=>{$('#tip').hidden=true;})
-    .merge(sel).attr('cx',d=>proj([d.lon,d.lat])[0]).attr('cy',d=>proj([d.lon,d.lat])[1]).attr('r',d=>rad(d)*sz(k)).attr('stroke-width',1/k)
-    .attr('fill',d=>catColor(d.cat)).attr('fill-opacity',.82).classed('sel',d=>d.id===selId);
-  gPts.selectAll('circle').sort((a,b)=>(b.mp||0)-(a.mp||0));
-}
+function makeMap(selector,o){
+  const M={svg:null,g:null,proj:null,zoom:null,pts:null,W:800,H:600,last:null,o};
+  M.svg=d3.select(selector);const node=M.svg.node();M.W=node.clientWidth||800;M.H=node.clientHeight||600;M.svg.attr('viewBox',`0 0 ${M.W} ${M.H}`);
+  M.g=M.svg.append('g');
+  M.ready=geoP.then(geo=>{
+    M.proj=d3.geoConicConformal().parallels([44,49]).rotate([-3,0]).fitExtent([[12,12],[M.W-12,M.H-12]],geo);
+    M.g.append('g').selectAll('path').data(geo.features).join('path').attr('class','dep').attr('d',d3.geoPath(M.proj)).append('title').text(f=>f.properties.n+' ('+f.properties.c+')');
+    M.pts=M.g.append('g');
+    M.zoom=d3.zoom().scaleExtent([1,220]).on('zoom',ev=>{M.g.attr('transform',ev.transform);const k=ev.transform.k;M.pts.selectAll('circle').attr('r',d=>o.rad(d)*sz(k)).attr('stroke-width',1/k);});
+    M.svg.call(M.zoom);if(M.last)M.update(M.last);return M;});
+  M.update=(pts)=>{M.last=pts;if(!M.pts)return;const k=d3.zoomTransform(M.svg.node()).k;
+    const sel=M.pts.selectAll('circle').data(pts,d=>d.id);sel.exit().remove();
+    sel.enter().append('circle').attr('class','pt').on('click',(ev,d)=>o.click(d))
+      .on('mousemove',(ev,d)=>{const tp=$('#tip');tp.hidden=false;tp.style.left=(ev.clientX+12)+'px';tp.style.top=(ev.clientY+12)+'px';tp.innerHTML=o.tip(d);})
+      .on('mouseleave',()=>{$('#tip').hidden=true;})
+      .merge(sel).attr('cx',d=>M.proj([d.lon,d.lat])[0]).attr('cy',d=>M.proj([d.lon,d.lat])[1]).attr('r',d=>o.rad(d)*sz(k)).attr('stroke-width',1/k)
+      .attr('fill',o.color).attr('fill-opacity',.82).classed('sel',d=>o.isSel(d));
+    M.pts.selectAll('circle').sort(o.order||((a,b)=>0));};
+  M.select=()=>{if(M.pts)M.pts.selectAll('circle').classed('sel',d=>o.isSel(d));};
+  M.recolor=()=>{if(M.pts)M.pts.selectAll('circle').attr('fill',o.color);};
+  M.zoomBox=(bb)=>{if(!M.zoom)return;if(!bb){M.svg.transition().duration(500).call(M.zoom.transform,d3.zoomIdentity);return;}
+    const [[x0,y0],[x1,y1]]=[M.proj([bb[0][0],bb[1][1]]),M.proj([bb[1][0],bb[0][1]])];const k=Math.min(220,0.9/Math.max((x1-x0)/M.W,(y1-y0)/M.H,1e-6));
+    M.svg.transition().duration(600).call(M.zoom.transform,d3.zoomIdentity.translate(M.W/2,M.H/2).scale(k).translate(-(x0+x1)/2,-(y0+y1)/2));};
+  M.fit=(pts,pad)=>{pts=pts.filter(x=>x.lat!=null);if(!pts.length)return;const lo=d3.extent(pts,d=>d.lon),la=d3.extent(pts,d=>d.lat);pad=pad||.08;M.zoomBox([[lo[0]-pad,la[0]-pad],[lo[1]+pad,la[1]+pad]]);};
+  return M;}
 const PRESETS={fr:null,idf:[[1.45,48.12],[3.56,49.24]],paris:[[2.22,48.81],[2.47,48.91]],se:[[3.6,42.3],[7.8,46.4]]};
-function zoomBox(bb){if(!zoom)return;if(!bb){svg.transition().duration(500).call(zoom.transform,d3.zoomIdentity);return;}
-  const [[x0,y0],[x1,y1]]=[proj([bb[0][0],bb[1][1]]),proj([bb[1][0],bb[0][1]])];const k=Math.min(220,0.9/Math.max((x1-x0)/W,(y1-y0)/H));
-  svg.transition().duration(600).call(zoom.transform,d3.zoomIdentity.translate(W/2,H/2).scale(k).translate(-(x0+x1)/2,-(y0+y1)/2));}
+let M1=null;
+function drawMap(){M1=makeMap('#map',{rad:d=>2.2+Math.sqrt((d.mp||20000)/20000)*1.6,color:d=>catColor(d.cat),isSel:d=>d.id===selId,click:d=>openDetail(d.id),
+  order:(a,b)=>(b.mp||0)-(a.mp||0),tip:d=>`<b>${esc(d.city)}</b><br>${esc(d.title)} · ${eur(d.mp)}<br>${fmtDate(d.date)}`});}
+function updateMap(){if(M1)M1.update(filtered.filter(x=>x.lat!=null));}
+function zoomBox(bb){if(M1)M1.zoomBox(bb);}
 function zoomPreset(p){zoomBox(PRESETS[p]);}
-function zoomZone(z){const pts=L.filter(x=>x.zone===z&&x.lat!=null);if(!pts.length)return;const lo=d3.extent(pts,d=>d.lon),la=d3.extent(pts,d=>d.lat);zoomBox([[lo[0]-.1,la[0]-.1],[lo[1]+.1,la[1]+.1]]);}
+function zoomZone(z){if(M1)M1.fit(L.filter(x=>x.zone===z),.1);}
+
 
 /* detail */
 function strategyTips(x){const tt=T().t,out=[];
@@ -1226,7 +1304,7 @@ function openDetail(id,keepScroll){
   const prev=keepScroll?$('#drawer').scrollTop:0;
   const keep={};if(keepScroll)['dBid','dPre','dDm','dMv','dMg','dOc'].forEach(i=>{const n=$('#'+i);if(n)keep[i]=n.value;});
   document.querySelectorAll('.row').forEach(r=>r.classList.toggle('sel',+r.dataset.id===id));
-  if(gPts)gPts.selectAll('circle').classed('sel',d=>d.id===id);
+  if(M1)M1.select();drawerMode='listing';
   const parts=x.cat==='parts',defBid=x.pred?x.pred.p50:(x.mp||0);
   const lots=x.subs.map(s=>`<div class="lot"><b>${esc(s.title)}</b> <span class="desc">${esc(s.text)}</span></div>`).join('');
   const lw=x.lawyers.map((l,i)=>person(i===0?t('role.poursuivant'):t('role.other'),l.name,[l.contact,l.email,l.web].filter(Boolean).join('\n'),l.email)).join('');
@@ -1251,6 +1329,7 @@ function openDetail(id,keepScroll){
      </dl></div>
      <div class="panel sec"><h3>${t('d.property')}</h3>${lots}${x.notes&&!x.consig?`<p class="desc note" style="margin-top:8px">${esc(x.notes)}</p>`:''}</div>
      <div class="panel sec"><h3>${t('d.likely')}</h3><p class="sub">${t('d.likelySub',D.model.n)}</p>${bandHTML(x)}</div>
+     <div class="panel sec"><h3>${t('cp.title')}</h3>${compsHTML(x)}</div>
      <div class="panel sec"><h3>${t('d.maxTitle')}</h3><p class="sub">${t('d.maxSub')}</p>
        <div class="calc">
          <div class="field"><label for="dMv">${t('d.mv')}</label><input class="inp num" id="dMv" type="number" step="1000" value="${x.marketValue||''}" placeholder="${t('d.mvPh')}"></div>
@@ -1275,6 +1354,7 @@ function openDetail(id,keepScroll){
   $('#dClose').addEventListener('click',closeDrawer);if(!keepScroll)$('#dClose').focus();
   dr.querySelectorAll('[data-ph]').forEach(b=>b.addEventListener('click',()=>{$('#lbImg').src=b.dataset.ph;$('#lightbox').hidden=false;}));
   dr.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>copy(b)));
+  dr.querySelectorAll('tr[data-pid]').forEach(r=>{r.addEventListener('click',()=>openPast(+r.dataset.pid));r.addEventListener('keydown',e=>{if(e.key==='Enter')openPast(+r.dataset.pid);});});
   const upd=()=>{const o={pre:+$('#dPre').value||0,dm:+$('#dDm').value,parts};$('#dFees').innerHTML=feeRows(+$('#dBid').value||0,o);
     const mv=+$('#dMv').value;if(mv){const tgt=mv*(1-(+$('#dOc').value))*(1-(+$('#dMg').value));const mb=maxBidFor(tgt,o);
       $('#dMax').innerHTML=t('d.maxRes',eur(tgt),eur(mb))+(x.mp&&mb<x.mp?t('d.maxBelow'):x.pred&&mb<x.pred.p25?t('d.maxLow'):x.pred&&mb>x.pred.p75?t('d.maxHigh'):'');}
@@ -1329,37 +1409,124 @@ function calendar(){
   $('#visits').querySelectorAll('a[data-id]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();openDetail(+a.dataset.id);}));
 }
 
-/* past sales table */
-const hst={q:'',zone:'',cat:'',occ:'',min:'',max:'',sort:'date',dir:-1,shown:50};
-const HSORTS={date:-1,name:1,city:1,surface:-1,mp:1,adj:-1,ratio:-1,ppm:-1};
-function hkey(r,k){switch(k){case 'date':return r.date?r.date.slice(6)+r.date.slice(3,5)+r.date.slice(0,2):null;case 'name':return NORM(r.name);case 'city':return NORM(r.city);
-  case 'surface':return r.surface||null;case 'mp':return r.mp;case 'adj':return r.adj;case 'ratio':return r.adj/r.mp;case 'ppm':return r.surface&&r.surface>8?r.adj/r.surface:null;}}
-function bindHist(){
-  $('#hq').addEventListener('input',e=>{hst.q=e.target.value;hst.shown=50;histRender();});
-  [['hzone','zone'],['hcat','cat'],['hocc','occ']].forEach(([id,k])=>$('#'+id).addEventListener('change',e=>{hst[k]=e.target.value;hst.shown=50;histRender();}));
-  [['hmin','min'],['hmax','max']].forEach(([id,k])=>$('#'+id).addEventListener('input',e=>{hst[k]=e.target.value;hst.shown=50;histRender();}));
-  $('#htable').querySelectorAll('[data-hs]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.hs;if(hst.sort===k)hst.dir*=-1;else{hst.sort=k;hst.dir=HSORTS[k];}histRender();}));
-  $('#hmore').addEventListener('click',()=>{hst.shown+=50;histRender();});
+/* past sales */
+const ps={q:'',zone:'',dep:'',cat:'',occ:'',flags:new Set(),aMin:'',aMax:'',dFrom:'',dTo:'',rmin:'',sort:'date',dir:-1,shown:40};
+const PSORTS={date:-1,adj:-1,mp:1,ratio:-1,ppm:-1,surf:-1,city:1};
+let PL=[],pFiltered=[],M2=null,pP=parseQ('');
+const ratioOf=r=>r.mp&&r.mp>=1000&&r.adj/r.mp<=30?r.adj/r.mp:null;
+const ppmOf=r=>r.surface&&r.surface>8&&r.nLots===1&&(r.cat==='appartement'||r.cat==='maison')?r.adj/r.surface:null;
+const rBucket=v=>v==null?'none':v<1.2?'b1':v<2?'b2':v<4?'b3':'b4';
+const RCOL={b1:'--ok',b2:'--accent',b3:'--warn',b4:'--bad',none:'--faint'};
+const rColor=r=>css(RCOL[rBucket(ratioOf(r))]);
+function km(a,b){if(a.lat==null||b.lat==null)return null;const R=6371,t=Math.PI/180,dl=(b.lat-a.lat)*t,dn=(b.lon-a.lon)*t;
+  const h=Math.sin(dl/2)**2+Math.cos(a.lat*t)*Math.cos(b.lat*t)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h));}
+function pastIndex(){PL=D.past||[];PL.forEach(r=>{r.surenchere=r.sur;r._s=' '+NORM([r.title,r.city,r.street,r.dep,r.depName,r.court,r.lawyer,r.desc,...['tr','fr','en'].map(l=>I18N[l].cats[r.cat])].join(' '))+' ';});}
+function pastControls(){
+  const zc=uniq(PL.map(r=>r.zone)),cc=uniq(PL.map(r=>r.cat));
+  $('#pzone').innerHTML=opt('',t('f.allFrance'))+Object.keys(ZONES()).filter(z=>zc.get(z)).map(z=>opt(z,`${ZONES()[z]} (${zc.get(z)})`,ps.zone===z)).join('');
+  const dc=new Map();PL.forEach(r=>{if(r.dep)dc.set(r.dep,{n:(dc.get(r.dep)||{n:0}).n+1,name:r.depName});});
+  $('#pdep').innerHTML=opt('',t('f.any'))+[...dc.entries()].sort((a,b)=>a[0].localeCompare(b[0])).map(([c,v])=>opt(c,`${c} · ${v.name||''} (${v.n})`,ps.dep===c)).join('');
+  $('#pcat').innerHTML=opt('',t('f.any'))+Object.keys(CATS()).filter(c=>cc.get(c)).map(c=>opt(c,`${CATS()[c]} (${cc.get(c)})`,ps.cat===c)).join('');
+  $('#pocc').innerHTML=opt('',t('f.any'))+[['libre','occ.libre'],['occupé','occ.occ'],['unk','occ.unk']].map(([v,k])=>opt(v,t(k),ps.occ===v)).join('');
+  $('#prmin').innerHTML=opt('',t('f.any'))+[['1.5','×1,5'],['2','×2'],['3','×3'],['5','×5']].map(([v,l])=>opt(v,'≥ '+(LANG==='en'?l.replace(',','.'):l),ps.rmin===v)).join('');
+  $('#pflags').innerHTML=[['sur','fl.sur'],['lic','fl.lic'],['multi','fl.multi']].map(([v,k])=>`<button type="button" class="chip" data-pflag="${v}" aria-pressed="${ps.flags.has(v)}">${t(k)} <span class="num">${PL.filter(r=>pflag(r,v)).length}</span></button>`).join('');
+  $('#psort').innerHTML=Object.keys(PSORTS).map(k=>opt(k,t('ps.'+k),ps.sort===k)).join('');$('#pdirIc').textContent=ps.dir>0?'↑':'↓';
+  const months=[...new Set(PL.map(r=>(r.date||'').slice(0,7)).filter(Boolean))].sort();
+  ['pdFrom','pdTo'].forEach(id=>{const cur=ps[id==='pdFrom'?'dFrom':'dTo'];$('#'+id).innerHTML=opt('','—')+months.map(m=>opt(m,fmtDate(m+'-01T00:00:00',{month:'short',year:'numeric'}),cur===m)).join('');});
+  $('#plegend').innerHTML=[['b1','< ×1,2'],['b2','×1,2 – ×2'],['b3','×2 – ×4'],['b4','> ×4'],['none',t('p.noMp')]].map(([b,l])=>`<span><i style="background:var(${RCOL[b]})"></i>${LANG==='en'?l.replace(/,/g,'.'):l}</span>`).join('')+`<span>${t('p.sizeNote')}</span>`;
 }
-function histUI(){
-  const H=D.hist,zc=uniq(H.map(r=>r.zone)),cc=uniq(H.map(r=>r.cat));
-  $('#hzone').innerHTML=opt('',t('f.any'))+Object.keys(ZONES()).filter(z=>zc.get(z)).map(z=>opt(z,`${ZONES()[z]} (${zc.get(z)})`,hst.zone===z)).join('');
-  $('#hcat').innerHTML=opt('',t('f.any'))+Object.keys(CATS()).filter(c=>cc.get(c)).map(c=>opt(c,`${CATS()[c]} (${cc.get(c)})`,hst.cat===c)).join('');
-  $('#hocc').innerHTML=opt('',t('f.any'))+[['libre','occ.libre'],['occupé','occ.occ']].map(([v,k])=>opt(v,t(k),hst.occ===v)).join('');
-  histRender();}
-function histRender(){
-  const H=D.hist,qP=parseQ(hst.q);
-  const rows=H.filter(r=>{if(hst.zone&&r.zone!==hst.zone)return false;if(hst.cat&&r.cat!==hst.cat)return false;if(hst.occ&&r.occ!==hst.occ)return false;
-    if(hst.min!==''&&r.mp<+hst.min)return false;if(hst.max!==''&&r.mp>+hst.max)return false;
-    if(!qP.empty){const s=' '+NORM([r.name,r.city,r.dep,ZONES()[r.zone],CATS()[r.cat]].join(' '))+' ';if(!qP.terms.every(tm=>s.includes(' '+tm)||(tm.length>=3&&s.includes(tm))))return false;}
-    return true;});
-  rows.sort((a,b)=>{const va=hkey(a,hst.sort),vb=hkey(b,hst.sort);if(va==null&&vb==null)return 0;if(va==null)return 1;if(vb==null)return -1;return (typeof va==='string'?va.localeCompare(vb):va-vb)*hst.dir;});
-  $('#hcount').textContent=t('h.count',rows.length,H.length);
-  $('#htable').querySelectorAll('[data-hs]').forEach(b=>{const k=b.dataset.hs;const old=b.querySelector('.ar');if(old)old.remove();if(k===hst.sort)b.insertAdjacentHTML('beforeend',`<span class="ar">${hst.dir>0?'↑':'↓'}</span>`);});
-  $('#htable tbody').innerHTML=rows.slice(0,hst.shown).map(r=>{const ra=r.adj/r.mp,ppm=hkey(r,'ppm');
-    return `<tr><td class="num">${esc(r.date||'—')}</td><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c-${r.cat});margin-right:6px"></span>${hl(r.name,qP)}<br><span class="note">${esc(ZONES()[r.zone]||'')}${r.occ?' · '+t(r.occ==='libre'?'occ.libre':'occ.occ'):''}</span></td><td>${hl(r.city,qP)} <span class="note">(${esc(r.dep)})</span></td><td class="num r">${r.surface?dec(r.surface):'—'}</td><td class="num r">${eur(r.mp)}</td><td class="num r"><b>${eur(r.adj)}</b></td><td class="num r"><span class="pill ${ra>=3?'warn':ra<1.2?'ok':'neutral'}">×${dec(ra.toFixed(2))}</span></td><td class="num r">${ppm?eur(ppm):'—'}</td></tr>`;}).join('')||`<tr><td colspan="8" class="empty">${t('r.none')}</td></tr>`;
-  $('#hmore').hidden=rows.length<=hst.shown;
+const pflag=(r,f)=>f==='sur'?r.sur:f==='lic'?r.lic:r.nLots>1;
+function bindPast(){
+  let tm=null;$('#pq').addEventListener('input',e=>{ps.q=e.target.value;clearTimeout(tm);tm=setTimeout(()=>{pP=parseQ(ps.q);ps.shown=40;pastApply();},120);});
+  [['pzone','zone'],['pdep','dep'],['pcat','cat'],['pocc','occ'],['prmin','rmin'],['pdFrom','dFrom'],['pdTo','dTo']].forEach(([id,k])=>$('#'+id).addEventListener('change',e=>{ps[k]=e.target.value;ps.shown=40;pastApply();if(k==='zone'||k==='dep')setTimeout(()=>M2&&M2.fit(pFiltered),50);}));
+  [['paMin','aMin'],['paMax','aMax']].forEach(([id,k])=>$('#'+id).addEventListener('input',e=>{ps[k]=e.target.value;ps.shown=40;pastApply();}));
+  $('#pflags').addEventListener('click',e=>{const b=e.target.closest('[data-pflag]');if(!b)return;const f=b.dataset.pflag;ps.flags.has(f)?ps.flags.delete(f):ps.flags.add(f);b.setAttribute('aria-pressed',ps.flags.has(f));ps.shown=40;pastApply();});
+  $('#psort').addEventListener('change',e=>{ps.sort=e.target.value;ps.dir=PSORTS[ps.sort];$('#pdirIc').textContent=ps.dir>0?'↑':'↓';pastRenderList();});
+  $('#pdir').addEventListener('click',()=>{ps.dir*=-1;$('#pdirIc').textContent=ps.dir>0?'↑':'↓';pastRenderList();});
+  $('#pmore').addEventListener('click',()=>{ps.shown+=40;pastRenderList();});
+  $('#pclear').addEventListener('click',()=>{Object.assign(ps,{q:'',zone:'',dep:'',cat:'',occ:'',aMin:'',aMax:'',dFrom:'',dTo:'',rmin:'',shown:40});ps.flags.clear();pP=parseQ('');
+    $('#pq').value='';$('#paMin').value='';$('#paMax').value='';pastControls();pastApply();if(M2)M2.zoomBox(null);});
+  document.querySelectorAll('[data-pzoom]').forEach(b=>b.addEventListener('click',()=>M2&&M2.zoomBox(PRESETS[b.dataset.pzoom])));
 }
+function pastPass(r){
+  if(ps.zone&&r.zone!==ps.zone)return false;if(ps.dep&&r.dep!==ps.dep)return false;if(ps.cat&&r.cat!==ps.cat)return false;
+  if(ps.occ){if(ps.occ==='unk'?r.occ!=null:r.occ!==ps.occ)return false;}
+  for(const f of ps.flags)if(!pflag(r,f))return false;
+  if(ps.aMin!==''&&r.adj<+ps.aMin)return false;if(ps.aMax!==''&&r.adj>+ps.aMax)return false;
+  if(ps.dFrom&&(r.date||'').slice(0,7)<ps.dFrom)return false;if(ps.dTo&&(r.date||'').slice(0,7)>ps.dTo)return false;
+  if(ps.rmin){const v=ratioOf(r);if(v==null||v<+ps.rmin)return false;}
+  if(!pP.empty){for(const tm of pP.terms){const so=synOK(r,tm);if(so)continue;if(!(r._s.includes(' '+tm)||(tm.length>=3&&!/^\d+$/.test(tm)&&r._s.includes(tm))))return false;}
+    for(const ph of pP.phrases)if(!r._s.includes(' '+ph))return false;for(const tm of pP.neg)if(r._s.includes(' '+tm))return false;
+    for(const n of pP.nums){const v=n.k==='mp'?r.adj:n.k==='surf'?r.surface:null;if(v==null)return false;if(!(n.op==='<'?v<n.v:n.op==='>'?v>n.v:n.op==='<='?v<=n.v:n.op==='>='?v>=n.v:v===n.v))return false;}}
+  return true;}
+function pastApply(){if(!PL.length)return;pFiltered=PL.filter(pastPass);pastKpis();pastRenderList();pastMonths();if(M2)M2.update(pFiltered.filter(r=>r.lat!=null));}
+function pastKpis(){const A=pFiltered,rs=A.map(ratioOf).filter(v=>v!=null),pm=A.map(ppmOf).filter(v=>v!=null&&A);
+  const apt=A.filter(r=>r.cat==='appartement').map(ppmOf).filter(v=>v!=null);
+  const dates=A.map(r=>r.date).filter(Boolean).sort();
+  $('#pkpis').innerHTML=[[t('pk.n'),A.length,dates.length?fmtDate(dates[0]+'T00:00:00',{month:'short',year:'numeric'})+' – '+fmtDate(dates[dates.length-1]+'T00:00:00',{month:'short',year:'numeric'}):'—'],
+    [t('pk.med'),eur(median(A.map(r=>r.adj))),t('pk.medS')],[t('pk.ratio'),rs.length?'×'+dec(median(rs).toFixed(2)):'—',t('pk.ratioS',rs.length)],[t('pk.m2'),apt.length?eur(median(apt)):'—',t('pk.m2S',apt.length)]]
+    .map(([k,v,s])=>`<div class="panel stat"><p class="k">${k}</p><p class="v num">${v}</p><p class="s">${esc(s)}</p></div>`).join('');}
+function pval(r,k){return k==='date'?r.date:k==='adj'?r.adj:k==='mp'?r.mp:k==='ratio'?ratioOf(r):k==='ppm'?ppmOf(r):k==='surf'?r.surface:NORM(r.city);}
+function pastRenderList(){
+  const A=pFiltered.slice().sort((a,b)=>{const va=pval(a,ps.sort),vb=pval(b,ps.sort);if(va==null&&vb==null)return 0;if(va==null)return 1;if(vb==null)return -1;return (typeof va==='string'?va.localeCompare(vb):va-vb)*ps.dir;});
+  $('#pcount').textContent=t('p.count',A.length,PL.length);
+  $('#plist').innerHTML=A.slice(0,ps.shown).map(r=>{const v=ratioOf(r),pm=ppmOf(r),b=rBucket(v);
+    return `<button type="button" class="row prow" data-pid="${r.id}">
+      <span class="rbadge ${b}"><span class="num">${v!=null?'×'+dec(v.toFixed(v>=10?0:1)):'—'}</span><span class="rl">${t('p.ratio')}</span></span>
+      <span style="min-width:0;display:block"><span class="t" style="display:block">${hl(r.title,pP)}${r.surface?' · '+sq(r.surface):''}</span>
+        <span class="m" style="display:block">${hl(r.city,pP)}${r.dep?' ('+esc(r.dep)+')':''} · ${fmtDate((r.date||'')+'T00:00:00',{day:'numeric',month:'short',year:'numeric'})} · ${hl((r.court||'').replace('Tribunal Judiciaire','TJ'),pP)}</span>
+        <span class="pills">${r.occ==='libre'?`<span class="pill ok">${t('p.libre')}</span>`:r.occ==='occupé'?`<span class="pill warn">${t('p.occ')}</span>`:''}${r.sur?`<span class="pill info">${t('p.sur')}</span>`:''}${r.lic?`<span class="pill info">${t('p.lic')}</span>`:''}${r.nLots>1?`<span class="pill neutral">${t('p.lots',r.nLots)}</span>`:''}</span></span>
+      <span class="price"><span class="lbl" style="display:block">${t('p.sold')}</span><span class="mp num" style="display:block">${eur(r.adj)}</span><span class="note num" style="display:block">MAP ${eur(r.mp)}</span>${pm?`<span class="score num" style="display:block">${eur(pm)}/m²</span>`:''}</span>
+    </button>`;}).join('')||`<div class="panel empty">${t('r.none')}</div>`;
+  $('#pmore').hidden=A.length<=ps.shown;
+  $('#plist').querySelectorAll('[data-pid]').forEach(b=>b.addEventListener('click',()=>openPast(+b.dataset.pid)));
+}
+function pastMonths(){
+  const by=new Map();pFiltered.forEach(r=>{const m=(r.date||'').slice(0,7);if(!m)return;if(!by.has(m))by.set(m,[]);by.get(m).push(r);});
+  const ms=[...by.keys()].sort().slice(-15);const max=Math.max(1,...ms.map(m=>by.get(m).length));
+  $('#pmonths').innerHTML=ms.length?`<div class="mbars">${ms.map(m=>{const a=by.get(m),rs=a.map(ratioOf).filter(v=>v!=null),md=rs.length?median(rs):null;
+    return `<div class="mb" title="${a.length}"><span class="mv num">${md!=null?'×'+dec(md.toFixed(1)):''}</span><span class="mbar" style="height:${Math.max(4,a.length/max*100)}%"></span><span class="mn num">${a.length}</span><span class="ml">${fmtDate(m+'-01T00:00:00',{month:'short'})}<br>${m.slice(2,4)}</span></div>`;}).join('')}</div>`:`<p class="note">—</p>`;}
+function showPastTab(){if(!M2){M2=makeMap('#pmap',{rad:d=>2+Math.sqrt((d.adj||20000)/30000)*1.5,color:rColor,isSel:d=>d.id===pSel,click:d=>openPast(d.id),order:(a,b)=>(b.adj||0)-(a.adj||0),
+  tip:d=>`<b>${esc(d.city)}</b><br>${esc(d.title)}<br>${eur(d.mp)} → <b>${eur(d.adj)}</b>${ratioOf(d)?' (×'+dec(ratioOf(d).toFixed(1))+')':''}<br>${esc(d.date||'')}`});M2.update(pFiltered.filter(r=>r.lat!=null));}}
+let pSel=null,drawerMode='listing';
+function openPast(id){const r=PL.find(x=>x.id===id);if(!r)return;pSel=id;drawerMode='past';if(M2)M2.select();drawerOpen=true;selId=null;
+  const v=ratioOf(r),pm=ppmOf(r);
+  const near=L.filter(x=>x.cat===r.cat&&x.lat!=null).map(x=>({x,d:km(r,x)})).filter(o=>o.d!=null&&o.d<40).sort((a,b)=>a.d-b.d).slice(0,4);
+  const dr=$('#drawer');dr.setAttribute('aria-label',r.title);
+  dr.innerHTML=`<div class="dhead"><div style="min-width:0"><p class="eyebrow">${t('p.detailEy')} · ${esc(CATS()[r.cat])} · ${r.id}</p><h2>${esc(r.title)}${r.surface?' · '+sq(r.surface):''}</h2>
+     <p class="note" style="margin:2px 0 0">${esc(r.street||'')}${r.street?', ':''}${esc(r.city)}${r.depName?' · '+esc(r.depName):''}</p></div>
+     <button class="x" type="button" aria-label="${t('ui.close')}" id="dClose"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+   <div class="dbody">
+     <div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr));margin:0">
+       <div class="panel stat"><p class="k">Mise à prix</p><p class="v num" style="font-size:20px">${eur(r.mp)}</p></div>
+       <div class="panel stat"><p class="k">${t('p.sold')}</p><p class="v num" style="font-size:20px">${eur(r.adj)}</p></div>
+       <div class="panel stat"><p class="k">${t('p.ratio')}</p><p class="v num" style="font-size:20px;color:var(${RCOL[rBucket(v)]})">${v!=null?'×'+dec(v.toFixed(2)):'—'}</p></div></div>
+     <div class="panel sec"><dl class="kv">
+       <dt>${t('h.date')}</dt><dd>${fmtDate((r.date||'')+'T00:00:00',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</dd>
+       <dt>${t('d.court')}</dt><dd>${esc(r.court)}</dd><dt>${t('d.type')}</dt><dd>${esc(r.stype)}</dd>
+       ${r.lawyer?`<dt>${t('f.lawyer')}</dt><dd>${esc(r.lawyer)}</dd>`:''}
+       ${pm?`<dt>€/m²</dt><dd class="num">${eur(pm)}</dd>`:''}
+       <dt>${t('f.occ')}</dt><dd>${r.occ?t(r.occ==='libre'?'occ.libre':'occ.occ'):t('occ.unk')}</dd>
+       ${r.nLots>1?`<dt>Lots</dt><dd>${r.nLots}</dd>`:''}
+     </dl>${r.desc?`<p class="desc note" style="margin-top:10px">${esc(r.desc)}${r.desc.length>=220?'…':''}</p>`:''}</div>
+     ${near.length?`<div class="panel sec"><h3>${t('p.nearUp')}</h3><p class="sub">${t('p.nearUpSub')}</p><div class="list">${near.map(({x,d})=>`<button type="button" class="row" data-oid="${x.id}" style="grid-template-columns:minmax(0,1fr) auto"><span style="min-width:0;display:block"><span class="t" style="display:block">${esc(x.title)}${x.surface?' · '+sq(x.surface):''}</span><span class="m" style="display:block">${esc(x.city)} · ${fmtDate(x.date)} · ${dec(d.toFixed(1))} km</span></span><span class="price"><span class="mp num" style="display:block">${eur(x.mp)}</span>${x.pred?`<span class="est num" style="display:block">${keur(x.pred.p25)}–${keur(x.pred.p75)}</span>`:''}</span></button>`).join('')}</div></div>`:''}
+     <div class="panel sec"><div class="docs"><a class="btn ghost sm" href="${esc(r.url)}" target="_blank" rel="noopener">${t('d.licitor')} ↗</a></div></div>
+   </div>`;
+  dr.hidden=false;$('#scrim').hidden=false;dr.scrollTop=0;$('#dClose').addEventListener('click',closeDrawer);$('#dClose').focus();
+  dr.querySelectorAll('[data-oid]').forEach(b=>b.addEventListener('click',()=>openDetail(+b.dataset.oid)));
+}
+function compsFor(x){
+  if(!PL.length)return [];const same=PL.filter(r=>r.cat===x.cat&&r.nLots===1&&r.mp);
+  let c=same.map(r=>({r,d:km(x,r)}));
+  if(x.lat!=null)c=c.filter(o=>o.d!=null&&o.d<=30).sort((a,b)=>a.d-b.d||(b.r.date||'').localeCompare(a.r.date||''));
+  else c=c.filter(o=>o.r.dep===x.dep).sort((a,b)=>(b.r.date||'').localeCompare(a.r.date||''));
+  if(x.surface)c=c.slice(0,30).sort((a,b)=>(Math.abs((a.r.surface||x.surface*3)-x.surface)/x.surface+(a.d||0)/15)-(Math.abs((b.r.surface||x.surface*3)-x.surface)/x.surface+(b.d||0)/15));
+  return c.slice(0,6);}
+function compsHTML(x){const c=compsFor(x);if(!c.length)return `<p class="note">${t('cp.none')}</p>`;
+  const rs=c.map(o=>ratioOf(o.r)),pm=c.map(o=>ppmOf(o.r)).filter(v=>v!=null);
+  return `<p class="sub">${t('cp.sum',c.length,dec(median(rs).toFixed(2)),pm.length?eur(median(pm)):null)}</p><div class="tw"><table class="ctable"><thead><tr><th>${t('h.date')}</th><th>${t('cal.city')}</th><th class="r">m²</th><th class="r">MAP</th><th class="r">${t('h.adj')}</th><th class="r">${t('h.ratio')}</th><th class="r">km</th></tr></thead><tbody>
+    ${c.map(({r,d})=>{const v=ratioOf(r);return `<tr class="click" data-pid="${r.id}" tabindex="0"><td class="num">${fmtDate(r.date+'T00:00:00',{day:'numeric',month:'short',year:'2-digit'})}</td><td>${esc(r.city)}</td><td class="num r">${r.surface?dec(r.surface):'—'}</td><td class="num r">${keur(r.mp)}</td><td class="num r"><b>${keur(r.adj)}</b></td><td class="num r"><span class="pill ${rBucket(v)==='b1'?'ok':rBucket(v)==='b4'||rBucket(v)==='b3'?'warn':'neutral'}">×${dec(v.toFixed(1))}</span></td><td class="num r">${d!=null?dec(d.toFixed(1)):'—'}</td></tr>`;}).join('')}
+    </tbody></table></div>`;}
 
 /* model */
 function model(){
