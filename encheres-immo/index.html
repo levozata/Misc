@@ -233,7 +233,6 @@ h3{margin:0;font-size:15px;font-weight:600}
 </style>
 </head>
 <body>
-
 <style>
 .lang{display:flex;gap:2px;padding:3px;background:var(--surface-2);border-radius:10px}
 .lang button{height:30px;min-width:38px;padding:0 8px;border:0;border-radius:7px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer}
@@ -284,7 +283,6 @@ mark{background:var(--warn-bg);color:inherit;border-radius:3px;padding:0 1px}
 .mv{font-size:10.5px;color:var(--accent);font-weight:600}.mn{font-size:11px;color:var(--muted)}.ml{font-size:10.5px;color:var(--faint);text-align:center;line-height:1.2}
 @media (max-width:760px){.prow{grid-template-columns:60px minmax(0,1fr)}.rbadge{width:60px;height:52px;font-size:14px}}
 </style>
-
 <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* Auction house theme: lavender-paper ground, ink-violet accent, navy actions, hairline square cards, high-contrast serif display */
@@ -441,6 +439,171 @@ h3{font-family:var(--serif);font-weight:400;font-size:19px}
   .fbar .sep{display:none}
   .bar{position:static;gap:12px}
 }
+/* ===== UX pass: search-first hero, grouped filters, clearer cards, drawer summary ===== */
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hfav{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 14px;border:1px solid var(--line-strong);border-radius:999px;background:transparent;color:var(--muted);font:500 13px var(--font);cursor:pointer}
+.hfav svg{fill:none;stroke:currentColor;stroke-width:2}
+.hfav.on svg{fill:var(--accent);stroke:var(--accent)}
+.hfav:hover{border-color:var(--accent);color:var(--accent)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:20px 48px;align-items:end;margin:8px 0 22px}
+.hero h1{margin:6px 0 10px}
+.hero .lede{margin:0;max-width:52ch}
+.hero-search{position:relative}
+.sbox.big .inp{height:58px;font-size:16.5px;padding-left:50px;padding-right:84px;border:1.5px solid var(--ink);background:var(--surface)}
+.sbox.big .inp:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.sbox.big .sico{left:18px;top:19px;color:var(--ink)}
+.sbox.big .kbd{top:18px;right:52px}
+.sbox.big .qhelp{top:12px;right:10px;width:34px;height:34px;border-radius:50%}
+.qtry{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px;font-size:12.5px;color:var(--faint)}
+.qtry>span{margin-right:2px}
+.tq{border:1px dashed var(--line-strong);background:transparent;color:var(--muted);font:500 12.5px var(--font);height:28px;padding:0 10px;border-radius:999px;cursor:pointer}
+.tq:hover{border-color:var(--accent);color:var(--accent);border-style:solid}
+.tq.link{border:0;text-decoration:underline;color:var(--accent);padding:0 4px}
+.kstrip{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:8px 28px;padding-top:16px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
+.ks{display:inline-flex;align-items:baseline;gap:6px;border:0;background:transparent;padding:0;color:inherit;font:inherit}
+.ks b{font-family:var(--serif);font-weight:400;font-size:24px;color:var(--ink)}
+button.ks{cursor:pointer;border-bottom:1px dashed var(--line-strong);padding-bottom:2px}
+button.ks:hover,button.ks[aria-pressed="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+button.ks[aria-pressed="true"] b{color:var(--accent)}
+.howto{position:relative;margin-bottom:18px;background:var(--navy);color:var(--on-navy);padding:16px 56px 16px 20px}
+.howto ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 28px}
+.howto li{display:flex;gap:12px;align-items:flex-start;font-size:13.5px;line-height:1.5}
+.howto .n{flex-shrink:0;width:28px;height:28px;border-radius:50%;border:1px solid currentColor;display:inline-flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:15px;opacity:.9}
+.howto b{display:block;font-family:var(--serif);font-weight:400;font-size:17px;margin-bottom:2px}
+.howto li span:not(.n){opacity:.82}
+.howto .hx{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:inherit;cursor:pointer;opacity:.8}
+.howto .hx:hover{opacity:1;background:rgba(255,255,255,.12)}
+.fpanel{padding:16px 18px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-start}
+.fgrid{flex:1 1 600px;display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:14px 36px}
+.fgrp:first-child{grid-column:1 / -1}
+.price .lbl,.price .mp{display:block}
+@media (max-width:1599px){.bar .tag{display:none}}
+@media (max-width:1239px){.bar{flex-wrap:wrap;row-gap:8px}.bar .tabs{order:5;flex-basis:100%;overflow-x:auto}}
+@media (max-width:1439px){.hfav>span:not(.badge){display:none}.hfav{padding:0 10px}.bar{gap:16px}}
+.fgrp{display:flex;flex-direction:column;gap:7px;min-width:0}
+.flab{font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.fpanel .chip{height:32px;font-size:12.5px}
+.fpanel .chip .num{opacity:.6;font-size:11.5px}
+.favchip svg{color:var(--accent)}.favchip[aria-pressed="true"] svg{color:currentColor}
+.fmore{margin-left:auto;align-self:flex-start}
+.fopen{display:none}
+.fpanel .adv{flex-basis:100%;margin-top:4px}
+.rhead{display:flex;justify-content:space-between;align-items:center;gap:10px 16px;flex-wrap:wrap;margin:6px 0 12px;scroll-margin-top:90px}
+.rcount{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}
+.rhead .count{font-family:var(--serif);font-size:20px;color:var(--ink)}
+.pastnote{font-size:12.5px;color:var(--faint)}
+.linkb{border:0;background:transparent;color:var(--accent);text-decoration:underline;font:inherit;cursor:pointer;padding:0}
+.rtools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.rlab{font-size:12px;color:var(--muted);font-weight:600;margin-right:2px}
+.rtools .sel{height:38px}
+.btn.sq{width:38px;height:38px;padding:0;justify-content:center}
+.vtoggle{display:none;border:1px solid var(--line-strong);border-radius:999px;padding:3px;gap:2px}
+.vtoggle button{height:30px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:600 12.5px var(--font);cursor:pointer}
+.vtoggle button[aria-pressed="true"]{background:var(--navy);color:var(--on-navy)}
+.split{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)}
+.listcol{min-width:0}
+.mapwrap{top:88px}
+.mapfoot{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid var(--line);font-size:12.5px}
+.mapfoot .hint{color:var(--faint);font-size:12px}
+.areachk{display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:var(--ink);font-weight:500}
+.areachk input{width:16px;height:16px;accent-color:var(--accent)}
+#map circle.pt.hov{stroke:var(--accent);stroke-width:3px;fill-opacity:1}
+/* cards */
+.row.card{position:relative;grid-template-columns:112px minmax(0,1fr) auto;align-items:start;padding:14px 52px 14px 14px;cursor:pointer}
+.row.card .thumb{width:112px;height:84px}
+.row.sel{height:auto}
+.row.card.hov{border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 45%,var(--surface))}
+.cbody{min-width:0}
+.ctop{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;font-size:12px;color:var(--muted)}
+.cwhen{font-weight:600;color:var(--ink)}
+.cwhen.soon{color:var(--bad)}
+.cwhen.past{color:var(--faint);text-decoration:line-through}
+.ctype{display:inline-flex;align-items:center;gap:6px}
+.ctype i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.row.card .t{margin:4px 0 0;font-size:21px;line-height:1.2;white-space:normal}
+.row.card .open{all:unset;cursor:pointer;display:inline}
+.row.card .open:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.row.card .open .dep,.dhead h2 .dep{font-family:var(--font);font-size:13px;color:var(--faint);letter-spacing:.04em;vertical-align:middle}
+.row.card .m{margin-top:3px}
+.row.card .pills:empty{display:none}
+.row.card .price{min-width:140px}
+.mband{display:block;margin-top:8px}
+.mlab{display:block;font-size:11.5px;color:var(--accent)}
+.mlab b{font-weight:600}
+.mtrack{display:block;position:relative;height:6px;margin-top:5px;background:var(--surface-2)}
+.mtrack i{position:absolute;top:0;bottom:0}
+.mtrack .miq{background:var(--accent);opacity:.55}
+.mtrack .mmed{width:2px;margin-left:-1px;background:var(--accent);top:-3px;bottom:-3px}
+.mtrack .mmp{width:2px;margin-left:-1px;background:var(--ink);top:-3px;bottom:-3px}
+.fav{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--faint);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.fav svg{fill:none;stroke:currentColor;stroke-width:2}
+.fav:hover{color:var(--accent);border-color:var(--accent)}
+.fav[aria-pressed="true"]{color:var(--accent);border-color:var(--accent-soft);background:var(--accent-soft)}
+.fav[aria-pressed="true"] svg{fill:currentColor}
+/* glossary */
+.term{all:unset;cursor:help;border-bottom:1px dotted currentColor;text-underline-offset:3px}
+.term:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pill.term{border-bottom:1px dotted currentColor;cursor:help;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600}
+.gpop{position:fixed;z-index:80;background:var(--navy);color:var(--on-navy);padding:12px 14px;font-size:13px;line-height:1.5;box-shadow:0 14px 34px rgba(20,12,60,.28)}
+.gpop b{display:block;font-family:var(--serif);font-weight:400;font-size:16px;margin-bottom:4px}
+.gpop span{opacity:.88}
+.gloss{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px 28px;margin:0}
+.gloss dt{font-family:var(--serif);font-size:16.5px;margin-bottom:3px}
+.gloss dd{margin:0;font-size:13.5px;color:var(--muted);line-height:1.55}
+.gl-row{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px}
+/* drawer */
+.dhead{display:block;padding:16px 24px 0}
+.dtop{display:flex;gap:12px;align-items:flex-start}
+.dtop .x{margin-left:auto}
+.dnav{display:flex;gap:2px;overflow-x:auto;margin:12px -24px 0;padding:0 18px;scrollbar-width:none}
+.dnav::-webkit-scrollbar{display:none}
+.dnav button{flex-shrink:0;height:38px;padding:0 10px;border:0;background:transparent;color:var(--muted);font:500 12.5px var(--font);cursor:pointer;border-bottom:2px solid transparent}
+.dnav button:hover{color:var(--ink)}
+.dnav button.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.kfacts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);background:var(--surface)}
+.kf{padding:12px 14px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:3px;min-width:0}
+.kf:last-child{border-right:0}
+.kf .kl{font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.kf b{font-family:var(--serif);font-weight:400;font-size:21px;line-height:1.15;color:var(--ink)}
+.kf .ks2{font-size:12px;color:var(--muted)}
+.kf.hot b{color:var(--bad)}
+.kf.accent{background:var(--accent-soft)}
+.dacts{display:flex;flex-wrap:wrap;gap:8px}
+.dfav svg{fill:none;stroke:currentColor;stroke-width:2}
+.dfav[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.dfav[aria-pressed="true"] svg{fill:currentColor}
+.dpills{display:flex;flex-wrap:wrap;gap:6px}.dpills:empty{display:none}
+@media (max-width:1100px){
+  .fgrid{grid-template-columns:1fr 1fr}.fgrp:last-child{grid-column:1 / -1}
+  .hero{grid-template-columns:1fr;gap:16px}
+  .vtoggle{display:inline-flex}
+  .split{grid-template-columns:1fr}
+  .split:not([data-view="map"]) .mapwrap{display:none}
+  .split[data-view="map"] .listcol{display:none}
+  .split[data-view="map"] #map{height:auto;aspect-ratio:4/3}
+}
+@media (max-width:760px){
+  .hfav span:not(.badge){display:none}.hfav{padding:0 10px}
+  .bar{column-gap:8px}.brand b{font-size:19px}.lang button{min-width:32px;padding:0 6px}.lang{order:0}
+  .howto{padding:14px 48px 14px 16px}.howto ol{grid-template-columns:1fr;gap:10px}
+  .fgrid{grid-template-columns:1fr;flex-basis:100%}.fgrp:first-child{grid-column:auto}
+  .fopen{display:flex;width:100%;align-items:center;gap:10px;height:40px;border:0;background:transparent;color:var(--ink);font:600 14px var(--font);cursor:pointer;padding:0}
+  .fopen .chev{margin-left:auto;transition:transform .15s}
+  .fpanel.open .fopen .chev{transform:rotate(180deg)}
+  .fpanel:not(.open) .fgrid,.fpanel:not(.open) .fmore,.fpanel:not(.open) .adv{display:none}
+  .fpanel{padding:8px 16px}.fpanel.open{padding-bottom:16px}
+  .fmore{margin-left:0}
+  .kstrip{gap:6px 18px}.ks b{font-size:20px}
+  .row.card{grid-template-columns:80px minmax(0,1fr);padding:12px 50px 12px 12px;gap:12px}
+  .row.card .thumb{width:80px;height:64px}
+  .row.card .price{grid-column:1 / -1;text-align:left;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;min-width:0;border-top:1px solid var(--line);padding-top:8px}
+  .row.card .price .mband{flex:1 1 160px;margin-top:0}
+  .row.card .t{font-size:19px}
+  .rtools .rlab{display:none}
+  .kfacts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kf:nth-child(2){border-right:0}.kf:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .dhead{padding:14px 16px 0}.dnav{margin:10px -16px 0;padding:0 10px}
+}
 </style>
 
 <header class="bar">
@@ -454,6 +617,7 @@ h3{font-family:var(--serif);font-weight:400;font-size:19px}
     <button role="tab" id="tab-auriol" aria-selected="false" data-tab="auriol">70 bd Vincent Auriol</button>
   </nav>
   <div class="spacer"></div>
+  <button type="button" class="hfav" id="hfav" data-i18n-aria="u.favOpen"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.8 4.5c2.1 0 3.6 1.1 4.2 2.3h2c.6-1.2 2.1-2.3 4.2-2.3 3.8 0 5.9 3.9 4.4 7.3C19.5 16.4 12 21 12 21z" fill="currentColor"/></svg><span data-i18n="u.fav"></span><span class="badge num" id="hfavN" hidden>0</span></button>
   <div class="lang" role="group" aria-label="Language / Langue / Dil">
     <button type="button" data-lang="fr" aria-pressed="false" lang="fr">FR</button>
     <button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button>
@@ -464,38 +628,50 @@ h3{font-family:var(--serif);font-weight:400;font-size:19px}
 
 <main>
   <section id="v-ilanlar" role="tabpanel" aria-labelledby="tab-ilanlar">
-    <div class="head"><div>
-      <p class="eyebrow" data-i18n="l.eyebrow"></p>
-      <h1 data-i18n="l.h1"></h1>
-      <p class="lede" data-i18n="l.lede"></p>
-    </div></div>
-    <div class="stats" id="kpis"></div>
-    <div class="panel" style="margin-bottom:12px">
-      <div class="filters">
-        <div class="field searchf" style="flex:1 1 320px">
-          <label for="q" data-i18n="f.search"></label>
-          <div class="sbox">
-            <svg class="sico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-            <input class="inp" id="q" type="search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="sugg" aria-autocomplete="list" data-i18n-ph="f.searchPh">
-            <kbd class="kbd" aria-hidden="true">/</kbd>
-            <button type="button" class="qhelp" id="qhelpBtn" aria-expanded="false" aria-controls="qhelp" data-i18n-aria="q.helpBtn">?</button>
-            <div class="sugg" id="sugg" role="listbox" hidden></div>
-          </div>
-          <div class="qhelpbox" id="qhelp" hidden></div>
-        </div>
-        <div class="field"><label for="fsort" data-i18n="f.sort"></label>
-          <div style="display:flex;gap:6px"><select class="sel" id="fsort"></select>
-          <button type="button" class="btn ghost" id="fdir" style="width:44px;padding:0;justify-content:center" data-i18n-aria="s.dir"><span id="fdirIc">↑</span></button></div></div>
-        <div class="field"><label>&nbsp;</label><button type="button" class="btn ghost" id="advBtn" aria-expanded="false" aria-controls="adv"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span data-i18n="f.more"></span><span class="badge num" id="advN" hidden></span></button></div>
+    <div class="hero">
+      <div class="hero-txt">
+        <p class="eyebrow" data-i18n="l.eyebrow"></p>
+        <h1 data-i18n="u.h1"></h1>
+        <p class="lede" data-i18n="u.lede"></p>
       </div>
-      <div class="filters" style="margin-bottom:0">
-        <div class="chips" id="fcat" role="group" data-i18n-aria="f.type"></div>
-        <div class="chips" role="group" data-i18n-aria="f.other">
+      <div class="hero-search searchf">
+        <label for="q" class="vh" data-i18n="f.search"></label>
+        <div class="sbox big">
+          <svg class="sico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input class="inp" id="q" type="search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="sugg" aria-autocomplete="list" data-i18n-ph="u.searchPh">
+          <kbd class="kbd" aria-hidden="true">/</kbd>
+          <button type="button" class="qhelp" id="qhelpBtn" aria-expanded="false" aria-controls="qhelp" data-i18n-aria="q.helpBtn">?</button>
+          <div class="sugg" id="sugg" role="listbox" hidden></div>
+        </div>
+        <div class="qtry" id="qtry"></div>
+        <div class="qhelpbox" id="qhelp" hidden></div>
+      </div>
+      <div class="kstrip" id="kpis"></div>
+    </div>
+
+    <div class="howto" id="howto" hidden>
+      <ol id="howtoSteps"></ol>
+      <button type="button" class="hx" id="howtoX" data-i18n-aria="u.howtoHide"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+
+    <div class="panel fpanel" id="fpanel">
+      <button type="button" class="fopen" id="fOpen" aria-expanded="false" aria-controls="fpanel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span data-i18n="u.filters"></span><span class="badge num" id="fOpenN" hidden></span><span class="chev" aria-hidden="true">▾</span></button>
+      <div class="fgrid">
+        <div class="fgrp"><span class="flab" data-i18n="u.fType"></span><div class="chips" id="fcat" role="group" data-i18n-aria="f.type"></div></div>
+        <div class="fgrp"><span class="flab" data-i18n="u.fBudget"></span><div class="chips" id="fbudget" role="group" data-i18n-aria="u.fBudget"></div></div>
+        <div class="fgrp"><span class="flab" data-i18n="u.fWhen"></span><div class="chips" role="group" data-i18n-aria="u.fWhen">
+          <button class="chip" id="fweek" aria-pressed="false" data-i18n="u.week"></button>
+          <button class="chip" id="fmonth" aria-pressed="false" data-i18n="u.month"></button>
+        </div></div>
+        <div class="fgrp"><span class="flab" data-i18n="u.fOnly"></span><div class="chips" role="group" data-i18n-aria="f.other">
           <button class="chip" id="fphoto" aria-pressed="false" data-i18n="f.photo"></button>
           <button class="chip" id="flibre" aria-pressed="false" data-i18n="f.libre"></button>
-          <button class="chip" id="fweek" aria-pressed="false" data-i18n="f.week"></button>
           <button class="chip" id="fvisit" aria-pressed="false" data-i18n="f.visit"></button>
-        </div>
+          <button class="chip favchip" id="ffav" aria-pressed="false"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.8 4.5c2.1 0 3.6 1.1 4.2 2.3h2c.6-1.2 2.1-2.3 4.2-2.3 3.8 0 5.9 3.9 4.4 7.3C19.5 16.4 12 21 12 21z" fill="currentColor"/></svg><span data-i18n="u.fav"></span> <span class="num" id="ffavN">0</span></button>
+        </div></div>
+      </div>
+      <div class="fmore">
+        <button type="button" class="btn ghost sm" id="advBtn" aria-expanded="false" aria-controls="adv"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span data-i18n="u.more"></span><span class="badge num" id="advN" hidden></span></button>
       </div>
       <div class="adv" id="adv" hidden>
         <div class="field"><label for="fzone" data-i18n="f.zone"></label><select class="sel" id="fzone"></select></div>
@@ -512,22 +688,37 @@ h3{font-family:var(--serif);font-weight:400;font-size:19px}
       </div>
     </div>
     <div class="active" id="active" hidden></div>
-    <div class="split">
+
+    <div class="rhead">
+      <div class="rcount"><span class="count num" id="count"></span><span class="pastnote" id="pastNote" hidden></span></div>
+      <div class="rtools">
+        <label for="fsort" class="rlab" data-i18n="f.sort"></label>
+        <select class="sel" id="fsort"></select>
+        <button type="button" class="btn ghost sq" id="fdir" data-i18n-aria="s.dir"><span id="fdirIc">↑</span></button>
+        <div class="vtoggle" role="group" data-i18n-aria="u.view">
+          <button type="button" data-view="list" aria-pressed="true" data-i18n="u.vList"></button>
+          <button type="button" data-view="map" aria-pressed="false" data-i18n="u.vMap"></button>
+        </div>
+      </div>
+    </div>
+    <div class="split" id="split">
+      <div class="listcol">
+        <div class="list" id="list"></div>
+        <button class="btn ghost more" id="more" hidden data-i18n="l.more"></button>
+      </div>
       <div class="panel mapwrap">
         <div class="maptools">
           <button class="btn ghost sm" data-zoom="fr">France</button>
           <button class="btn ghost sm" data-zoom="idf">Île-de-France</button>
           <button class="btn ghost sm" data-zoom="paris">Paris</button>
           <button class="btn ghost sm" data-zoom="se" data-i18n="map.se"></button>
-          <span class="hint" data-i18n="map.hint"></span>
         </div>
         <svg id="map" role="img" data-i18n-aria="map.aria"></svg>
+        <div class="mapfoot">
+          <label class="areachk"><input type="checkbox" id="fbbox"><span data-i18n="u.area"></span></label>
+          <span class="hint" data-i18n="u.mapHint"></span>
+        </div>
         <div class="legend" id="legend"></div>
-      </div>
-      <div>
-        <div class="listhead"><span class="count num" id="count"></span></div>
-        <div class="list" id="list"></div>
-        <button class="btn ghost more" id="more" hidden data-i18n="l.more"></button>
       </div>
     </div>
   </section>
@@ -648,6 +839,8 @@ h3{font-family:var(--serif);font-weight:400;font-size:19px}
       <div class="panel"><h2 style="margin-bottom:14px" data-i18n="st.strat"></h2>
         <ul class="tips" id="gtips"></ul></div>
     </div>
+    <div class="panel" style="margin-top:16px"><h2 style="margin-bottom:14px" data-i18n="u.glossary"></h2>
+      <dl class="gloss" id="gloss"></dl></div>
   </section>
 
   <section id="v-auriol" role="tabpanel" aria-labelledby="tab-auriol" hidden>
@@ -670,10 +863,10 @@ h3{font-family:var(--serif);font-weight:400;font-size:19px}
 </footer>
 
 <div class="tip" id="tip" hidden></div>
+<div class="gpop" id="gpop" role="tooltip" hidden></div>
 <div class="scrim" id="scrim" hidden></div>
 <aside class="drawer" id="drawer" hidden></aside>
 <div class="lightbox" id="lightbox" hidden><img id="lbImg" alt=""><button id="lbClose" type="button" data-i18n="ui.close"></button></div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script>
 const I18N={
@@ -758,7 +951,7 @@ tr:{
   lots:n=>`İhale ${n} lot halinde: her lot ayrı satılır, her biri için ayrı teminat gerekebilir.`,
   small:'9 m² altı: ana konut olarak kiraya verilemez (décence kuralı). Kullanım planınızı buna göre yapın.',
   visitPast:'Ziyaret tarihi geçti; avukata ikinci ziyaret olup olmadığını sorun.',visit:(d,n)=>`Ziyaret ${d} (${n} gün sonra). Tek fırsat, takvime ekleyin.`,novisit:'İlanda ziyaret tarihi yok; avukata sorun.',
-  soon:n=>`İhaleye ${n} gün var: avukat bulmak, teminat çeki ve finansman için süre çok kısa.`},
+  soon:n=>`${n===0?'İhale bugün':n===1?'İhale yarın':`İhaleye ${n} gün var`}: avukat bulmak, teminat çeki ve finansman için süre çok kısa.`},
  'cal.n':(a,b)=>`${a} ilan · ${b} mahkeme`,'cal.time':'Saat','cal.court':'Mahkeme','cal.prop':'Mülk','cal.city':'Şehir','cal.est':'Tahmin (P25–P75)','cal.more':n=>`+${n} ziyaret daha`,'cal.none':'Yaklaşan ziyaret yok.',
  'ui.close':'Kapat','ui.err':'Veri yüklenemedi: ',
  src:n=>`Kaynaklar: ilanlar, mahkeme/avukat bilgileri, ziyaret tarihleri ve PV descriptif fotoğrafları <a href="https://www.licitor.com/" target="_blank" rel="noopener">Licitor</a>'dan (12 Ekim 2026 itibarıyla). Bölge €/m² değerleri ilan sayfalarındaki La Loupe Immo verisi. Geçmiş satışlar: Licitor adjudication geçmişi, ${n} tek lotlu satış. Tapu harcı: Paris için %6,32 (2025 artışı). Fotoğraflar Ferrari Publicité filigranlıdır. İlan metinleri kaynaktaki gibi Fransızca.`,
@@ -854,7 +1047,7 @@ fr:{
   lots:n=>`Vente en ${n} lots : chaque lot est adjugé séparément, une consignation par lot peut être exigée.`,
   small:'Moins de 9 m² : ne peut pas être loué comme résidence principale (décence). Adaptez votre projet.',
   visitPast:"La visite est passée ; demandez à l'avocat s'il y en a une seconde.",visit:(d,n)=>`Visite le ${d} (dans ${n} jours). Une seule occasion, notez-la.`,novisit:"Pas de date de visite dans l'annonce ; renseignez-vous auprès de l'avocat.",
-  soon:n=>`Vente dans ${n} jours : délai très court pour trouver un avocat, le chèque de consignation et le financement.`},
+  soon:n=>`${n===0?'Vente aujourd’hui':n===1?'Vente demain':`Vente dans ${n} jours`} : délai très court pour trouver un avocat, le chèque de consignation et le financement.`},
  'cal.n':(a,b)=>`${a} annonces · ${b} tribunaux`,'cal.time':'Heure','cal.court':'Tribunal','cal.prop':'Bien','cal.city':'Ville','cal.est':'Estimation (P25–P75)','cal.more':n=>`+${n} autres visites`,'cal.none':'Aucune visite à venir.',
  'ui.close':'Fermer','ui.err':'Impossible de charger les données : ',
  src:n=>`Sources : annonces, tribunaux, avocats, dates de visite et photos des PV descriptifs issus de <a href="https://www.licitor.com/" target="_blank" rel="noopener">Licitor</a> (au 12 octobre 2026). Prix au m² du secteur : données La Loupe Immo affichées sur les annonces. Historique : adjudications Licitor, ${n} ventes à lot unique. Droits de mutation : 6,32 % à Paris (hausse 2025). Photos filigranées Ferrari Publicité.`,
@@ -950,7 +1143,7 @@ en:{
   lots:n=>`Sold in ${n} lots: each lot is sold separately and may need its own deposit.`,
   small:'Under 9 m²: cannot be let as a main residence (decency rules). Plan your use accordingly.',
   visitPast:'The viewing date has passed; ask the lawyer whether there is a second one.',visit:(d,n)=>`Viewing on ${d} (in ${n} days). Only one chance, put it in your diary.`,novisit:'No viewing date in the listing; ask the lawyer.',
-  soon:n=>`Auction in ${n} days: very little time to hire a lawyer, get the deposit draft and arrange funds.`},
+  soon:n=>`${n===0?'Auction today':n===1?'Auction tomorrow':`Auction in ${n} days`}: very little time to hire a lawyer, get the deposit draft and arrange funds.`},
  'cal.n':(a,b)=>`${a} listings · ${b} courts`,'cal.time':'Time','cal.court':'Court','cal.prop':'Property','cal.city':'City','cal.est':'Estimate (P25–P75)','cal.more':n=>`+${n} more viewings`,'cal.none':'No upcoming viewings.',
  'ui.close':'Close','ui.err':'Could not load data: ',
  src:n=>`Sources: listings, courts, lawyers, viewing dates and report photos from <a href="https://www.licitor.com/" target="_blank" rel="noopener">Licitor</a> (as of 12 October 2026). Area €/m²: La Loupe Immo figures shown on listing pages. History: Licitor adjudications, ${n} single-lot sales. Transfer tax: 6.32% in Paris (2025 increase). Photos carry the Ferrari Publicité watermark. Listing texts are in the original French.`,
@@ -965,7 +1158,6 @@ en:{
   ppl:[['Court','Tribunal judiciaire de Paris','Before the enforcement judge · 3 December 2026, 2 pm'],['Seller’s lawyer','Me Éric Assouline, Cabinet Ethic All','15, bd Richard Lenoir, 75011 Paris\nTel.: 09 75 40 31 39\nventes.assouline@orange.fr','ventes.assouline@orange.fr'],['Liquidator','Me Marie-Hélène Montravers, SELARL Montravers Yang-Ting','9, rue du Mont Thabor, 75001 Paris'],['Supervising judge (juge-commissaire)','Mme Béatrix Peret','Paris commercial court · case P199501243'],['Bailiff (commissaire de justice)','Me Jeanne Delacroix, SELAS Samain, Asensio, Gonzalez & Associés','31-33, rue Deparcieux, 75014 Paris · Tel.: 01 43 20 55 95'],['Managing agent (syndic)',"Cabinet AXIMO (Syndic parisien d'utilité publique)",'237 B, rue de Belleville · contact Catherine Ciesla'],['Residence operator',"CASP (Centre d'action sociale protestant)",'Social units owned by Paris Habitat'],['Seller (debtor)','JRH HOTEL SNC','SIREN 380 430 884 · partners Jean-Raoul Ismael, Henry Benguigui, Patrick Memoune']],
   tl:[['1990','JRH HOTEL SNC is set up (Jean-Raoul Ismael, Henry Benguigui).'],['11.12.1992','JRH buys the former clinic at 70 bd Vincent Auriol (Me Claris).'],['19.11.1993','Co-ownership rules registered.'],['29.12.1993','Lot no. 6 sold for FRF 831,525 (€126,765).'],['27.02.1995','Paris commercial court opens JRH’s judicial liquidation.'],['25.12.1995','The Vincent Auriol establishment closes.'],['02.05.2002','Buyers’ claim: Paris court annuls the sale of lot 6 (upheld on appeal 14.10.2003).'],['25.09.2006','Liquidation closed for insufficient assets.'],['21.04.2010','Annulment registered; lot 6 returns to JRH’s estate.'],['11.09.2024','Liquidation reopened; liquidator SELARL Montravers Yang-Ting.'],['22.04.2026','Liquidator applies for a sale (proposed reserve €40,000).'],['03.06.2026','Judge Béatrix Peret orders the sale with a €10,000 reserve.'],['02.07.2026','Bailiff’s report (Me Jeanne Delacroix).'],['24.11.2026','On-site viewing, 4–5 pm.',1],['03.12.2026','Auction, TJ Paris, 2 pm.',1]]}
 }};
-
 Object.assign(I18N.tr,{
  'f.searchPh':'Şehir, adres, mahkeme, avukat, tip… (ör. paris 13 boş prix<50000)',
  'f.more':'Gelişmiş filtreler','f.week':'Bu hafta','f.dep':'Département','f.court':'Mahkeme','f.lawyer':'Avukat','f.price':'Mise à prix (€)','f.surf':'Yüzölçümü (m²)','f.min':'min','f.max2':'maks',
@@ -1023,7 +1215,6 @@ Object.assign(I18N.en,{
  'v.date':'By date','v.city':'By city','v.mp':'By reserve',
  'h.title':'Past sales','h.sub':'The single-lot sales the model is built on. Click a column header to sort.','h.ph':'City, property, département…','h.date':'Sale date','h.adj':'Hammer price','h.ratio':'Ratio','h.ppm':'€/m²','h.count':(a,b)=>`${a} / ${b} sales`
 });
-
 Object.assign(I18N.tr,{
  'nav.past':'Geçmiş satışlar','p.eyebrow':'Sonuçlanmış ihaleler','p.h1':'Geçmiş satışlar',
  'p.lede':'Licitor\'da sonucu yayınlanmış ihaleler: mise à prix, satış fiyatı, oran, konum ve mahkeme. Filtreleyin, sıralayın, haritada inceleyin; bir satışa tıklayınca yakınındaki yaklaşan ilanları da görürsünüz.',
@@ -1063,10 +1254,114 @@ Object.assign(I18N.en,{
 Object.assign(I18N.tr,{'cl.in':(d,w)=>d===0?`Bugün kapanıyor · ${w}`:`Kapanışa ${d} gün · ${w}`,'ft.sections':'Bölümler','ft.sources':'Kaynaklar','ft.hist':'Adjudication geçmişi','ft.lang':'Dil','ft.about':'Hakkında','ft.aboutTxt':'Licitor verisinden derlenen kişisel araştırma aracı. Karar desteği içindir; teklif öncesi rakamları avukatınıza teyit ettirin.','ft.snap':'Veri: 12 Ekim 2026','ft.notlegal':'Hukuki tavsiye değildir'});
 Object.assign(I18N.fr,{'cl.in':(d,w)=>d===0?`Clôture aujourd'hui · ${w}`:`Clôture dans ${d} j · ${w}`,'ft.sections':'Rubriques','ft.sources':'Sources','ft.hist':'Historique des adjudications','ft.lang':'Langue','ft.about':'À propos','ft.aboutTxt':'Outil de recherche personnel construit à partir des données Licitor. Aide à la décision : faites valider les chiffres par votre avocat avant d’enchérir.','ft.snap':'Données : 12 octobre 2026','ft.notlegal':'Pas un conseil juridique'});
 Object.assign(I18N.en,{'cl.in':(d,w)=>d===0?`Closing today · ${w}`:`Closing in ${d} days · ${w}`,'ft.sections':'Sections','ft.sources':'Sources','ft.hist':'Adjudication history','ft.lang':'Language','ft.about':'About','ft.aboutTxt':'A personal research tool built from Licitor data. Decision support only: have your lawyer confirm the figures before bidding.','ft.snap':'Data: 12 October 2026','ft.notlegal':'Not legal advice'});
-
+Object.assign(I18N.en,{
+ 'nav.list':'Upcoming auctions','nav.past':'Past results','nav.model':'Price estimates','nav.strat':'Costs &amp; guide',
+ 'u.h1':'Find a property at a court auction',
+ 'u.lede':'Every upcoming judicial sale in France, with the likely final price, the full cost and what to check before you bid.',
+ 'u.searchPh':'Search a city, postcode, type, court, lawyer…',
+ 'u.try':'Try','u.tries':['paris appartement','lyon','maison prix<100000','dep:13','jours<14'],
+ 'u.howto':[['Find','Search or tap the filters. Click a card or a dot on the map.'],['Check','Each listing shows the likely price from past sales, all fees, and what to watch out for.'],['Bid','You bid through a lawyer at the court. Contact the lawyer named in the listing, visit, and set your maximum.']],
+ 'u.howtoHide':'Hide these tips','u.howtoShow':'How it works',
+ 'u.fType':'Property','u.fBudget':'Starting price up to','u.fWhen':'Auction date','u.fOnly':'Only show',
+ 'u.week':'Next 7 days','u.month':'Next 30 days','u.fav':'Saved','u.favOpen':'Open my saved listings','u.more':'More filters','u.filters':'Filters',
+ 'u.view':'View','u.vList':'List','u.vMap':'Map','u.area':'Only show what’s on the map','u.mapHint':'Drag to move · scroll to zoom',
+ 'u.kUp':'upcoming','u.kWeek':'in the next 7 days','u.kPhoto':'with photos','u.kMed':'median starting price',
+ 'u.pastHidden':n=>`${n} auction${n>1?'s':''} already held, hidden`,'u.showPast':'show','u.hidePast':'Hide held auctions',
+ 'u.inD':d=>d===0?'Today':d===1?'Tomorrow':`In ${d} days`,'u.held':'Held',
+ 'u.likely':'Likely','u.save':'Save','u.saved':'Saved','u.saveAria':t=>`Save ${t}`,'u.unsaveAria':t=>`Remove ${t} from saved`,
+ 'u.bandTitle':(mp,a,b)=>`Starting price ${mp} · likely final price ${a}–${b}`,
+ 'u.noFav':'You haven’t saved any listings yet. Tap the heart on a card to keep it here.',
+ 'fc.month':'Next 30 days','fc.fav':'Saved only','fc.area':'Map area',
+ 'kf.date':'Auction','kf.mp':'Starting price','kf.likely':'Likely price','kf.total':'Total if you win','kf.totalSub':v=>`at ${v}, incl. fees`,'kf.noEst':'no estimate',
+ 'u.licitor':'Open on Licitor','u.pv':'Property report (PV)',
+ 'dn.sale':'Sale','dn.prop':'Property','dn.price':'Price','dn.comps':'Comparables','dn.max':'Max bid','dn.fees':'Fees','dn.tips':'Watch-outs','dn.people':'Contacts','dn.docs':'Documents',
+ 'u.glossary':'Glossary',
+ gl:{mp:['Mise à prix (starting price)','The opening price set by the creditor’s lawyer. Bidding starts here. It is usually well below market value and is not an estimate.'],
+  est:['Likely price (P25–P75)','Half of comparable past sales ended inside this range; P50 is the middle. Computed from past Licitor results — a guide, not a promise.'],
+  sur:['Surenchère','For 10 days after the auction anyone can, through a lawyer, outbid the winner by at least 10%. That triggers a new auction, so a win is only final after this delay.'],
+  lic:['Licitation','A sale ordered by the court to end joint ownership (e.g. inheritance or divorce). Co-owners may bid too.'],
+  baisse:['Price reduction (faculté de baisse)','If nobody bids at the starting price, the judge may lower it on the spot (often by a quarter or a half).'],
+  consig:['Deposit (consignation)','Before bidding you give your lawyer a bank cheque, usually 10% of the starting price and at least €3,000. It is returned if you don’t win.'],
+  pre:['Prior costs (frais préalables)','The pursuing side’s procedure costs (adverts, bailiff, diagnostics). Announced at the hearing and paid by the winner on top of the price.'],
+  emol:['Lawyer’s regulated fee (émoluments)','A sliding percentage of the price paid to the pursuing lawyer, plus VAT. Paid by the buyer.'],
+  dmto:['Transfer taxes (droits de mutation)','About 5.8–6.3% of the price depending on the département, as in an ordinary purchase.'],
+  ratio:['Ratio','Final price ÷ starting price. ×2 means it sold for twice the starting price.'],
+  occ:['Occupied / vacant','Occupied means someone lives there (owner or tenant). You buy with the occupant; getting possession can take months. Vacant (libre) is simpler.'],
+  avocat:['Lawyer (avocat)','At a tribunal judiciaire you can only bid through a lawyer registered at that court’s bar. Brief them a few days before.']}
+});
+Object.assign(I18N.fr,{
+ 'nav.list':'Ventes à venir','nav.past':'Résultats passés','nav.model':'Estimation des prix','nav.strat':'Frais &amp; guide',
+ 'u.h1':'Trouver un bien aux enchères judiciaires',
+ 'u.lede':'Toutes les ventes judiciaires à venir en France, avec le prix final probable, le coût total et les points à vérifier avant d’enchérir.',
+ 'u.searchPh':'Ville, code postal, type, tribunal, avocat…',
+ 'u.try':'Essayez','u.tries':['paris appartement','lyon','maison prix<100000','dep:13','jours<14'],
+ 'u.howto':[['Chercher','Tapez une recherche ou utilisez les filtres. Cliquez sur une carte ou un point.'],['Vérifier','Chaque annonce indique le prix probable d’après les ventes passées, tous les frais et les points de vigilance.'],['Enchérir','On enchérit par un avocat au tribunal. Contactez l’avocat indiqué, visitez et fixez votre maximum.']],
+ 'u.howtoHide':'Masquer ces conseils','u.howtoShow':'Comment ça marche',
+ 'u.fType':'Type de bien','u.fBudget':'Mise à prix jusqu’à','u.fWhen':'Date de vente','u.fOnly':'Afficher seulement',
+ 'u.week':'7 prochains jours','u.month':'30 prochains jours','u.fav':'Ma sélection','u.favOpen':'Ouvrir ma sélection','u.more':'Plus de filtres','u.filters':'Filtres',
+ 'u.view':'Affichage','u.vList':'Liste','u.vMap':'Carte','u.area':'Limiter à la zone de la carte','u.mapHint':'Glisser pour déplacer · molette pour zoomer',
+ 'u.kUp':'ventes à venir','u.kWeek':'dans les 7 jours','u.kPhoto':'avec photos','u.kMed':'mise à prix médiane',
+ 'u.pastHidden':n=>`${n} vente${n>1?'s':''} déjà passée${n>1?'s':''}, masquée${n>1?'s':''}`,'u.showPast':'afficher','u.hidePast':'Masquer les ventes passées',
+ 'u.inD':d=>d===0?'Aujourd’hui':d===1?'Demain':`Dans ${d} jours`,'u.held':'Passée',
+ 'u.likely':'Probable','u.save':'Sauvegarder','u.saved':'Sauvegardé','u.saveAria':t=>`Ajouter ${t} à ma sélection`,'u.unsaveAria':t=>`Retirer ${t} de ma sélection`,
+ 'u.bandTitle':(mp,a,b)=>`Mise à prix ${mp} · prix final probable ${a}–${b}`,
+ 'u.noFav':'Votre sélection est vide. Touchez le cœur d’une annonce pour la garder ici.',
+ 'fc.month':'30 prochains jours','fc.fav':'Ma sélection','fc.area':'Zone de la carte',
+ 'kf.date':'Audience','kf.mp':'Mise à prix','kf.likely':'Prix probable','kf.total':'Coût total si adjugé','kf.totalSub':v=>`à ${v}, frais compris`,'kf.noEst':'pas d’estimation',
+ 'u.licitor':'Voir sur Licitor','u.pv':'PV descriptif',
+ 'dn.sale':'Vente','dn.prop':'Bien','dn.price':'Prix','dn.comps':'Comparables','dn.max':'Enchère max','dn.fees':'Frais','dn.tips':'Vigilance','dn.people':'Contacts','dn.docs':'Documents',
+ 'u.glossary':'Lexique',
+ gl:{mp:['Mise à prix','Prix de départ fixé par l’avocat du créancier. Les enchères partent de là. Souvent bien en dessous du marché : ce n’est pas une estimation.'],
+  est:['Prix probable (P25–P75)','La moitié des ventes comparables passées se sont terminées dans cette fourchette ; P50 est le milieu. Calculé sur les résultats Licitor — un repère, pas une garantie.'],
+  sur:['Surenchère','Pendant 10 jours après l’audience, toute personne peut, par avocat, surenchérir d’au moins 10 %. Une nouvelle vente a alors lieu : l’adjudication n’est définitive qu’après ce délai.'],
+  lic:['Licitation','Vente ordonnée par le tribunal pour sortir d’une indivision (succession, divorce…). Les indivisaires peuvent aussi enchérir.'],
+  baisse:['Faculté de baisse','Faute d’enchère à la mise à prix, le juge peut la baisser séance tenante (souvent d’un quart ou de moitié).'],
+  consig:['Consignation','Avant d’enchérir, vous remettez à votre avocat un chèque de banque, en général 10 % de la mise à prix et au moins 3 000 €. Restitué si vous ne gagnez pas.'],
+  pre:['Frais préalables','Frais de procédure du poursuivant (publicité, commissaire de justice, diagnostics). Annoncés à l’audience et payés par l’adjudicataire en plus du prix.'],
+  emol:['Émoluments','Rémunération réglementée de l’avocat poursuivant, en pourcentage dégressif du prix, plus TVA. À la charge de l’acquéreur.'],
+  dmto:['Droits de mutation','Environ 5,8 à 6,3 % du prix selon le département, comme pour un achat classique.'],
+  ratio:['Ratio','Prix adjugé ÷ mise à prix. ×2 signifie vendu au double de la mise à prix.'],
+  occ:['Occupé / libre','Occupé : quelqu’un y vit (propriétaire ou locataire). Vous achetez avec l’occupant ; obtenir la libération peut prendre des mois. Libre est plus simple.'],
+  avocat:['Avocat','Au tribunal judiciaire, on ne peut enchérir que par un avocat inscrit au barreau de ce tribunal. Prévenez-le quelques jours avant.']}
+});
+Object.assign(I18N.tr,{
+ 'nav.list':'Yaklaşan ihaleler','nav.past':'Geçmiş sonuçlar','nav.model':'Fiyat tahmini','nav.strat':'Masraflar &amp; rehber',
+ 'u.h1':'Mahkeme ihalesinde mülk bulun',
+ 'u.lede':'Fransa’daki tüm yaklaşan adli satışlar: olası satış fiyatı, toplam maliyet ve teklif öncesi kontrol edilecekler.',
+ 'u.searchPh':'Şehir, posta kodu, tip, mahkeme, avukat ara…',
+ 'u.try':'Deneyin','u.tries':['paris daire','lyon','ev fiyat<100000','dep:13','gun<14'],
+ 'u.howto':[['Bul','Arama yapın ya da filtrelere dokunun. Bir karta veya haritadaki noktaya tıklayın.'],['Kontrol et','Her ilanda geçmiş satışlara göre olası fiyat, tüm masraflar ve dikkat edilecekler var.'],['Teklif ver','Teklif mahkemede bir avukat aracılığıyla verilir. İlandaki avukatla görüşün, ziyaret edin, üst sınırınızı belirleyin.']],
+ 'u.howtoHide':'Bu ipuçlarını gizle','u.howtoShow':'Nasıl çalışır',
+ 'u.fType':'Mülk tipi','u.fBudget':'Başlangıç fiyatı en çok','u.fWhen':'İhale tarihi','u.fOnly':'Yalnızca',
+ 'u.week':'7 gün içinde','u.month':'30 gün içinde','u.fav':'Kaydedilenler','u.favOpen':'Kaydedilen ilanları aç','u.more':'Diğer filtreler','u.filters':'Filtreler',
+ 'u.view':'Görünüm','u.vList':'Liste','u.vMap':'Harita','u.area':'Yalnızca haritadaki alanı göster','u.mapHint':'Sürükleyerek gezin · tekerlekle yakınlaşın',
+ 'u.kUp':'yaklaşan ihale','u.kWeek':'7 gün içinde','u.kPhoto':'fotoğraflı','u.kMed':'medyan başlangıç fiyatı',
+ 'u.pastHidden':n=>`${n} ihale zaten yapıldı, gizlendi`,'u.showPast':'göster','u.hidePast':'Yapılmış ihaleleri gizle',
+ 'u.inD':d=>d===0?'Bugün':d===1?'Yarın':`${d} gün sonra`,'u.held':'Yapıldı',
+ 'u.likely':'Olası','u.save':'Kaydet','u.saved':'Kaydedildi','u.saveAria':t=>`${t} ilanını kaydet`,'u.unsaveAria':t=>`${t} ilanını kaydedilenlerden çıkar`,
+ 'u.bandTitle':(mp,a,b)=>`Başlangıç ${mp} · olası satış fiyatı ${a}–${b}`,
+ 'u.noFav':'Henüz kaydettiğiniz ilan yok. Bir karttaki kalbe dokunarak burada tutabilirsiniz.',
+ 'fc.month':'30 gün içinde','fc.fav':'Yalnızca kaydedilenler','fc.area':'Harita alanı',
+ 'kf.date':'İhale','kf.mp':'Başlangıç fiyatı','kf.likely':'Olası fiyat','kf.total':'Kazanırsanız toplam','kf.totalSub':v=>`${v} teklifle, masraflar dahil`,'kf.noEst':'tahmin yok',
+ 'u.licitor':'Licitor’da aç','u.pv':'Tespit tutanağı (PV)',
+ 'dn.sale':'Satış','dn.prop':'Mülk','dn.price':'Fiyat','dn.comps':'Benzerler','dn.max':'Azami teklif','dn.fees':'Masraflar','dn.tips':'Dikkat','dn.people':'Kişiler','dn.docs':'Belgeler',
+ 'u.glossary':'Sözlük',
+ gl:{mp:['Mise à prix (başlangıç fiyatı)','Alacaklının avukatının belirlediği açılış fiyatı. Teklifler buradan başlar. Genelde piyasa değerinin çok altındadır; bir tahmin değildir.'],
+  est:['Olası fiyat (P25–P75)','Benzer geçmiş satışların yarısı bu aralıkta bitti; P50 ortası. Licitor sonuçlarından hesaplanır — garanti değil, yol gösterici.'],
+  sur:['Surenchère','İhaleden sonraki 10 gün içinde herkes bir avukat aracılığıyla en az %10 fazlasını teklif edebilir. Bu yeni bir ihale başlatır; kazanç ancak bu süreden sonra kesinleşir.'],
+  lic:['Licitation','Ortak mülkiyeti (miras, boşanma vb.) sona erdirmek için mahkemenin emrettiği satış. Ortaklar da teklif verebilir.'],
+  baisse:['Fiyat indirimi (faculté de baisse)','Başlangıç fiyatına teklif gelmezse hâkim fiyatı anında düşürebilir (çoğu zaman dörtte bir ya da yarı yarıya).'],
+  consig:['Teminat (consignation)','Teklif vermeden önce avukatınıza banka çeki verirsiniz; genelde başlangıç fiyatının %10’u, en az 3.000 €. Kazanamazsanız iade edilir.'],
+  pre:['Ön masraflar (frais préalables)','Takip eden tarafın usul masrafları (ilan, icra memuru, ekspertiz). Duruşmada açıklanır, fiyata ek olarak kazanan öder.'],
+  emol:['Avukat ücreti (émoluments)','Takip eden avukata ödenen, fiyata göre kademeli yüzde + KDV. Alıcı öder.'],
+  dmto:['Tapu harcı (droits de mutation)','Département’a göre fiyatın yaklaşık %5,8–6,3’ü; normal alımdaki gibi.'],
+  ratio:['Oran','Satış fiyatı ÷ başlangıç fiyatı. ×2, başlangıcın iki katına satıldı demek.'],
+  occ:['Dolu / boş','Dolu: içinde biri yaşıyor (malik ya da kiracı). Mülkü onunla birlikte alırsınız; tahliye aylar sürebilir. Boş (libre) daha kolaydır.'],
+  avocat:['Avukat','Tribunal judiciaire’de yalnızca o mahkemenin barosuna kayıtlı bir avukat aracılığıyla teklif verilebilir. Birkaç gün önceden haber verin.']}
+});
 (function(){
 "use strict";
-const TODAY=new Date('2026-10-12T00:00:00');
+const SNAP=new Date('2026-10-12T00:00:00');const TODAY=(()=>{const n=new Date();n.setHours(0,0,0,0);return n>SNAP?n:SNAP;})();
 let LANG='tr';
 try{const s=localStorage.getItem('ench_lang');if(s&&I18N[s])LANG=s;else{const n=(navigator.language||'').slice(0,2);if(I18N[n])LANG=n;}}catch(e){}
 const T=()=>I18N[LANG];
@@ -1181,7 +1476,11 @@ function hl(text,P){
 /* state */
 let D=null,L=[],filtered=[],shown=40,selId=null,drawerOpen=false,booted=false,P=parseQ('');
 const SORTS={rel:-1,date:1,pub:-1,mp:1,surf:-1,ppm:1,disc:1,upside:-1,visit:1,city:1,court:1};
-const st={q:'',zone:'',dep:'',court:'',lawyer:'',city:'',cats:new Set(),mpMin:'',mpMax:'',sMin:'',sMax:'',dFrom:'',dTo:'',occ:'',disc:'',flags:new Set(),docs:new Set(),week:false,sort:'date',dir:1,sortUser:false};
+const st={q:'',zone:'',dep:'',court:'',lawyer:'',city:'',cats:new Set(),mpMin:'',mpMax:'',sMin:'',sMax:'',dFrom:'',dTo:'',occ:'',disc:'',flags:new Set(),docs:new Set(),week:false,month:false,fav:false,bbox:null,bboxOn:false,showPast:false,sort:'date',dir:1,sortUser:false};
+const HEART='<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.8 4.5c2.1 0 3.6 1.1 4.2 2.3h2c.6-1.2 2.1-2.3 4.2-2.3 3.8 0 5.9 3.9 4.4 7.3C19.5 16.4 12 21 12 21z"/></svg>';
+let FAV=new Set();try{FAV=new Set(JSON.parse(localStorage.getItem('ench_fav')||'[]'));}catch(e){}
+const isPast=x=>!!(x.date&&daysTo(x.date)<0);
+const term=(k,label)=>`<button type="button" class="term" data-term="${k}">${label}</button>`;
 try{const s=JSON.parse(localStorage.getItem('ench_sort')||'null');if(s&&SORTS[s.sort]!=null){st.sort=s.sort;st.dir=s.dir;st.sortUser=true;}}catch(e){}
 applyStatic();
 fetch('data.json').then(r=>r.json()).then(d=>{D=d;L=d.listings;buildIndex(L);init();}).catch(e=>{$('#list').innerHTML='<div class="panel empty">'+t('ui.err')+esc(e.message)+'</div>';});
@@ -1196,6 +1495,9 @@ function applyStatic(){
   $('#steps').innerHTML=T().steps.map((s,i)=>`<li><span class="n">${i+1}</span><div><h3>${s[0]}</h3><p>${s[1]}</p></div></li>`).join('');
   $('#gtips').innerHTML=T().gtips.map(([c,i,s])=>`<li><span class="ic ${c}">${i}</span><span>${s}</span></li>`).join('');
   $('#qhelp').innerHTML=t('q.help');
+  $('#howtoSteps').innerHTML=T()['u.howto'].map(([h,p],i)=>`<li><span class="n">${i+1}</span><div><b>${h}</b><span>${p}</span></div></li>`).join('');
+  $('#gloss').innerHTML=Object.values(T().gl).map(([h,p])=>`<div><dt>${esc(h)}</dt><dd>${esc(p)}</dd></div>`).join('');
+  howtoUI();
   $('#qhelp').querySelectorAll('code').forEach(c=>c.addEventListener('click',()=>{$('#q').value=c.textContent;onQuery(c.textContent,true);$('#q').focus();}));
 }
 function setLang(l){if(!I18N[l]||l===LANG)return;LANG=l;try{localStorage.setItem('ench_lang',l);}catch(e){}
@@ -1204,10 +1506,18 @@ function init(){pastIndex();bind();drawMap();renderDynamic();booted=true;if(loca
 function renderDynamic(){kpis();controlsUI();apply();model();pastControls();pastApply();strategy();auriol();$('#src').innerHTML=t('src',D.model.n);}
 function median(a){if(!a.length)return null;a=[...a].sort((x,y)=>x-y);const m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2;}
 function kpis(){
-  const wk=L.filter(x=>x.date&&daysTo(x.date)>=0&&daysTo(x.date)<=7).length;
-  const ph=L.filter(x=>x.photos.length).length;const sum=L.reduce((a,x)=>a+(x.mp||0),0);
-  $('#kpis').innerHTML=[[t('k.upcoming'),L.length,t('k.upcomingS',new Set(L.map(x=>x.court)).size)],[t('k.week'),wk,t('k.weekS')],[t('k.sum'),keur(sum),t('k.sumS',eur(median(L.map(x=>x.mp).filter(Boolean))))],[t('k.photo'),ph,t('k.photoS')]]
-    .map(([k,v,s])=>`<div class="panel stat"><p class="k">${k}</p><p class="v num">${v}</p><p class="s">${esc(s)}</p></div>`).join('');}
+  const up=L.filter(x=>!isPast(x));const wk=up.filter(x=>x.date&&daysTo(x.date)<=7).length,ph=up.filter(x=>x.photos.length).length,med=median(up.map(x=>x.mp).filter(Boolean));
+  $('#kpis').innerHTML=[[up.length,t('u.kUp'),''],[wk,t('u.kWeek'),'week'],[ph,t('u.kPhoto'),'photo'],[eur(med),t('u.kMed'),'']]
+    .map(([v,k,a])=>a?`<button type="button" class="ks" data-k="${a}" aria-pressed="${a==='week'?st.week:st.docs.has('photo')}"><b class="num">${v}</b> ${esc(k)}</button>`:`<span class="ks"><b class="num">${v}</b> ${esc(k)}</span>`).join('');}
+function howtoUI(){let off=false;try{off=localStorage.getItem('ench_howto')==='0';}catch(e){}
+  $('#howto').hidden=off;
+  $('#qtry').innerHTML=`<span>${t('u.try')}</span>`+T()['u.tries'].map(q=>`<button type="button" class="tq" data-q="${esc(q)}">${esc(q)}</button>`).join('')+(off?`<button type="button" class="tq link" id="howtoShow">${t('u.howtoShow')}</button>`:'');}
+function saveFav(){try{localStorage.setItem('ench_fav',JSON.stringify([...FAV]));}catch(e){}}
+function favUI(){const n=L.filter(x=>FAV.has(x.id)).length;$('#ffavN').textContent=n;$('#hfavN').textContent=n;$('#hfavN').hidden=!n;$('#hfav').classList.toggle('on',n>0);}
+function toggleFav(id){FAV.has(id)?FAV.delete(id):FAV.add(id);saveFav();favUI();
+  const x=L.find(y=>y.id===id);document.querySelectorAll(`.row[data-id="${id}"] .fav`).forEach(b=>{b.setAttribute('aria-pressed',FAV.has(id));b.setAttribute('aria-label',t(FAV.has(id)?'u.unsaveAria':'u.saveAria',x?x.city:''));});
+  const df=$('#dFav');if(df&&selId===id&&drawerOpen){df.setAttribute('aria-pressed',FAV.has(id));df.lastChild.textContent=FAV.has(id)?t('u.saved'):t('u.save');}
+  if(st.fav)apply();}
 const opt=(v,l,sel)=>`<option value="${esc(v)}"${sel?' selected':''}>${esc(l)}</option>`;
 function uniq(arr){const m=new Map();arr.forEach(v=>{if(v)m.set(v,(m.get(v)||0)+1);});return m;}
 function controlsUI(){
@@ -1223,10 +1533,12 @@ function controlsUI(){
   $('#fdisc').innerHTML=opt('',t('f.any'))+[['0.25','disc.25'],['0.5','disc.50'],['0.75','disc.75']].map(([v,k])=>opt(v,t(k),st.disc===v)).join('');
   $('#fflags').innerHTML=[['sur','fl.sur'],['lic','fl.lic'],['baisse','fl.baisse'],['multi','fl.multi']].map(([v,k])=>`<button type="button" class="chip" data-flag="${v}" aria-pressed="${st.flags.has(v)}">${t(k)} <span class="num">${L.filter(x=>flagOK(x,v)).length}</span></button>`).join('');
   $('#fdocs').innerHTML=[['photo','dc.photo'],['docs','dc.docs'],['visit','dc.visit'],['est','dc.est'],['mv','dc.mv']].map(([v,k])=>`<button type="button" class="chip" data-doc="${v}" aria-pressed="${st.docs.has(v)}">${t(k)} <span class="num">${L.filter(x=>docOK(x,v)).length}</span></button>`).join('');
-  const ct=uniq(L.map(x=>x.cat));
+  const UPL=L.filter(x=>!isPast(x)||st.showPast);
+  $('#fbudget').innerHTML=[20000,50000,100000,200000].map(v=>`<button type="button" class="chip" data-budget="${v}" aria-pressed="${!st.mpMin&&+st.mpMax===v}">${keur(v)} <span class="num">${UPL.filter(x=>x.mp&&x.mp<=v).length}</span></button>`).join('');
+  const ct=uniq(UPL.map(x=>x.cat));
   $('#fcat').innerHTML=Object.keys(CATS()).filter(c=>ct.get(c)).map(c=>`<button class="chip" aria-pressed="${st.cats.has(c)}" data-cat="${c}"><span class="dot" style="background:var(--c-${c})"></span>${CATS()[c]} <span class="num">${ct.get(c)}</span></button>`).join('');
   $('#legend').innerHTML=Object.keys(CATS()).filter(c=>ct.get(c)&&c!=='parts').map(c=>`<span><i style="background:var(--c-${c})"></i>${CATS()[c]}</span>`).join('')+`<span>${t('map.size')}</span>`;
-  sortUI();syncInputs();
+  sortUI();syncInputs();favUI();
 }
 function sortUI(){
   $('#fsort').innerHTML=Object.keys(SORTS).filter(k=>k!=='rel'||!P.empty).map(k=>opt(k,t('s.'+k),st.sort===k)).join('');
@@ -1236,11 +1548,14 @@ function syncInputs(){
   [['fmpMin','mpMin'],['fmpMax','mpMax'],['fsMin','sMin'],['fsMax','sMax'],['fdFrom','dFrom'],['fdTo','dTo']].forEach(([id,k])=>{if($('#'+id).value!==st[k])$('#'+id).value=st[k];});
   [['fzone','zone'],['fdep','dep'],['fcourt','court'],['flaw','lawyer'],['focc','occ'],['fdisc','disc']].forEach(([id,k])=>{$('#'+id).value=st[k];});
   $('#fphoto').setAttribute('aria-pressed',st.docs.has('photo'));$('#fvisit').setAttribute('aria-pressed',st.docs.has('visit'));
-  $('#flibre').setAttribute('aria-pressed',st.occ==='libre');$('#fweek').setAttribute('aria-pressed',st.week);
+  $('#flibre').setAttribute('aria-pressed',st.occ==='libre');$('#fweek').setAttribute('aria-pressed',st.week);$('#fmonth').setAttribute('aria-pressed',st.month);$('#ffav').setAttribute('aria-pressed',st.fav);$('#fbbox').checked=st.bboxOn;
+  document.querySelectorAll('[data-budget]').forEach(b=>b.setAttribute('aria-pressed',!st.mpMin&&+st.mpMax===+b.dataset.budget));
+  document.querySelectorAll('.ks[data-k]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k==='week'?st.week:st.docs.has('photo')));
   document.querySelectorAll('[data-flag]').forEach(b=>b.setAttribute('aria-pressed',st.flags.has(b.dataset.flag)));
   document.querySelectorAll('[data-doc]').forEach(b=>b.setAttribute('aria-pressed',st.docs.has(b.dataset.doc)));
   document.querySelectorAll('[data-cat]').forEach(b=>b.setAttribute('aria-pressed',st.cats.has(b.dataset.cat)));
-  const n=['zone','dep','court','lawyer','city','mpMin','mpMax','sMin','sMax','dFrom','dTo','occ','disc'].filter(k=>st[k]).length+st.flags.size+st.docs.size;
+  const budget=!st.mpMin&&[20000,50000,100000,200000].includes(+st.mpMax);
+  const n=['zone','dep','court','lawyer','city','mpMin','mpMax','sMin','sMax','dFrom','dTo','occ','disc'].filter(k=>st[k]&&!(k==='mpMax'&&budget)&&!(k==='occ'&&st.occ==='libre')).length+st.flags.size+[...st.docs].filter(d=>d!=='photo'&&d!=='visit').length;
   $('#advN').hidden=!n;$('#advN').textContent=n;
 }
 const flagOK=(x,f)=>f==='sur'?x.surenchere:f==='lic'?x.lic:f==='baisse'?x.baisse:x.nLots>1;
@@ -1262,7 +1577,7 @@ function bind(){
   document.addEventListener('keydown',e=>{
     const typing=/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName);
     if((e.key==='k'&&(e.metaKey||e.ctrlKey))||(e.key==='/'&&!typing)){e.preventDefault();closeDrawer();showTab('ilanlar');q.focus();q.select();}
-    if(e.key==='Escape'){if(!$('#lightbox').hidden)$('#lightbox').hidden=true;else if(!$('#sugg').hidden)closeSugg();else closeDrawer();}});
+    if(e.key==='Escape'){if(!$('#gpop').hidden){$('#gpop').hidden=true;return;}if(!$('#lightbox').hidden)$('#lightbox').hidden=true;else if(!$('#sugg').hidden)closeSugg();else closeDrawer();}});
   $('#fsort').addEventListener('change',e=>{st.sort=e.target.value;st.dir=SORTS[st.sort];st.sortUser=true;saveSort();sortUI();apply();});
   $('#fdir').addEventListener('click',()=>{st.dir*=-1;st.sortUser=true;saveSort();sortUI();apply();});
   $('#advBtn').addEventListener('click',()=>{const a=$('#adv');a.hidden=!a.hidden;$('#advBtn').setAttribute('aria-expanded',!a.hidden);});
@@ -1274,7 +1589,24 @@ function bind(){
   $('#fphoto').addEventListener('click',()=>{st.docs.has('photo')?st.docs.delete('photo'):st.docs.add('photo');apply();});
   $('#fvisit').addEventListener('click',()=>{st.docs.has('visit')?st.docs.delete('visit'):st.docs.add('visit');apply();});
   $('#flibre').addEventListener('click',()=>{st.occ=st.occ==='libre'?'':'libre';apply();});
-  $('#fweek').addEventListener('click',()=>{st.week=!st.week;apply();});
+  $('#fweek').addEventListener('click',()=>{st.week=!st.week;if(st.week)st.month=false;apply();});
+  $('#fmonth').addEventListener('click',()=>{st.month=!st.month;if(st.month)st.week=false;apply();});
+  $('#fOpen').addEventListener('click',()=>{const f=$('#fpanel');f.classList.toggle('open');$('#fOpen').setAttribute('aria-expanded',f.classList.contains('open'));});
+  $('#ffav').addEventListener('click',()=>{st.fav=!st.fav;apply();});
+  $('#hfav').addEventListener('click',()=>{closeDrawer();showTab('ilanlar');st.fav=true;apply();const r=$('.rhead');if(r)r.scrollIntoView({behavior:'smooth',block:'start'});});
+  $('#fbudget').addEventListener('click',e=>{const b=e.target.closest('[data-budget]');if(!b)return;const v=b.dataset.budget;if(!st.mpMin&&st.mpMax===v)st.mpMax='';else{st.mpMax=v;st.mpMin='';}apply();});
+  $('#kpis').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;if(b.dataset.k==='week'){st.week=!st.week;if(st.week)st.month=false;}else{st.docs.has('photo')?st.docs.delete('photo'):st.docs.add('photo');}apply();});
+  $('#qtry').addEventListener('click',e=>{const b=e.target.closest('.tq');if(!b)return;if(b.id==='howtoShow'){try{localStorage.removeItem('ench_howto');}catch(_){}howtoUI();return;}$('#q').value=b.dataset.q;onQuery(b.dataset.q,true);closeSugg();});
+  $('#howtoX').addEventListener('click',()=>{try{localStorage.setItem('ench_howto','0');}catch(_){}howtoUI();});
+  document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{$('#split').dataset.view=b.dataset.view;document.querySelectorAll('[data-view]').forEach(o=>o.setAttribute('aria-pressed',o===b));}));
+  $('#fbbox').addEventListener('change',e=>{st.bboxOn=e.target.checked;st.bbox=st.bboxOn&&M1&&M1.proj?M1.bounds():null;apply();});
+  $('#pastNote').addEventListener('click',e=>{if(e.target.closest('button')){st.showPast=!st.showPast;controlsUI();apply();}});
+  const lst=$('#list');
+  lst.addEventListener('click',e=>{const f=e.target.closest('.fav');const r=e.target.closest('.row');if(!r)return;if(f){e.stopPropagation();toggleFav(+r.dataset.id);return;}openDetail(+r.dataset.id);});
+  lst.addEventListener('mouseover',e=>{const r=e.target.closest('.row');if(M1)M1.hover(r?+r.dataset.id:null);});
+  lst.addEventListener('mouseleave',()=>{if(M1)M1.hover(null);});
+  document.addEventListener('click',e=>{const b=e.target.closest('.term');if(b){e.preventDefault();e.stopPropagation();if(gTerm===b&&!$('#gpop').hidden){$('#gpop').hidden=true;gTerm=null;}else showTerm(b);return;}if(!e.target.closest('#gpop')){$('#gpop').hidden=true;gTerm=null;}},true);
+  window.addEventListener('scroll',()=>{$('#gpop').hidden=true;},{passive:true});
   $('#more').addEventListener('click',()=>{shown+=40;renderList();});
   $('#scrim').addEventListener('click',closeDrawer);
   $('#lbClose').addEventListener('click',()=>$('#lightbox').hidden=true);
@@ -1290,6 +1622,10 @@ function showTab(tab){document.querySelectorAll('.tabs button').forEach(b=>b.set
   document.querySelectorAll('main > section').forEach(s=>s.hidden=s.id!=='v-'+tab);window.scrollTo(0,0);if(tab==='past')showPastTab();}
 
 function passFilters(x){
+  if(!st.showPast&&isPast(x))return false;
+  if(st.month&&!(x.date&&daysTo(x.date)>=0&&daysTo(x.date)<=30))return false;
+  if(st.fav&&!FAV.has(x.id))return false;
+  if(st.bbox){if(x.lat==null)return false;const [[a,b],[c,d]]=st.bbox;if(x.lon<a||x.lon>c||x.lat<b||x.lat>d)return false;}
   if(st.zone&&x.zone!==st.zone)return false;
   if(st.dep&&x.dep!==st.dep)return false;
   if(st.court&&x.court!==st.court)return false;
@@ -1328,29 +1664,36 @@ function activeChips(){
   if(st.lawyer)c.push([st.lawyer,()=>st.lawyer='']);
   if(st.city)c.push([t('fc.city')+': '+st.city,()=>st.city='']);
   st.cats.forEach(k=>c.push([CATS()[k],()=>st.cats.delete(k)]));
-  if(st.mpMin!==''||st.mpMax!=='')c.push([t('fc.price')+' '+dash(st.mpMin&&eur(+st.mpMin),st.mpMax&&eur(+st.mpMax)),()=>{st.mpMin='';st.mpMax='';}]);
+  if(st.mpMin===''&&st.mpMax!=='')c.push([t('fc.price')+' ≤ '+eur(+st.mpMax),()=>{st.mpMax='';}]);
+  else if(st.mpMin!==''||st.mpMax!=='')c.push([t('fc.price')+' '+dash(st.mpMin&&eur(+st.mpMin),st.mpMax&&eur(+st.mpMax)),()=>{st.mpMin='';st.mpMax='';}]);
   if(st.sMin!==''||st.sMax!=='')c.push([t('fc.surf')+' '+dash(st.sMin,st.sMax),()=>{st.sMin='';st.sMax='';}]);
   if(st.dFrom||st.dTo)c.push([t('fc.date')+' '+dash(st.dFrom&&fmtDate(st.dFrom+'T00:00:00',{day:'numeric',month:'short'}),st.dTo&&fmtDate(st.dTo+'T00:00:00',{day:'numeric',month:'short'})),()=>{st.dFrom='';st.dTo='';}]);
   if(st.week)c.push([t('fc.week'),()=>st.week=false]);
+  if(st.month)c.push([t('fc.month'),()=>st.month=false]);
+  if(st.fav)c.push([t('fc.fav'),()=>st.fav=false]);
+  if(st.bbox)c.push([t('fc.area'),()=>{st.bbox=null;st.bboxOn=false;}]);
   if(st.occ)c.push([t({libre:'occ.libre','occupé':'occ.occ',unk:'occ.unk'}[st.occ]),()=>st.occ='']);
   if(st.disc)c.push([t('fc.disc')+' '+t({'0.25':'disc.25','0.5':'disc.50','0.75':'disc.75'}[st.disc]),()=>st.disc='']);
   st.flags.forEach(k=>c.push([t('fl.'+k),()=>st.flags.delete(k)]));
   st.docs.forEach(k=>c.push([t('dc.'+k),()=>st.docs.delete(k)]));
-  const box=$('#active');box.hidden=!c.length;
+  const box=$('#active');box.hidden=!c.length;$('#fOpenN').hidden=!c.length;$('#fOpenN').textContent=c.length;
   box.innerHTML=c.map(([l],i)=>`<button type="button" class="fchip" data-i="${i}" aria-label="${esc(t('fc.remove')+': '+l)}">${esc(l)}<span class="x" aria-hidden="true">×</span></button>`).join('')+(c.length>1?`<button type="button" class="clear" id="clearAll">${t('f.clear')}</button>`:'');
   box.querySelectorAll('.fchip').forEach(b=>b.addEventListener('click',()=>{c[+b.dataset.i][1]();apply();}));
   const ca=$('#clearAll');if(ca)ca.addEventListener('click',clearAll);
 }
-function clearAll(){Object.assign(st,{q:'',zone:'',dep:'',court:'',lawyer:'',city:'',mpMin:'',mpMax:'',sMin:'',sMax:'',dFrom:'',dTo:'',occ:'',disc:'',week:false});
+function clearAll(){Object.assign(st,{q:'',zone:'',dep:'',court:'',lawyer:'',city:'',mpMin:'',mpMax:'',sMin:'',sMax:'',dFrom:'',dTo:'',occ:'',disc:'',week:false,month:false,fav:false,bbox:null,bboxOn:false});
   st.cats.clear();st.flags.clear();st.docs.clear();$('#q').value='';P=parseQ('');if(st.sort==='rel'){st.sort='date';st.dir=1;}sortUI();apply();}
-function pills(x){const p=[];
-  if(x.occ==='libre')p.push(`<span class="pill ok">${t('p.libre')}</span>`);else if(x.occ==='occupé')p.push(`<span class="pill warn">${t('p.occ')}</span>`);
-  if(x.surenchere)p.push(`<span class="pill info">${t('p.sur')}</span>`);
-  if(x.lic)p.push(`<span class="pill info">${t('p.lic')}</span>`);
-  if(x.baisse)p.push(`<span class="pill neutral">${t('p.baisse')}</span>`);
-  if(x.nLots>1)p.push(`<span class="pill neutral">${t('p.lots',x.nLots)}</span>`);
-  if(x.date){const d=daysTo(x.date);if(d>=0&&d<=7)p.push(`<span class="pill bad">${d===0?t('p.today'):t('p.days',d)}</span>`);}
+function pills(x,o){o=o||{};const p=[],pl=(c,l,k)=>o.terms&&k?`<button type="button" class="pill ${c} term" data-term="${k}">${l}</button>`:`<span class="pill ${c}">${l}</span>`;
+  if(x.occ==='libre')p.push(pl('ok',t('p.libre'),'occ'));else if(x.occ==='occupé')p.push(pl('warn',t('p.occ'),'occ'));
+  if(x.surenchere)p.push(pl('info',t('p.sur'),'sur'));
+  if(x.lic)p.push(pl('info',t('p.lic'),'lic'));
+  if(x.baisse)p.push(pl('neutral',t('p.baisse'),'baisse'));
+  if(x.nLots>1)p.push(pl('neutral',t('p.lots',x.nLots)));
+  if(!o.noDays&&x.date){const d=daysTo(x.date);if(d>=0&&d<=7)p.push(pl('bad',d===0?t('p.today'):t('p.days',d)));}
   return p.join('');}
+function miniBand(x){const p=x.pred;if(!p||!x.mp)return '';const lo=Math.log(x.mp*0.85),hi=Math.log(Math.max(p.p90,x.mp*1.6)),f=v=>Math.max(0,Math.min(100,(Math.log(v)-lo)/(hi-lo)*100));
+  return `<span class="mband" title="${esc(t('u.bandTitle',eur(x.mp),eur(p.p25),eur(p.p75)))}"><span class="mlab">${t('u.likely')} <b class="num">${keur(p.p25)}–${keur(p.p75)}</b></span><span class="mtrack" aria-hidden="true"><i class="mmp" style="left:${f(x.mp).toFixed(1)}%"></i><i class="miq" style="left:${f(p.p25).toFixed(1)}%;width:${Math.max(2,f(p.p75)-f(p.p25)).toFixed(1)}%"></i><i class="mmed" style="left:${f(p.p50).toFixed(1)}%"></i></span></span>`;}
+function whenChip(x){if(!x.date)return '';const d=daysTo(x.date);return `<span class="cwhen${d>=0&&d<=7?' soon':''}${d<0?' past':''}">${d<0?t('u.held'):t('u.inD',d)} · ${fmtDate(x.date,{weekday:'short',day:'numeric',month:'short'})}</span>`;}
 function sortHint(x){const k=st.sort;if(['ppm','disc','upside','surf','visit'].indexOf(k)<0)return '';const v=sortVal(x,k);if(v==null)return '';
   return `<span class="score num" style="display:block">${k==='ppm'?eur(v)+'/m²':k==='disc'?Math.round(v*100)+' %':k==='upside'?'×'+dec(v.toFixed(1)):k==='surf'?sq(v):fmtDate(v+'T00:00:00',{day:'numeric',month:'short'})}</span>`;}
 function snippet(x){if(P.empty||!P.hl.length)return '';
@@ -1360,19 +1703,22 @@ function snippet(x){if(P.empty||!P.hl.length)return '';
   return `<span class="m" style="display:block;white-space:normal">${hl(s,P)}</span>`;}
 function renderList(){
   $('#count').textContent=t('r.count',filtered.length,filtered.filter(x=>x.lat!=null).length);
-  $('#list').innerHTML=filtered.slice(0,shown).map(x=>`
-    <button class="row${x.id===selId?' sel':''}" data-id="${x.id}" type="button">
+  const np=L.filter(isPast).length;const pn=$('#pastNote');pn.hidden=!np;
+  if(np)pn.innerHTML=st.showPast?`<button type="button" class="linkb">${t('u.hidePast')}</button>`:`${esc(t('u.pastHidden',np))} · <button type="button" class="linkb">${t('u.showPast')}</button>`;
+  $('#list').innerHTML=filtered.slice(0,shown).map(x=>{const fv=FAV.has(x.id);return `
+    <article class="row card${x.id===selId?' sel':''}" data-id="${x.id}">
       ${x.photos.length?`<img class="thumb" src="${x.photos[0]}" alt="" loading="lazy">`:`<span class="thumb" style="color:var(--c-${x.cat})">${houseIcon}</span>`}
-      <span style="min-width:0;display:block">
-        <span class="t" style="display:block">${hl(x.title,P)}${x.surface?' · '+sq(x.surface):''}</span>
-        <span class="m" style="display:block">${hl(x.city,P)}${x.dep?' ('+esc(x.dep)+')':''} · ${fmtDate(x.date)} · ${hl(x.court.replace('Tribunal Judiciaire','TJ'),P)}</span>
+      <div class="cbody">
+        <div class="ctop">${whenChip(x)}<span class="ctype"><i style="background:var(--c-${T().cats[x.cat]?x.cat:'autre'})"></i>${esc(CATS()[x.cat]||'')}${x.surface?' · '+sq(x.surface):''}</span></div>
+        <h3 class="t"><button type="button" class="open">${hl(x.city,P)}${x.dep?` <span class="dep">${esc(x.dep)}</span>`:''}</button></h3>
+        <p class="m">${hl(x.title,P)} · ${hl(x.court.replace('Tribunal Judiciaire','TJ'),P)}</p>
         ${snippet(x)}
-        <span class="pills">${pills(x)}</span>
-      </span>
-      <span class="price"><span class="lbl" style="display:block">${t('r.mp')}</span><span class="mp num" style="display:block">${eur(x.mp)}</span>${x.pred?`<span class="est num" style="display:block">${t('r.est')} ${keur(x.pred.p25)}–${keur(x.pred.p75)}</span>`:''}${sortHint(x)}</span>
-    </button>`).join('')||`<div class="panel empty">${t('r.none')}${st.q||$('#advN').textContent?` <button type="button" class="clear" id="clearAll2">${t('f.clear')}</button>`:''}</div>`;
+        <div class="pills">${pills(x,{noDays:true})}</div>
+      </div>
+      <div class="price"><span class="lbl">${t('r.mp')}</span><span class="mp num">${eur(x.mp)}</span>${miniBand(x)}${sortHint(x)}</div>
+      <button type="button" class="fav" aria-pressed="${fv}" aria-label="${esc(t(fv?'u.unsaveAria':'u.saveAria',x.city))}">${HEART}</button>
+    </article>`;}).join('')||`<div class="panel empty">${st.fav&&!L.some(x=>FAV.has(x.id))?t('u.noFav'):t('r.none')}${!$('#active').hidden?` <button type="button" class="clear" id="clearAll2">${t('f.clear')}</button>`:''}</div>`;
   $('#more').hidden=filtered.length<=shown;
-  $('#list').querySelectorAll('.row').forEach(r=>r.addEventListener('click',()=>openDetail(+r.dataset.id)));
   const c2=$('#clearAll2');if(c2)c2.addEventListener('click',clearAll);
 }
 
@@ -1423,16 +1769,20 @@ function makeMap(selector,o){
     M.proj=d3.geoConicConformal().parallels([44,49]).rotate([-3,0]).fitExtent([[12,12],[M.W-12,M.H-12]],geo);
     M.g.append('g').selectAll('path').data(geo.features).join('path').attr('class','dep').attr('d',d3.geoPath(M.proj)).append('title').text(f=>f.properties.n+' ('+f.properties.c+')');
     M.pts=M.g.append('g');
-    M.zoom=d3.zoom().scaleExtent([1,220]).on('zoom',ev=>{M.g.attr('transform',ev.transform);const k=ev.transform.k;M.pts.selectAll('circle').attr('r',d=>o.rad(d)*sz(k)).attr('stroke-width',1/k);});
+    M.zoom=d3.zoom().scaleExtent([1,220]).on('zoom',ev=>{M.g.attr('transform',ev.transform);const k=ev.transform.k;M.pts.selectAll('circle').attr('r',d=>o.rad(d)*sz(k)).attr('stroke-width',1/k);}).on('end',()=>{if(o.onEnd)o.onEnd(M);});
     M.svg.call(M.zoom);if(M.last)M.update(M.last);return M;});
   M.update=(pts)=>{M.last=pts;if(!M.pts)return;const k=d3.zoomTransform(M.svg.node()).k;
     const sel=M.pts.selectAll('circle').data(pts,d=>d.id);sel.exit().remove();
     sel.enter().append('circle').attr('class','pt').on('click',(ev,d)=>o.click(d))
       .on('mousemove',(ev,d)=>{const tp=$('#tip');tp.hidden=false;tp.style.left=(ev.clientX+12)+'px';tp.style.top=(ev.clientY+12)+'px';tp.innerHTML=o.tip(d);})
-      .on('mouseleave',()=>{$('#tip').hidden=true;})
+      .on('mouseenter',(ev,d)=>{if(o.hover)o.hover(d);})
+      .on('mouseleave',()=>{$('#tip').hidden=true;if(o.hover)o.hover(null);})
       .merge(sel).attr('cx',d=>M.proj([d.lon,d.lat])[0]).attr('cy',d=>M.proj([d.lon,d.lat])[1]).attr('r',d=>o.rad(d)*sz(k)).attr('stroke-width',1/k)
       .attr('fill',o.color).attr('fill-opacity',.82).classed('sel',d=>o.isSel(d));
     M.pts.selectAll('circle').sort(o.order||((a,b)=>0));};
+  M.hover=(id)=>{if(!M.pts)return;const c=M.pts.selectAll('circle').classed('hov',d=>d.id===id);if(id!=null)c.filter(d=>d.id===id).raise();};
+  M.bounds=()=>{const tr=d3.zoomTransform(M.svg.node());const c=[[0,0],[M.W,0],[0,M.H],[M.W,M.H]].map(p=>M.proj.invert(tr.invert(p)));
+    return [[Math.min(...c.map(v=>v[0])),Math.min(...c.map(v=>v[1]))],[Math.max(...c.map(v=>v[0])),Math.max(...c.map(v=>v[1]))]];};
   M.select=()=>{if(M.pts)M.pts.selectAll('circle').classed('sel',d=>o.isSel(d));};
   M.recolor=()=>{if(M.pts)M.pts.selectAll('circle').attr('fill',o.color);};
   M.zoomBox=(bb)=>{if(!M.zoom)return;if(!bb){M.svg.transition().duration(500).call(M.zoom.transform,d3.zoomIdentity);return;}
@@ -1443,13 +1793,21 @@ function makeMap(selector,o){
 const PRESETS={fr:null,idf:[[1.45,48.12],[3.56,49.24]],paris:[[2.22,48.81],[2.47,48.91]],se:[[3.6,42.3],[7.8,46.4]]};
 let M1=null;
 function drawMap(){M1=makeMap('#map',{rad:d=>2.2+Math.sqrt((d.mp||20000)/20000)*1.6,color:d=>catColor(d.cat),isSel:d=>d.id===selId,click:d=>openDetail(d.id),
-  order:(a,b)=>(b.mp||0)-(a.mp||0),tip:d=>`<b>${esc(d.city)}</b><br>${esc(d.title)} · ${eur(d.mp)}<br>${fmtDate(d.date)}`});}
+  order:(a,b)=>(b.mp||0)-(a.mp||0),
+  hover:d=>{document.querySelectorAll('#list .row.hov').forEach(r=>r.classList.remove('hov'));if(d){const r=document.querySelector(`#list .row[data-id="${d.id}"]`);if(r)r.classList.add('hov');}},
+  onEnd:M=>{if(!st.bboxOn)return;const b=M.bounds();if(st.bbox&&b.every((p,i)=>p.every((v,j)=>Math.abs(v-st.bbox[i][j])<1e-4)))return;st.bbox=b;apply();},
+  tip:d=>`<b>${esc(d.city)}</b><br>${esc(d.title)} · ${eur(d.mp)}<br>${fmtDate(d.date)}`});}
 function updateMap(){if(M1)M1.update(filtered.filter(x=>x.lat!=null));}
 function zoomBox(bb){if(M1)M1.zoomBox(bb);}
 function zoomPreset(p){zoomBox(PRESETS[p]);}
 function zoomZone(z){if(M1)M1.fit(L.filter(x=>x.zone===z),.1);}
 
 
+/* glossary popover */
+let gTerm=null;
+function showTerm(b){const g=T().gl[b.dataset.term];if(!g)return;const p=$('#gpop');gTerm=b;
+  p.innerHTML=`<b>${esc(g[0])}</b><span>${esc(g[1])}</span>`;p.hidden=false;const w=Math.min(320,innerWidth-24);p.style.width=w+'px';
+  const r=b.getBoundingClientRect();p.style.left=Math.max(12,Math.min(r.left,innerWidth-w-12))+'px';let top=r.bottom+8;if(top+p.offsetHeight>innerHeight-12)top=Math.max(12,r.top-p.offsetHeight-8);p.style.top=top+'px';}
 /* detail */
 function closingChip(iso){if(!iso)return '';const d=daysTo(iso);if(d<0)return '';const w=fmtDate(iso,{day:'numeric',month:'short'})+' · '+iso.slice(11,16);return `<span class="closing"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg>${esc(t('cl.in',d,w))}</span>`;}
 function strategyTips(x){const tt=T().t,out=[];
@@ -1486,47 +1844,70 @@ function openDetail(id,keepScroll){
   const docs=x.docs.map(d=>`<a class="btn ghost sm" href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.label)} ↗</a>`).join('')+(x.url?`<a class="btn ghost sm" href="${esc(x.url)}" target="_blank" rel="noopener">${t('d.licitor')} ↗</a>`:'');
   const geo={licitor:t('geo.licitor'),commune:t('geo.commune'),'geocodé':t('geo.geocode')}[x.geo]||t('geo.none');
   const dr=$('#drawer');dr.setAttribute('aria-label',x.title);
+  const cd=x.date?daysTo(x.date):null,hm=x.date?x.date.slice(11,16):'';const p=x.pred,fv=FAV.has(x.id);
+  const tot=p?p.p50+fees(p.p50,{parts}).total:null;
+  const SECS=[['ds-prop','dn.prop'],['ds-tips','dn.tips'],['ds-price','dn.price'],['ds-comps','dn.comps'],['ds-fees','dn.fees'],['ds-max','dn.max'],['ds-sale','dn.sale'],['ds-people','dn.people'],['ds-docs','dn.docs']];
   dr.innerHTML=`
-   <div class="dhead"><div style="min-width:0"><p class="eyebrow">${esc(CATS()[x.cat])} · ${t('d.listing')} ${x.id}${x.ref?' · '+esc(x.ref):''}</p><h2>${esc(x.title)}${x.surface?' · '+sq(x.surface):''}</h2>
-     <p class="note" style="margin:2px 0 0">${esc(x.street||'')}${x.street?', ':''}${esc(x.city)}${x.depName?' · '+esc(x.depName):''}</p><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">${pills(x)}</div>${closingChip(x.date)}</div>
+   <div class="dhead"><div class="dtop"><div style="min-width:0"><p class="eyebrow">${esc(CATS()[x.cat])} · ${t('d.listing')} ${x.id}${x.ref?' · '+esc(x.ref):''}</p><h2>${esc(x.city)}${x.dep?` <span class="dep">${esc(x.dep)}</span>`:''}</h2>
+     <p class="note" style="margin:2px 0 0">${esc(x.title)}${x.surface?' · '+sq(x.surface):''}${x.street?' · '+esc(x.street):''}</p></div>
      <button class="x" type="button" aria-label="${t('ui.close')}" id="dClose"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+     <nav class="dnav" aria-label="${t('nav.aria')}">${SECS.map(([id,k])=>`<button type="button" data-sec="${id}">${t(k)}</button>`).join('')}</nav></div>
    <div class="dbody">
-     ${x.photos.length?`<div class="gallery">${x.photos.map((p,i)=>`<button type="button" data-ph="${p}" aria-label="${t('d.photo')} ${i+1}"><img src="${p}" alt="${t('d.photo')} ${i+1}" loading="lazy"></button>`).join('')}</div><p class="note" style="margin:-6px 0 0">${t('d.photoNote')}</p>`
+     <div class="kfacts">
+       <div class="kf${cd!=null&&cd>=0&&cd<=7?' hot':''}"><span class="kl">${t('kf.date')}</span><b>${cd==null?'—':cd<0?t('u.held'):t('u.inD',cd)}</b><span class="ks2">${x.date?fmtDate(x.date,{weekday:'short',day:'numeric',month:'long'})+(hm&&hm!=='00:00'?' · '+hm:''):esc(x.dateText||'')}</span></div>
+       <div class="kf"><span class="kl">${term('mp',t('kf.mp'))}</span><b class="num">${eur(x.mp)}</b><span class="ks2">${x.nLots>1?t('p.lots',x.nLots):'&nbsp;'}</span></div>
+       <div class="kf accent"><span class="kl">${term('est',t('kf.likely'))}</span><b class="num">${p?eur(p.p50):'—'}</b><span class="ks2 num">${p?keur(p.p25)+' – '+keur(p.p75):t('kf.noEst')}</span></div>
+       <div class="kf"><span class="kl">${t('kf.total')}</span><b class="num">${tot?eur(tot):'—'}</b><span class="ks2">${p?t('kf.totalSub',keur(p.p50)):'&nbsp;'}</span></div>
+     </div>
+     <div class="dacts">
+       <button type="button" class="btn dfav" id="dFav" aria-pressed="${fv}">${HEART}<span>${fv?t('u.saved'):t('u.save')}</span></button>
+       ${x.url?`<a class="btn ghost" href="${esc(x.url)}" target="_blank" rel="noopener">${t('u.licitor')} ↗</a>`:''}
+       ${x.docs[0]?`<a class="btn ghost" href="${esc(x.docs[0].url)}" target="_blank" rel="noopener">${esc(x.docs[0].label)} ↗</a>`:''}
+     </div>
+     <div class="dpills">${pills(x,{noDays:true,terms:true})}</div>
+     ${x.photos.length?`<div class="gallery">${x.photos.map((ph,i)=>`<button type="button" data-ph="${ph}" aria-label="${t('d.photo')} ${i+1}"><img src="${ph}" alt="${t('d.photo')} ${i+1}" loading="lazy"></button>`).join('')}</div><p class="note" style="margin:-6px 0 0">${t('d.photoNote')}</p>`
        :`<div class="nophoto">${houseIcon.replace('<svg','<svg width="22" height="22"')}<span>${t('d.nophoto')} ${x.docs.length?t('d.docsBelow'):t('d.askPV')}</span></div>`}
-     <div class="panel sec"><h3>${t('d.sale')}</h3><dl class="kv">
-       <dt>${t('d.date')}</dt><dd><b>${esc(x.dateText||'—')}</b>${x.date?` <span class="note">${t('d.days',daysTo(x.date))}</span>`:''}</dd>
-       <dt>${t('d.court')}</dt><dd>${esc(x.court)}</dd>
-       <dt>${t('d.type')}</dt><dd>${esc(x.saleType)}</dd>
-       <dt>Mise à prix</dt><dd class="num"><b>${eur(x.mp)}</b>${x.nLots>1?' <span class="note">('+x.lotPrices.map(eur).join(' + ')+')</span>':''}</dd>
-       <dt>${t('d.visit')}</dt><dd>${x.visits.length?x.visits.map(esc).join('<br>'):'—'}</dd>
-       <dt>${t('d.consig')}</dt><dd>${esc(x.consig||t('d.consigDef'))}</dd>
-       ${x.areaPrice?`<dt>${t('d.areaPrice')}</dt><dd class="num">${t('d.minAvgMax',eur(x.areaPrice[0]),eur(x.areaPrice[1]),eur(x.areaPrice[2]))}</dd>`:''}
-     </dl></div>
-     <div class="panel sec"><h3>${t('d.property')}</h3>${lots}${x.notes&&!x.consig?`<p class="desc note" style="margin-top:8px">${esc(x.notes)}</p>`:''}</div>
-     <div class="panel sec"><h3>${t('d.likely')}</h3><p class="sub">${t('d.likelySub',D.model.n)}</p>${bandHTML(x)}</div>
-     <div class="panel sec"><h3>${t('cp.title')}</h3>${compsHTML(x)}</div>
-     <div class="panel sec"><h3>${t('d.maxTitle')}</h3><p class="sub">${t('d.maxSub')}</p>
+     <div class="panel sec" id="ds-prop"><h3>${t('d.property')}</h3>${lots}${x.notes&&!x.consig?`<p class="desc note" style="margin-top:8px">${esc(x.notes)}</p>`:''}</div>
+     <div class="panel sec" id="ds-tips"><h3>${t('d.tips')}</h3><ul class="tips">${strategyTips(x).map(([c,i,s2])=>`<li><span class="ic ${c}">${i}</span><span>${s2}</span></li>`).join('')}</ul></div>
+     <div class="panel sec" id="ds-price"><h3>${t('d.likely')}</h3><p class="sub">${t('d.likelySub',D.model.n)}</p>${bandHTML(x)}</div>
+     <div class="panel sec" id="ds-comps"><h3>${t('cp.title')}</h3>${compsHTML(x)}</div>
+     <div class="panel sec" id="ds-fees"><h3>${t('d.fees')}</h3><p class="sub">${t('d.feesSub')}</p>
+       <div class="calc">
+         <div class="field"><label for="dBid">${t('d.bid')}</label><input class="inp num" id="dBid" type="number" step="500" value="${Math.round(defBid)}"></div>
+         <div class="field"><label for="dPre">${t('d.pre')}</label><input class="inp num" id="dPre" type="number" step="100" value="4000"></div>
+         <div class="field"><label for="dDm">${t('d.dm')}</label><select class="sel" id="dDm"><option value="0.0632">${pct(0.0632)}</option><option value="0.0581">${pct(0.0581)}</option></select></div>
+       </div><table class="fees" id="dFees"></table>
+       <p class="note gl-row">${term('pre',T().gl.pre[0])} · ${term('emol',T().gl.emol[0])} · ${term('dmto',T().gl.dmto[0])} · ${term('consig',T().gl.consig[0])}</p></div>
+     <div class="panel sec" id="ds-max"><h3>${t('d.maxTitle')}</h3><p class="sub">${t('d.maxSub')}</p>
        <div class="calc">
          <div class="field"><label for="dMv">${t('d.mv')}</label><input class="inp num" id="dMv" type="number" step="1000" value="${x.marketValue||''}" placeholder="${t('d.mvPh')}"></div>
          <div class="field"><label for="dMg">${t('d.margin')}</label><select class="sel" id="dMg"><option value="0.1">10 %</option><option value="0.2" selected>20 %</option><option value="0.3">30 %</option></select></div>
          <div class="field"><label for="dOc">${t('d.occDisc')}</label><select class="sel" id="dOc"><option value="0">${t('d.none')}</option><option value="0.15" ${x.occ==='occupé'?'selected':''}>15 %</option><option value="0.3">30 %</option></select></div>
        </div><div id="dMax" class="callout info"></div></div>
-     <div class="panel sec"><h3>${t('d.fees')}</h3><p class="sub">${t('d.feesSub')}</p>
-       <div class="calc">
-         <div class="field"><label for="dBid">${t('d.bid')}</label><input class="inp num" id="dBid" type="number" step="500" value="${Math.round(defBid)}"></div>
-         <div class="field"><label for="dPre">${t('d.pre')}</label><input class="inp num" id="dPre" type="number" step="100" value="4000"></div>
-         <div class="field"><label for="dDm">${t('d.dm')}</label><select class="sel" id="dDm"><option value="0.0632">${pct(0.0632)}</option><option value="0.0581">${pct(0.0581)}</option></select></div>
-       </div><table class="fees" id="dFees"></table></div>
-     <div class="panel sec"><h3>${t('d.tips')}</h3><ul class="tips">${strategyTips(x).map(([c,i,s])=>`<li><span class="ic ${c}">${i}</span><span>${s}</span></li>`).join('')}</ul></div>
-     <div class="panel sec"><h3>${t('d.people')}</h3><div class="people">
+     <div class="panel sec" id="ds-sale"><h3>${t('d.sale')}</h3><dl class="kv">
+       <dt>${t('d.date')}</dt><dd><b>${esc(x.dateText||'—')}</b>${x.date?` <span class="note">${t('d.days',daysTo(x.date))}</span>`:''}</dd>
+       <dt>${t('d.court')}</dt><dd>${esc(x.court)}</dd>
+       <dt>${t('d.type')}</dt><dd>${esc(x.saleType)}</dd>
+       <dt>${term('mp','Mise à prix')}</dt><dd class="num"><b>${eur(x.mp)}</b>${x.nLots>1?' <span class="note">('+x.lotPrices.map(eur).join(' + ')+')</span>':''}</dd>
+       <dt>${t('d.visit')}</dt><dd>${x.visits.length?x.visits.map(esc).join('<br>'):'—'}</dd>
+       <dt>${term('consig',t('d.consig'))}</dt><dd>${esc(x.consig||t('d.consigDef'))}</dd>
+       ${x.areaPrice?`<dt>${t('d.areaPrice')}</dt><dd class="num">${t('d.minAvgMax',eur(x.areaPrice[0]),eur(x.areaPrice[1]),eur(x.areaPrice[2]))}</dd>`:''}
+     </dl></div>
+     <div class="panel sec" id="ds-people"><h3>${t('d.people')}</h3><p class="note" style="margin:0 0 10px">${term('avocat',T().gl.avocat[0])}</p><div class="people">
        ${person(t('role.court'),x.court,t('role.courtTxt'))}${lw}
        ${x.extra.length?`<p class="note">${x.extra.map(esc).join('<br>')}</p>`:''}</div></div>
-     <div class="panel sec"><h3>${t('d.docs')}</h3><div class="docs">${docs||`<span class="note">${t('d.nodocs')}</span>`}</div>
+     <div class="panel sec" id="ds-docs"><h3>${t('d.docs')}</h3><div class="docs">${docs||`<span class="note">${t('d.nodocs')}</span>`}</div>
        <p class="note" style="margin-top:10px">${t('d.pub')}: ${esc(x.published)} · ${t('d.geo')}: ${geo}</p></div>
    </div>`;
   Object.entries(keep).forEach(([i,v])=>{const n=$('#'+i);if(n)n.value=v;});
   dr.hidden=false;$('#scrim').hidden=false;dr.scrollTop=prev;
   $('#dClose').addEventListener('click',closeDrawer);if(!keepScroll)$('#dClose').focus();
+  $('#dFav').addEventListener('click',()=>toggleFav(x.id));
+  const dh=dr.querySelector('.dhead'),navB=[...dr.querySelectorAll('[data-sec]')];
+  navB.forEach(b=>b.addEventListener('click',()=>{const sc=dr.querySelector('#'+b.dataset.sec);if(!sc)return;dr.scrollTo({top:sc.getBoundingClientRect().top-dr.getBoundingClientRect().top+dr.scrollTop-dh.offsetHeight-12,behavior:'smooth'});}));
+  const spy=()=>{$('#gpop').hidden=true;const top=dr.getBoundingClientRect().top+dh.offsetHeight+24;let cur=null;navB.forEach(b=>{const sc=dr.querySelector('#'+b.dataset.sec);if(sc&&sc.getBoundingClientRect().top<=top)cur=b;});
+    navB.forEach(b=>b.classList.toggle('on',b===cur));};
+  dr.onscroll=spy;spy();
   dr.querySelectorAll('[data-ph]').forEach(b=>b.addEventListener('click',()=>{$('#lbImg').src=b.dataset.ph;$('#lightbox').hidden=false;}));
   dr.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>copy(b)));
   dr.querySelectorAll('tr[data-pid]').forEach(r=>{r.addEventListener('click',()=>openPast(+r.dataset.pid));r.addEventListener('keydown',e=>{if(e.key==='Enter')openPast(+r.dataset.pid);});});
@@ -1766,7 +2147,6 @@ function auriol(){
 }
 
 })();
-
 </script>
 
 </body>
