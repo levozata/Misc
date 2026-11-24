@@ -680,7 +680,7 @@ button.ks[aria-pressed="true"] b{color:var(--accent)}
         <div class="field"><label for="flaw" data-i18n="f.lawyer"></label><select class="sel" id="flaw"></select></div>
         <div class="field"><label data-i18n="f.price"></label><div class="pair"><input class="inp num" id="fmpMin" type="number" min="0" step="5000" data-i18n-ph="f.min"><span>–</span><input class="inp num" id="fmpMax" type="number" min="0" step="5000" data-i18n-ph="f.max2"></div></div>
         <div class="field"><label data-i18n="f.surf"></label><div class="pair"><input class="inp num" id="fsMin" type="number" min="0" step="5" data-i18n-ph="f.min"><span>–</span><input class="inp num" id="fsMax" type="number" min="0" step="5" data-i18n-ph="f.max2"></div></div>
-        <div class="field"><label data-i18n="f.dates"></label><div class="pair"><input class="inp num" id="fdFrom" type="date" min="2026-10-12" max="2026-12-31"><span>–</span><input class="inp num" id="fdTo" type="date" min="2026-10-12" max="2026-12-31"></div></div>
+        <div class="field"><label data-i18n="f.dates"></label><div class="pair"><input class="inp num" id="fdFrom" type="date" min="2026-11-24" max="2027-01-31"><span>–</span><input class="inp num" id="fdTo" type="date" min="2026-11-24" max="2027-01-31"></div></div>
         <div class="field"><label for="focc" data-i18n="f.occ"></label><select class="sel" id="focc"></select></div>
         <div class="field"><label for="fdisc" data-i18n="f.disc"></label><select class="sel" id="fdisc"></select></div>
         <div class="field wide"><label data-i18n="f.saleType"></label><div class="chips" id="fflags"></div></div>
@@ -873,7 +873,7 @@ const I18N={
 tr:{
  locale:'tr-TR',
  'nav.aria':'Bölümler','nav.list':'İlanlar &amp; harita','nav.cal':'Takvim','nav.model':'Fiyat modeli','nav.strat':'Masraf &amp; strateji',
- 'tag.src':'Licitor · 12 Ekim 2026',
+ 'tag.src':'Licitor · 24 Kasım 2026',
  'l.eyebrow':'Fransa · adli gayrimenkul ihaleleri','l.h1':'Yaklaşan ihaleler',
  'l.lede':"Licitor'da yayınlanan tüm yaklaşan <i>ventes judiciaires</i>: konum, ihale tarihi, mahkeme ve avukat, geçmiş sonuçlara göre tahmini fiyat aralığı ve masraflar. Bir ilana tıklayın.",
  'l.more':'Daha fazla göster',
@@ -926,7 +926,7 @@ tr:{
   ['bad','!','Ben avukat değilim; bu sayfa karar desteğidir. Teklif öncesi rakamları avukatınıza teyit ettirin.']],
  cats:{appartement:'Daire',maison:'Ev',immeuble:'Bina / ensemble',commerce:'Ticari / sanayi',terrain:'Arsa',parking:'Otopark / garaj',autre:'Diğer',parts:'Şirket payı'},
  zones:{'paris':'Paris','petite-couronne':'Petite couronne (92-93-94)','grande-couronne':'Grande couronne (77-78-91-95)','regions-du-nord-est':'Kuzey-Doğu','bretagne-grand-ouest':'Bretagne / Batı','centre-loire-limousin':'Centre / Loire / Limousin','sud-ouest-pyrenees':'Güney-Batı / Pireneler','sud-est-mediterrannee':'Güney-Doğu / Akdeniz','autre':'Konumsuz'},
- 'k.upcoming':'Yaklaşan ilan','k.upcomingS':n=>`Licitor, ${n} mahkeme / etüt`,'k.week':'Bu hafta ihale','k.weekS':'12–19 Ekim arası','k.sum':'Toplam mise à prix','k.sumS':v=>`Medyan ${v}`,'k.photo':'Fotoğraflı dosya','k.photoS':'PV descriptif PDF\'inden',
+ 'k.upcoming':'Yaklaşan ilan','k.upcomingS':n=>`Licitor, ${n} mahkeme / etüt`,'k.week':'Bu hafta ihale','k.weekS':'24 Kasım – 1 Aralık arası','k.sum':'Toplam mise à prix','k.sumS':v=>`Medyan ${v}`,'k.photo':'Fotoğraflı dosya','k.photoS':'PV descriptif PDF\'inden',
  'p.libre':'Boş','p.occ':'Dolu','p.sur':'Surenchère','p.lic':'Licitation','p.baisse':'Fiyat düşebilir','p.lots':n=>`${n} lot`,'p.today':'Bugün','p.days':n=>`${n} gün`,
  'r.count':(a,b)=>`${a} ilan · ${b} haritada`,'r.none':'Bu filtrelerle ilan yok.','r.mp':'Mise à prix','r.est':'tahmin',
  'd.listing':'ilan','d.nophoto':'Bu ilan için yayınlanmış tutanak fotoğrafı yok.','d.docsBelow':'Belgeler aşağıda.','d.askPV':'Avukattan tutanağı isteyin.','d.photoNote':'Fotoğraflar icra tutanağından (PV descriptif).','d.photo':'Fotoğraf',
@@ -954,7 +954,7 @@ tr:{
   soon:n=>`${n===0?'İhale bugün':n===1?'İhale yarın':`İhaleye ${n} gün var`}: avukat bulmak, teminat çeki ve finansman için süre çok kısa.`},
  'cal.n':(a,b)=>`${a} ilan · ${b} mahkeme`,'cal.time':'Saat','cal.court':'Mahkeme','cal.prop':'Mülk','cal.city':'Şehir','cal.est':'Tahmin (P25–P75)','cal.more':n=>`+${n} ziyaret daha`,'cal.none':'Yaklaşan ziyaret yok.',
  'ui.close':'Kapat','ui.err':'Veri yüklenemedi: ',
- src:n=>`Kaynaklar: ilanlar, mahkeme/avukat bilgileri, ziyaret tarihleri ve PV descriptif fotoğrafları <a href="https://www.licitor.com/" target="_blank" rel="noopener">Licitor</a>'dan (12 Ekim 2026 itibarıyla). Bölge €/m² değerleri ilan sayfalarındaki La Loupe Immo verisi. Geçmiş satışlar: Licitor adjudication geçmişi, ${n} tek lotlu satış. Tapu harcı: Paris için %6,32 (2025 artışı). Fotoğraflar Ferrari Publicité filigranlıdır. İlan metinleri kaynaktaki gibi Fransızca.`,
+ src:n=>`Kaynaklar: ilanlar, mahkeme/avukat bilgileri, ziyaret tarihleri ve PV descriptif fotoğrafları <a href="https://www.licitor.com/" target="_blank" rel="noopener">Licitor</a>'dan (24 Kasım 2026 itibarıyla). Bölge €/m² değerleri ilan sayfalarındaki La Loupe Immo verisi. Geçmiş satışlar: Licitor adjudication geçmişi, ${n} tek lotlu satış. Tapu harcı: Paris için %6,32 (2025 artışı). Fotoğraflar Ferrari Publicité filigranlıdır. İlan metinleri kaynaktaki gibi Fransızca.`,
  au:{eyebrow:'Dosya · ilan 110264 · TJ Paris',h1:'70 bd Vincent Auriol, lot 6',lede:"Eski JRH HOTEL'in tasfiyesinden satılan oda. Bir sosyal konut yurdunun 1. katında, boş. İhale 3 Aralık 2026, 14:00.",open:'İlan detayını aç',
   k1s:'Teklif yoksa 1/3, sonra 1/2 düşebilir',k2:'Model aralığı',k2s:v=>`Medyan ${v}`,k3:'Teminat',k3s:'Bâtonnier Séquestre adına banka çeki',k4:'Ziyaret',k4v:'24 Kas.',k4s:'Salı 16:00–17:00, tek seferlik',
   photoNote:'Tutanaktan (2 Temmuz 2026): oda, lavabo, paylaşılan balkon ve bulvar cephesi.',photoAlt:'Lot 6 fotoğraf',
@@ -969,7 +969,7 @@ tr:{
 fr:{
  locale:'fr-FR',
  'nav.aria':'Sections','nav.list':'Annonces &amp; carte','nav.cal':'Calendrier','nav.model':'Modèle de prix','nav.strat':'Frais &amp; stratégie',
- 'tag.src':'Licitor · 12 octobre 2026',
+ 'tag.src':'Licitor · 24 novembre 2026',
  'l.eyebrow':'France · ventes judiciaires immobilières','l.h1':'Ventes à venir',
  'l.lede':"Toutes les ventes judiciaires à venir publiées sur Licitor : localisation, date d'audience, tribunal et avocat, fourchette de prix estimée à partir des adjudications passées, et frais. Cliquez sur une annonce.",
  'l.more':'Afficher plus',
@@ -1022,7 +1022,7 @@ fr:{
   ['bad','!','Je ne suis pas avocat ; cette page est une aide à la décision. Faites valider les chiffres par votre avocat avant d’enchérir.']],
  cats:{appartement:'Appartement',maison:'Maison',immeuble:'Immeuble / ensemble',commerce:'Commerce / industrie',terrain:'Terrain',parking:'Parking / garage',autre:'Autre',parts:'Parts sociales'},
  zones:{'paris':'Paris','petite-couronne':'Petite couronne (92-93-94)','grande-couronne':'Grande couronne (77-78-91-95)','regions-du-nord-est':'Nord-Est','bretagne-grand-ouest':'Bretagne / Grand Ouest','centre-loire-limousin':'Centre / Loire / Limousin','sud-ouest-pyrenees':'Sud-Ouest / Pyrénées','sud-est-mediterrannee':'Sud-Est / Méditerranée','autre':'Sans localisation'},
- 'k.upcoming':'Ventes à venir','k.upcomingS':n=>`Licitor, ${n} tribunaux / études`,'k.week':'Audiences cette semaine','k.weekS':'du 12 au 19 octobre','k.sum':'Total des mises à prix','k.sumS':v=>`Médiane ${v}`,'k.photo':'Dossiers avec photos','k.photoS':'tirées des PV descriptifs',
+ 'k.upcoming':'Ventes à venir','k.upcomingS':n=>`Licitor, ${n} tribunaux / études`,'k.week':'Audiences cette semaine','k.weekS':'du 24 novembre au 1er décembre','k.sum':'Total des mises à prix','k.sumS':v=>`Médiane ${v}`,'k.photo':'Dossiers avec photos','k.photoS':'tirées des PV descriptifs',
  'p.libre':'Libre','p.occ':'Occupé','p.sur':'Surenchère','p.lic':'Licitation','p.baisse':'Baisse possible','p.lots':n=>`${n} lots`,'p.today':"Aujourd'hui",'p.days':n=>`J-${n}`,
  'r.count':(a,b)=>`${a} annonces · ${b} sur la carte`,'r.none':'Aucune annonce avec ces filtres.','r.mp':'Mise à prix','r.est':'estimé',
  'd.listing':'annonce','d.nophoto':'Aucune photo de PV publiée pour cette annonce.','d.docsBelow':'Documents ci-dessous.','d.askPV':"Demandez le PV à l'avocat.",'d.photoNote':'Photos issues du procès-verbal descriptif.','d.photo':'Photo',
@@ -1050,7 +1050,7 @@ fr:{
   soon:n=>`${n===0?'Vente aujourd’hui':n===1?'Vente demain':`Vente dans ${n} jours`} : délai très court pour trouver un avocat, le chèque de consignation et le financement.`},
  'cal.n':(a,b)=>`${a} annonces · ${b} tribunaux`,'cal.time':'Heure','cal.court':'Tribunal','cal.prop':'Bien','cal.city':'Ville','cal.est':'Estimation (P25–P75)','cal.more':n=>`+${n} autres visites`,'cal.none':'Aucune visite à venir.',
  'ui.close':'Fermer','ui.err':'Impossible de charger les données : ',
- src:n=>`Sources : annonces, tribunaux, avocats, dates de visite et photos des PV descriptifs issus de <a href="https://www.licitor.com/" target="_blank" rel="noopener">Licitor</a> (au 12 octobre 2026). Prix au m² du secteur : données La Loupe Immo affichées sur les annonces. Historique : adjudications Licitor, ${n} ventes à lot unique. Droits de mutation : 6,32 % à Paris (hausse 2025). Photos filigranées Ferrari Publicité.`,
+ src:n=>`Sources : annonces, tribunaux, avocats, dates de visite et photos des PV descriptifs issus de <a href="https://www.licitor.com/" target="_blank" rel="noopener">Licitor</a> (au 24 novembre 2026). Prix au m² du secteur : données La Loupe Immo affichées sur les annonces. Historique : adjudications Licitor, ${n} ventes à lot unique. Droits de mutation : 6,32 % à Paris (hausse 2025). Photos filigranées Ferrari Publicité.`,
  au:{eyebrow:'Dossier · annonce 110264 · TJ Paris',h1:'70 bd Vincent Auriol, lot 6',lede:"Chambre vendue dans la liquidation de l'ancienne SNC JRH HOTEL. Au 1er étage d'une résidence sociale, libre. Vente le 3 décembre 2026 à 14 h.",open:"Ouvrir l'annonce",
   k1s:'Baisse d’un tiers puis de moitié si carence',k2:'Fourchette du modèle',k2s:v=>`Médiane ${v}`,k3:'Consignation',k3s:"Chèque de banque à l'ordre du Bâtonnier Séquestre",k4:'Visite',k4v:'24 nov.',k4s:'Mardi 16 h–17 h, une seule fois',
   photoNote:'Extraits du PV du 2 juillet 2026 : chambre, lavabo, balcon filant partagé et façade sur le boulevard.',photoAlt:'Lot 6, photo',
@@ -1065,7 +1065,7 @@ fr:{
 en:{
  locale:'en-GB',
  'nav.aria':'Sections','nav.list':'Listings &amp; map','nav.cal':'Calendar','nav.model':'Price model','nav.strat':'Costs &amp; strategy',
- 'tag.src':'Licitor · 12 October 2026',
+ 'tag.src':'Licitor · 24 November 2026',
  'l.eyebrow':'France · court-ordered property auctions','l.h1':'Upcoming auctions',
  'l.lede':'Every upcoming <i>vente judiciaire</i> published on Licitor: location, hearing date, court and lawyer, a likely price range from past results, and costs. Click a listing.',
  'l.more':'Show more',
@@ -1118,7 +1118,7 @@ en:{
   ['bad','!','I am not a lawyer; this page supports your decision. Have your lawyer confirm the figures before bidding.']],
  cats:{appartement:'Apartment',maison:'House',immeuble:'Building / complex',commerce:'Commercial / industrial',terrain:'Land',parking:'Parking / garage',autre:'Other',parts:'Company shares'},
  zones:{'paris':'Paris','petite-couronne':'Inner suburbs (92-93-94)','grande-couronne':'Outer suburbs (77-78-91-95)','regions-du-nord-est':'North-East','bretagne-grand-ouest':'Brittany / West','centre-loire-limousin':'Centre / Loire / Limousin','sud-ouest-pyrenees':'South-West / Pyrenees','sud-est-mediterrannee':'South-East / Mediterranean','autre':'No location'},
- 'k.upcoming':'Upcoming listings','k.upcomingS':n=>`Licitor, ${n} courts / offices`,'k.week':'Auctions this week','k.weekS':'12–19 October','k.sum':'Total reserve prices','k.sumS':v=>`Median ${v}`,'k.photo':'Files with photos','k.photoS':'from the bailiff’s reports',
+ 'k.upcoming':'Upcoming listings','k.upcomingS':n=>`Licitor, ${n} courts / offices`,'k.week':'Auctions this week','k.weekS':'24 November – 1 December','k.sum':'Total reserve prices','k.sumS':v=>`Median ${v}`,'k.photo':'Files with photos','k.photoS':'from the bailiff’s reports',
  'p.libre':'Vacant','p.occ':'Occupied','p.sur':'Surenchère','p.lic':'Licitation','p.baisse':'Price may drop','p.lots':n=>`${n} lots`,'p.today':'Today','p.days':n=>`${n} days`,
  'r.count':(a,b)=>`${a} listings · ${b} on the map`,'r.none':'No listings match these filters.','r.mp':'Reserve','r.est':'est.',
  'd.listing':'listing','d.nophoto':'No report photos published for this listing.','d.docsBelow':'Documents below.','d.askPV':'Ask the lawyer for the report.','d.photoNote':'Photos from the bailiff’s report (PV descriptif).','d.photo':'Photo',
@@ -1146,7 +1146,7 @@ en:{
   soon:n=>`${n===0?'Auction today':n===1?'Auction tomorrow':`Auction in ${n} days`}: very little time to hire a lawyer, get the deposit draft and arrange funds.`},
  'cal.n':(a,b)=>`${a} listings · ${b} courts`,'cal.time':'Time','cal.court':'Court','cal.prop':'Property','cal.city':'City','cal.est':'Estimate (P25–P75)','cal.more':n=>`+${n} more viewings`,'cal.none':'No upcoming viewings.',
  'ui.close':'Close','ui.err':'Could not load data: ',
- src:n=>`Sources: listings, courts, lawyers, viewing dates and report photos from <a href="https://www.licitor.com/" target="_blank" rel="noopener">Licitor</a> (as of 12 October 2026). Area €/m²: La Loupe Immo figures shown on listing pages. History: Licitor adjudications, ${n} single-lot sales. Transfer tax: 6.32% in Paris (2025 increase). Photos carry the Ferrari Publicité watermark. Listing texts are in the original French.`,
+ src:n=>`Sources: listings, courts, lawyers, viewing dates and report photos from <a href="https://www.licitor.com/" target="_blank" rel="noopener">Licitor</a> (as of 24 November 2026). Area €/m²: La Loupe Immo figures shown on listing pages. History: Licitor adjudications, ${n} single-lot sales. Transfer tax: 6.32% in Paris (2025 increase). Photos carry the Ferrari Publicité watermark. Listing texts are in the original French.`,
  au:{eyebrow:'Case file · listing 110264 · TJ Paris',h1:'70 bd Vincent Auriol, lot 6',lede:'A room sold in the liquidation of the former JRH HOTEL partnership. First floor of a social-housing residence, vacant. Auction on 3 December 2026 at 2 pm.',open:'Open listing',
   k1s:'Drops by a third, then a half, if no bids',k2:'Model range',k2s:v=>`Median ${v}`,k3:'Deposit',k3s:'Banker’s draft to the Bâtonnier Séquestre',k4:'Viewing',k4v:'24 Nov.',k4s:'Tuesday 4–5 pm, once only',
   photoNote:'From the 2 July 2026 report: room, washbasin, shared balcony and boulevard façade.',photoAlt:'Lot 6 photo',
@@ -1251,9 +1251,9 @@ Object.assign(I18N.en,{
  'cp.title':'Comparable past sales','cp.none':'No comparable past sales nearby.','cp.sum':(n,r,m)=>`The ${n} nearest comparable sales: median ratio ×${r}${m?`, median ${m}/m²`:''}. Click a row.`,
  'm.toPast':'Open past sales →','m.toPastSub':'Every sale behind the model, with map and filters, in its own tab.'
 });
-Object.assign(I18N.tr,{'cl.in':(d,w)=>d===0?`Bugün kapanıyor · ${w}`:`Kapanışa ${d} gün · ${w}`,'ft.sections':'Bölümler','ft.sources':'Kaynaklar','ft.hist':'Adjudication geçmişi','ft.lang':'Dil','ft.about':'Hakkında','ft.aboutTxt':'Licitor verisinden derlenen kişisel araştırma aracı. Karar desteği içindir; teklif öncesi rakamları avukatınıza teyit ettirin.','ft.snap':'Veri: 12 Ekim 2026','ft.notlegal':'Hukuki tavsiye değildir'});
-Object.assign(I18N.fr,{'cl.in':(d,w)=>d===0?`Clôture aujourd'hui · ${w}`:`Clôture dans ${d} j · ${w}`,'ft.sections':'Rubriques','ft.sources':'Sources','ft.hist':'Historique des adjudications','ft.lang':'Langue','ft.about':'À propos','ft.aboutTxt':'Outil de recherche personnel construit à partir des données Licitor. Aide à la décision : faites valider les chiffres par votre avocat avant d’enchérir.','ft.snap':'Données : 12 octobre 2026','ft.notlegal':'Pas un conseil juridique'});
-Object.assign(I18N.en,{'cl.in':(d,w)=>d===0?`Closing today · ${w}`:`Closing in ${d} days · ${w}`,'ft.sections':'Sections','ft.sources':'Sources','ft.hist':'Adjudication history','ft.lang':'Language','ft.about':'About','ft.aboutTxt':'A personal research tool built from Licitor data. Decision support only: have your lawyer confirm the figures before bidding.','ft.snap':'Data: 12 October 2026','ft.notlegal':'Not legal advice'});
+Object.assign(I18N.tr,{'cl.in':(d,w)=>d===0?`Bugün kapanıyor · ${w}`:`Kapanışa ${d} gün · ${w}`,'ft.sections':'Bölümler','ft.sources':'Kaynaklar','ft.hist':'Adjudication geçmişi','ft.lang':'Dil','ft.about':'Hakkında','ft.aboutTxt':'Licitor verisinden derlenen kişisel araştırma aracı. Karar desteği içindir; teklif öncesi rakamları avukatınıza teyit ettirin.','ft.snap':'Veri: 24 Kasım 2026','ft.notlegal':'Hukuki tavsiye değildir'});
+Object.assign(I18N.fr,{'cl.in':(d,w)=>d===0?`Clôture aujourd'hui · ${w}`:`Clôture dans ${d} j · ${w}`,'ft.sections':'Rubriques','ft.sources':'Sources','ft.hist':'Historique des adjudications','ft.lang':'Langue','ft.about':'À propos','ft.aboutTxt':'Outil de recherche personnel construit à partir des données Licitor. Aide à la décision : faites valider les chiffres par votre avocat avant d’enchérir.','ft.snap':'Données : 24 novembre 2026','ft.notlegal':'Pas un conseil juridique'});
+Object.assign(I18N.en,{'cl.in':(d,w)=>d===0?`Closing today · ${w}`:`Closing in ${d} days · ${w}`,'ft.sections':'Sections','ft.sources':'Sources','ft.hist':'Adjudication history','ft.lang':'Language','ft.about':'About','ft.aboutTxt':'A personal research tool built from Licitor data. Decision support only: have your lawyer confirm the figures before bidding.','ft.snap':'Data: 24 November 2026','ft.notlegal':'Not legal advice'});
 Object.assign(I18N.en,{
  'nav.list':'Upcoming auctions','nav.past':'Past results','nav.model':'Price estimates','nav.strat':'Costs &amp; guide',
  'u.h1':'Find a property at a court auction',
@@ -1361,7 +1361,7 @@ Object.assign(I18N.tr,{
 });
 (function(){
 "use strict";
-const SNAP=new Date('2026-10-12T00:00:00');const TODAY=(()=>{const n=new Date();n.setHours(0,0,0,0);return n>SNAP?n:SNAP;})();
+const SNAP=new Date('2026-11-24T00:00:00');const TODAY=(()=>{const n=new Date();n.setHours(0,0,0,0);return n>SNAP?n:SNAP;})();
 let LANG='tr';
 try{const s=localStorage.getItem('ench_lang');if(s&&I18N[s])LANG=s;else{const n=(navigator.language||'').slice(0,2);if(I18N[n])LANG=n;}}catch(e){}
 const T=()=>I18N[LANG];
